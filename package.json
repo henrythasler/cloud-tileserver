@@ -1,0 +1,33 @@
+{
+  "name": "aws-tileserver",
+  "version": "1.0.0",
+  "description": "AWS lambda function to handle vectortile queries via REST",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage",
+    "zip": "tsc && zip -j ./dist/function.zip ./dist/index.js",
+    "publish": "npm run zip && aws lambda update-function-code --function-name tileserver --zip-file fileb://dist/function.zip"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henrythasler/aws-tileserver.git"
+  },
+  "keywords": [
+    "vectortiles",
+    "postgis",
+    "lambda",
+    "mapbox",
+    "mvt",
+    "terraform",
+    "aws"
+  ],
+  "author": "Henry Thasler",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/henrythasler/aws-tileserver/issues"
+  },
+  "homepage": "https://github.com/henrythasler/aws-tileserver#readme",
+  "devDependencies": {
+    "@types/node": "^12.0.12"
+  }
+}
