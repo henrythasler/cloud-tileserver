@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/henrythasler/aws-tileserver#readme",
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.27",
     "@types/node": "^12.0.12"
   }
 }
