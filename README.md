@@ -25,5 +25,7 @@ These are the main project goals:
 ### AWS
 
 - https://docs.aws.amazon.com/lambda/latest/dg/programming-model.html
+- https://medium.com/@anjanava.biswas/nodejs-runtime-environment-with-aws-lambda-layers-f3914613e20e
+- https://mikhail.io/serverless/coldstarts/aws/
 
 ### Typescript
