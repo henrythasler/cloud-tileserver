@@ -14,7 +14,7 @@ export const handler:Handler = async (event: TileRequest, context: Context): Pro
     });
     try {
         await client.connect();    
-        let res = await client.query(`SELECT encode(ST_AsMVT(q, 'roads', 4096, 'geom'), 'base64') as data FROM
+        let res = await client.query(`SELECT ST_AsMVT(q, 'roads', 4096, 'geom') as data FROM
         (SELECT id, 
                 ST_AsMvtGeom(
                   geometry,
@@ -26,7 +26,15 @@ export const handler:Handler = async (event: TileRequest, context: Context): Pro
               FROM import.buildings
               WHERE geometry && ST_Transform(ST_MakeEnvelope(10.8984375, 49.92293567, 10.94238248, 49.95121991, 4326), 3857)
          ) as q`)
-        return Promise.resolve(res.rows[0].data)
+        let response = {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/vnd.mapbox-vector-tile'
+            },
+            body: res.rows[0].data.toString('base64'),
+            isBase64Encoded: true
+        }
+        return Promise.resolve(response)
     } catch (error) {
         console.log(error)
         return Promise.resolve({})

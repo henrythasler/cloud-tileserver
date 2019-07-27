@@ -27,5 +27,11 @@ These are the main project goals:
 - https://docs.aws.amazon.com/lambda/latest/dg/programming-model.html
 - https://medium.com/@anjanava.biswas/nodejs-runtime-environment-with-aws-lambda-layers-f3914613e20e
 - https://mikhail.io/serverless/coldstarts/aws/
+- https://www.josephecombs.com/2018/03/05/how-to-make-an-AWS-S3-static-website-with-ssl
+- https://medium.com/@adil/how-to-send-an-image-as-a-response-via-aws-lambda-and-api-gateway-3820f3d4b6c8
 
 ### Typescript
+
+### Terraform
+
+- https://learn.hashicorp.com/terraform/aws/lambda-api-gateway

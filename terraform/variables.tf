@@ -15,3 +15,7 @@ variable "postgres_host" {
 variable "database_local" {
   default = "local"
 }
+
+variable "sitename" {
+  default = "cyclemap-server"
+}
