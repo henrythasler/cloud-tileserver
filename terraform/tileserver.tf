@@ -1,7 +1,7 @@
 provider "aws" {
   version = "~> 2.16"
   profile = "default"
-  region  = var.region
+  region  = "${var.region}"
 }
 
 resource "aws_iam_role" "tileserver_role" {
@@ -56,6 +56,7 @@ resource "aws_lambda_function" "tileserver" {
   filename = "./../dist/function.zip"
   role = "${aws_iam_role.tileserver_role.arn}"
   handler = "index.handler"
+  timeout = 120
   source_code_hash = "${filebase64sha256("./../dist/function.zip")}"
   layers = ["${aws_lambda_layer_version.tileserver_layer.arn}"]
   vpc_config {
@@ -64,22 +65,14 @@ resource "aws_lambda_function" "tileserver" {
   }
   environment {
     variables = {
-      PGDATABASE = var.database_local
-      PGHOST = var.postgres_host
-      PGPASSWORD = var.postgres_password
-      PGUSER = var.postgres_user
+      PGDATABASE = "${var.database_local}"
+      PGHOST = "${var.postgres_host}"
+      PGPASSWORD = "${var.postgres_password}"
+      PGUSER = "${var.postgres_user}"
     }
   }
 }
 
-resource "aws_lambda_permission" "allow_api_gateway" {
-     statement_id  = "AllowExecutionFromAPIGateway"
-     action        = "lambda:InvokeFunction"
-     function_name = "${aws_lambda_function.tileserver.function_name}"
-     principal     = "apigateway.amazonaws.com"
-     source_arn = "${aws_api_gateway_rest_api.example.execution_arn}/*/*/*"
-     
-}
 
 resource "aws_api_gateway_rest_api" "example" {
   name = "ServerlessExample"
@@ -87,6 +80,7 @@ resource "aws_api_gateway_rest_api" "example" {
   binary_media_types = [
     "*/*"
   ]
+  minimum_compression_size = 5000
   endpoint_configuration {
     types = [
       "REGIONAL"
@@ -144,17 +138,25 @@ resource "aws_api_gateway_deployment" "example" {
   stage_name = "test"
 }
 
-
-resource "aws_lambda_permission" "apigw" {
-  statement_id = "AllowAPIGatewayInvoke"
-  action = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.tileserver.arn}"
-  principal = "apigateway.amazonaws.com"
-
-  # The /*/* portion grants access from any method on any resource
-  # within the API Gateway "REST API".
-  source_arn = "${aws_api_gateway_deployment.example.execution_arn}/*/*"
+resource "aws_lambda_permission" "allow_api_gateway" {
+     statement_id  = "AllowExecutionFromAPIGateway"
+     action        = "lambda:InvokeFunction"
+     function_name = "${aws_lambda_function.tileserver.function_name}"
+     principal     = "apigateway.amazonaws.com"
+     source_arn = "${aws_api_gateway_rest_api.example.execution_arn}/*/*/*"
+     
 }
+
+# resource "aws_lambda_permission" "apigw" {
+#   statement_id = "AllowAPIGatewayInvoke"
+#   action = "lambda:InvokeFunction"
+#   function_name = "${aws_lambda_function.tileserver.arn}"
+#   principal = "apigateway.amazonaws.com"
+
+#   # The /*/* portion grants access from any method on any resource
+#   # within the API Gateway "REST API".
+#   source_arn = "${aws_api_gateway_deployment.example.execution_arn}/*/*"
+# }
 
 output "base_url" {
   value = "${aws_api_gateway_deployment.example.invoke_url}"
@@ -162,7 +164,7 @@ output "base_url" {
 
 # http://www-0000.s3-website.eu-central-1.amazonaws.com
 resource "aws_s3_bucket" "website" {
-  bucket = var.sitename
+  bucket = "${var.sitename}"
   acl = "public-read"
   force_destroy = true
 

@@ -6,14 +6,14 @@
     "global": {
       "type": "vector",
       "tiles": [
-        "https://efsvrwi9fa.execute-api.eu-central-1.amazonaws.com/test/maps/global/{z}/{x}/{y}.pbf"
+        "http://localhost:8081/global/{z}/{x}/{y}.pbf"
       ]
     },
     "local": {
       "type": "vector",
       "minzoom": 8,
       "tiles": [
-        "https://efsvrwi9fa.execute-api.eu-central-1.amazonaws.com/test/maps/local/{z}/{x}/{y}.pbf"
+        "https://u3gib9o63m.execute-api.eu-central-1.amazonaws.com/test/maps/local/{z}/{x}/{y}.pbf"
       ]
     },
     "cluster": {
@@ -23,7 +23,7 @@
       "clusterMaxZoom": 14,
       "clusterRadius": 50,
       "tiles": [
-        "https://efsvrwi9fa.execute-api.eu-central-1.amazonaws.com/test/maps/cluster/{z}/{x}/{y}.pbf"
+        "http://localhost:8081/cluster/{z}/{x}/{y}.pbf"
       ]
     },
     "mapbox-terrain-rgb": {

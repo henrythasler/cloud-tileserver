@@ -17,5 +17,5 @@ variable "database_local" {
 }
 
 variable "sitename" {
-  default = "cyclemap-server"
+  default = "cyclemap.link"
 }

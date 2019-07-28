@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
-    "sim": "tsc && PGUSER=postgres PGHOST=127.0.0.1 PGDATABASE=slice PGPORT=5432 node_modules/lambda-local/bin/lambda-local -l dist/index.js -h handler -e test/gettile.js",
-    "predeploy": "tsc && rm ./dist/*.zip && zip -j ./dist/function.zip ./dist/index.js && cd tileserver_layer && zip -qr ../dist/tileserver_layer.zip nodejs",
+    "sim": "tsc && PGUSER=postgres PGHOST=127.0.0.1 PGDATABASE=slice PGPORT=5432 node_modules/lambda-local/bin/lambda-local -l dist/index.js -h handler -e test/mering.js",
+    "predeploy": "tsc && rm ./dist/*.zip && zip -j ./dist/function.zip ./dist/*.js && cd tileserver_layer && zip -qr ../dist/tileserver_layer.zip nodejs",
     "deploy": "aws lambda update-function-code --function-name tileserver --zip-file fileb://dist/function.zip"
   },
   "repository": {
