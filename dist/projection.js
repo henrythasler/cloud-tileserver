@@ -18,22 +18,22 @@ class Projection {
         return { x: pos.x * res - this.originShift, y: this.originShift - pos.y * res };
     }
     /** Returns bounds of the given tile in Pseudo-Mercator (https://epsg.io/3857) coordinates */
-    getMercatorTileBounds(tile, zoom, tileSize = 256) {
-        let leftbottom = this.getMercatorFromPixels({ x: tile.x * tileSize, y: (tile.y + 1) * tileSize }, zoom, tileSize);
-        let righttop = this.getMercatorFromPixels({ x: (tile.x + 1) * tileSize, y: tile.y * tileSize }, zoom, tileSize);
+    getMercatorTileBounds(tile, tileSize = 256) {
+        let leftbottom = this.getMercatorFromPixels({ x: tile.x * tileSize, y: (tile.y + 1) * tileSize }, tile.z, tileSize);
+        let righttop = this.getMercatorFromPixels({ x: (tile.x + 1) * tileSize, y: tile.y * tileSize }, tile.z, tileSize);
         return { leftbottom: leftbottom, righttop: righttop };
     }
     /** Returns bounds of the given tile in WGS84 (https://epsg.io/4326) coordinates */
-    getWGS84TileBounds(tile, zoom, tileSize = 256) {
-        let bounds = this.getMercatorTileBounds(tile, zoom, tileSize);
+    getWGS84TileBounds(tile, tileSize = 256) {
+        let bounds = this.getMercatorTileBounds(tile, tileSize);
         return {
             leftbottom: this.getWGS84FromMercator(bounds.leftbottom),
             righttop: this.getWGS84FromMercator(bounds.righttop)
         };
     }
     /** Returns center of the given tile in WGS84 (https://epsg.io/4326) coordinates */
-    getWGS84TileCenter(tile, zoom, tileSize = 256) {
-        let bounds = this.getWGS84TileBounds(tile, zoom, tileSize);
+    getWGS84TileCenter(tile, tileSize = 256) {
+        let bounds = this.getWGS84TileBounds(tile, tileSize);
         return {
             lng: (bounds.righttop.lng + bounds.leftbottom.lng) / 2,
             lat: (bounds.righttop.lat + bounds.leftbottom.lat) / 2,

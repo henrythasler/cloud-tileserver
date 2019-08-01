@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
+    "layer": "cd tileserver_layer && npm i",
+    "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
     "sim": "tsc && PGUSER=postgres PGHOST=127.0.0.1 PGDATABASE=slice PGPORT=5432 node_modules/lambda-local/bin/lambda-local -l dist/index.js -h handler -e test/mering.js",
     "predeploy": "tsc && rm ./dist/*.zip && zip -j ./dist/function.zip ./dist/*.js && cd tileserver_layer && zip -qr ../dist/tileserver_layer.zip nodejs",
     "deploy": "aws lambda update-function-code --function-name tileserver --zip-file fileb://dist/function.zip"
@@ -35,6 +37,7 @@
     "lambda-local": "^1.6.3"
   },
   "dependencies": {
+    "aws-sdk": "^2.503.0",
     "pg": "^7.11.0"
   }
 }

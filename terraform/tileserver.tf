@@ -32,15 +32,15 @@ resource "aws_iam_role_policy_attachment" "exec-role" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
-# resource "aws_iam_role_policy_attachment" "vpcAccess" {
+# resource "aws_iam_role_policy_attachment" "s3Access" {
 #     role       = "${aws_iam_role.tileserver_role.name}"
-#     policy_arn = "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
+#     policy_arn = "arn:aws:iam::aws:policy/AWSLambdaExecute"
 # }
 
-# resource "aws_iam_role_policy_attachment" "rdsAccess" {
-#     role       = "${aws_iam_role.tileserver_role.name}"
-#     policy_arn = "arn:aws:iam::aws:policy/AmazonRDSFullAccess"
-# }
+resource "aws_iam_role_policy_attachment" "S3FullAccess" {
+    role       = "${aws_iam_role.tileserver_role.name}"
+    policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
 
 
 resource "aws_lambda_layer_version" "tileserver_layer" {
@@ -75,8 +75,8 @@ resource "aws_lambda_function" "tileserver" {
 
 
 resource "aws_api_gateway_rest_api" "example" {
-  name = "ServerlessExample"
-  description = "Terraform Serverless Application Example"
+  name = "${var.tileserver_prefix}${var.sitename}"
+  description = "Vectortiles Server"
   binary_media_types = [
     "*/*"
   ]
@@ -198,6 +198,25 @@ resource "aws_s3_bucket_policy" "website_policy" {
 EOF
 }
 
+resource "aws_s3_bucket" "tilecache" {
+  bucket = "${var.tilecache_prefix}${var.sitename}"
+  force_destroy = true
+}
+
+
+data "aws_vpc" "gis" {
+  id = "${var.vpc_id}"
+}
+
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id       = "${data.aws_vpc.gis.id}"
+  service_name = "com.amazonaws.${var.region}.s3"
+}
+
+resource "aws_vpc_endpoint_route_table_association" "private_s3" {
+  vpc_endpoint_id = "${aws_vpc_endpoint.s3.id}"
+  route_table_id  = "${var.route_id}"
+}
 # resource "aws_s3_bucket_object" "index" {
 #   bucket = "${aws_s3_bucket.www_0000.id}"
 #   acl    = "public-read"

@@ -54,15 +54,15 @@ export class Projection {
     }
 
     /** Returns bounds of the given tile in Pseudo-Mercator (https://epsg.io/3857) coordinates */
-    getMercatorTileBounds(tile: Vector, zoom: number, tileSize: number = 256): MercatorBoundingBox {
-        let leftbottom = this.getMercatorFromPixels(<Vector>{ x: tile.x * tileSize, y: (tile.y + 1) * tileSize }, zoom, tileSize);
-        let righttop = this.getMercatorFromPixels(<Vector>{ x: (tile.x + 1) * tileSize, y: tile.y * tileSize }, zoom, tileSize);
+    getMercatorTileBounds(tile: Tile, tileSize: number = 256): MercatorBoundingBox {
+        let leftbottom = this.getMercatorFromPixels(<Vector>{ x: tile.x * tileSize, y: (tile.y + 1) * tileSize }, tile.z, tileSize);
+        let righttop = this.getMercatorFromPixels(<Vector>{ x: (tile.x + 1) * tileSize, y: tile.y * tileSize }, tile.z, tileSize);
         return ({ leftbottom: leftbottom, righttop: righttop } as MercatorBoundingBox)
     }
 
     /** Returns bounds of the given tile in WGS84 (https://epsg.io/4326) coordinates */
-    getWGS84TileBounds(tile: Vector, zoom: number, tileSize: number = 256): WGS84BoundingBox {
-        let bounds: MercatorBoundingBox = this.getMercatorTileBounds(tile, zoom, tileSize);
+    getWGS84TileBounds(tile: Tile, tileSize: number = 256): WGS84BoundingBox {
+        let bounds: MercatorBoundingBox = this.getMercatorTileBounds(tile, tileSize);
         return ({
             leftbottom: this.getWGS84FromMercator(bounds.leftbottom),
             righttop: this.getWGS84FromMercator(bounds.righttop)
@@ -70,9 +70,9 @@ export class Projection {
     }
 
     /** Returns center of the given tile in WGS84 (https://epsg.io/4326) coordinates */
-    getWGS84TileCenter(tile: Vector, zoom: number, tileSize: number = 256): Wgs84 {
-        let bounds: WGS84BoundingBox = this.getWGS84TileBounds(tile, zoom, tileSize);
-        return ({
+    getWGS84TileCenter(tile: Tile, tileSize: number = 256): Wgs84 {
+        let bounds: WGS84BoundingBox = this.getWGS84TileBounds(tile, tileSize);
+         return ({
             lng: (bounds.righttop.lng + bounds.leftbottom.lng) / 2,
             lat: (bounds.righttop.lat + bounds.leftbottom.lat) / 2,
         } as Wgs84)

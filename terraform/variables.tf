@@ -19,3 +19,17 @@ variable "database_local" {
 variable "sitename" {
   default = "cyclemap.link"
 }
+
+variable "tileserver_prefix" {
+  default = "tiles."
+}
+
+variable "tilecache_prefix" {
+  default = "cache."
+}
+
+variable "vpc_id" {  
+}
+
+variable "route_id" {  
+}

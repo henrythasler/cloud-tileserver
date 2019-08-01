@@ -29,9 +29,14 @@ These are the main project goals:
 - https://mikhail.io/serverless/coldstarts/aws/
 - https://www.josephecombs.com/2018/03/05/how-to-make-an-AWS-S3-static-website-with-ssl
 - https://medium.com/@adil/how-to-send-an-image-as-a-response-via-aws-lambda-and-api-gateway-3820f3d4b6c8
+- http://erajasekar.com/posts/how-to-setup-subdomain-for-aws-api-gateway/
 
 ### Typescript
 
 ### Terraform
 
 - https://learn.hashicorp.com/terraform/aws/lambda-api-gateway
+
+### Postgres
+
+- https://node-postgres.com/
