@@ -36,7 +36,6 @@ function extractLayer(path: string): string | null {
 async function fetchTileFromDatabase(bbox: WGS84BoundingBox): Promise<Buffer> {
     let client: Client = new Client();
     await client.connect();
-    // console.log(bbox)
     let res: QueryResult = await client.query(`SELECT ST_AsMVT(q, 'buildings', 4096, 'geom') as data FROM
 (SELECT ST_AsMvtGeom(
           geometry,
@@ -112,19 +111,21 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
         }
         else {
             console.log(`${layer}/${tile.z}/${tile.x}/${tile.y} - cache miss`);
-            let bbox = proj.getWGS84TileBounds(tile)
-            try {
-                vectortile = await fetchTileFromDatabase(bbox);
-                let s3obj = await s3.putObject({
-                    Body: vectortile,
-                    Bucket: cacheBucketName,
-                    Key: `${layer}/${tile.z}/${tile.x}/${tile.y}.mvt`,
-                    ContentEncoding: "application/vnd.mapbox-vector-tile"
-                }).promise();
-                // console.log(s3obj);
-            } catch (error) {
-                vectortile = null;
-                console.log(error);
+            let wgs84BoundingBox = proj.getWGS84TileBounds(tile)
+            if(layer === "local") {
+                try {
+                    vectortile = await fetchTileFromDatabase(wgs84BoundingBox);
+                    let s3obj = await s3.putObject({
+                        Body: vectortile,
+                        Bucket: cacheBucketName,
+                        Key: `${layer}/${tile.z}/${tile.x}/${tile.y}.mvt`,
+                        ContentEncoding: "application/vnd.mapbox-vector-tile"
+                    }).promise();
+                    // console.log(s3obj);
+                } catch (error) {
+                    vectortile = null;
+                    console.log(error);
+                }
             }
         }
         if (vectortile) {

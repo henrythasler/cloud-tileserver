@@ -6,7 +6,7 @@
     "global": {
       "type": "vector",
       "tiles": [
-        "http://localhost:8081/global/{z}/{x}/{y}.pbf"
+        "https://tiles.cyclemap.link/global/{z}/{x}/{y}.mvt"
       ]
     },
     "local": {
@@ -23,7 +23,7 @@
       "clusterMaxZoom": 14,
       "clusterRadius": 50,
       "tiles": [
-        "http://localhost:8081/cluster/{z}/{x}/{y}.pbf"
+        "https://tiles.cyclemap.link/cluster/{z}/{x}/{y}.mvt"
       ]
     },
     "mapbox-terrain-rgb": {
@@ -40,7 +40,7 @@
       "url": "mapbox://mapbox.mapbox-terrain-v2"
       }
   },
-  "sprite": "http://localhost:8082/sprites/cyclemap",
+  "sprite": "https://www.cyclemap.link/sprites/cyclemap",
   "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
   "layers": [
     {
