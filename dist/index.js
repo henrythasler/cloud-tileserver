@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pg_1 = require("pg");
 const projection_1 = require("./projection");
 const s3_1 = __importDefault(require("aws-sdk/clients/s3"));
-const cacheBucketName = "cache.cyclemap.link";
+const cacheBucketName = "tiles.cyclemap.link";
 const proj = new projection_1.Projection();
 const s3 = new s3_1.default({ apiVersion: '2006-03-01' });
 function extractTile(path) {
@@ -84,39 +84,39 @@ exports.handler = async (event, context) => {
     let tile = extractTile(event.path);
     let layer = extractLayer(event.path);
     if (tile && layer) {
-        let cacheObjects = await s3.listObjects({
-            Bucket: cacheBucketName,
-            Prefix: `${layer}/${tile.z}/${tile.x}/${tile.y}`
-        }).promise();
+        // let cacheObjects = await s3.listObjects({
+        //     Bucket: cacheBucketName,
+        //     Prefix: `${layer}/${tile.z}/${tile.x}/${tile.y}`
+        // }).promise();
         let vectortile = null;
-        if (cacheObjects.Contents && cacheObjects.Contents.length > 0) {
-            console.log(`${layer}/${tile.z}/${tile.x}/${tile.y} - cache hit`);
-            let cacheobj = await s3.getObject({
-                Bucket: cacheBucketName,
-                Key: `${layer}/${tile.z}/${tile.x}/${tile.y}.mvt`
-            }).promise();
-            vectortile = cacheobj.Body;
-        }
-        else {
-            console.log(`${layer}/${tile.z}/${tile.x}/${tile.y} - cache miss`);
-            let wgs84BoundingBox = proj.getWGS84TileBounds(tile);
-            if (layer === "local") {
-                try {
-                    vectortile = await fetchTileFromDatabase(wgs84BoundingBox);
-                    let s3obj = await s3.putObject({
-                        Body: vectortile,
-                        Bucket: cacheBucketName,
-                        Key: `${layer}/${tile.z}/${tile.x}/${tile.y}.mvt`,
-                        ContentEncoding: "application/vnd.mapbox-vector-tile"
-                    }).promise();
-                    // console.log(s3obj);
-                }
-                catch (error) {
-                    vectortile = null;
-                    console.log(error);
-                }
+        // if (cacheObjects.Contents && cacheObjects.Contents.length > 0) {
+        //     console.log(`${layer}/${tile.z}/${tile.x}/${tile.y} - cache hit`);
+        //     let cacheobj = await s3.getObject({
+        //         Bucket: cacheBucketName,
+        //         Key: `${layer}/${tile.z}/${tile.x}/${tile.y}.mvt`
+        //     }).promise();
+        //     vectortile = <Buffer>cacheobj.Body;
+        // }
+        // else {
+        console.log(`${layer}/${tile.z}/${tile.x}/${tile.y}`);
+        let wgs84BoundingBox = proj.getWGS84TileBounds(tile);
+        if (layer === "local") {
+            try {
+                vectortile = await fetchTileFromDatabase(wgs84BoundingBox);
+                let s3obj = await s3.putObject({
+                    Body: vectortile,
+                    Bucket: cacheBucketName,
+                    Key: `${layer}/${tile.z}/${tile.x}/${tile.y}.mvt`,
+                    ContentEncoding: "application/vnd.mapbox-vector-tile"
+                }).promise();
+                // console.log(s3obj);
+            }
+            catch (error) {
+                vectortile = null;
+                console.log(error);
             }
         }
+        // }
         if (vectortile) {
             response = {
                 statusCode: 200,

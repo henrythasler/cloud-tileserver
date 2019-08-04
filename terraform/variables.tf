@@ -36,6 +36,3 @@ variable "route_id" {
 
 variable "certificate_arn" {  
 }
-
-variable "www_zone_id" {  
-}

@@ -7,7 +7,7 @@ interface Event {
     path: string
 }
 
-const cacheBucketName = "cache.cyclemap.link"
+const cacheBucketName = "tiles.cyclemap.link"
 const proj = new Projection();
 const s3 = new S3({ apiVersion: '2006-03-01' });
 
@@ -94,23 +94,23 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
     let layer: string | null = extractLayer(event.path);
 
     if (tile && layer) {
-        let cacheObjects = await s3.listObjects({
-            Bucket: cacheBucketName,
-            Prefix: `${layer}/${tile.z}/${tile.x}/${tile.y}`
-        }).promise();
+        // let cacheObjects = await s3.listObjects({
+        //     Bucket: cacheBucketName,
+        //     Prefix: `${layer}/${tile.z}/${tile.x}/${tile.y}`
+        // }).promise();
 
         let vectortile: Buffer | null = null;
 
-        if (cacheObjects.Contents && cacheObjects.Contents.length > 0) {
-            console.log(`${layer}/${tile.z}/${tile.x}/${tile.y} - cache hit`);
-            let cacheobj = await s3.getObject({
-                Bucket: cacheBucketName,
-                Key: `${layer}/${tile.z}/${tile.x}/${tile.y}.mvt`
-            }).promise();
-            vectortile = <Buffer>cacheobj.Body;
-        }
-        else {
-            console.log(`${layer}/${tile.z}/${tile.x}/${tile.y} - cache miss`);
+        // if (cacheObjects.Contents && cacheObjects.Contents.length > 0) {
+        //     console.log(`${layer}/${tile.z}/${tile.x}/${tile.y} - cache hit`);
+        //     let cacheobj = await s3.getObject({
+        //         Bucket: cacheBucketName,
+        //         Key: `${layer}/${tile.z}/${tile.x}/${tile.y}.mvt`
+        //     }).promise();
+        //     vectortile = <Buffer>cacheobj.Body;
+        // }
+        // else {
+            console.log(`${layer}/${tile.z}/${tile.x}/${tile.y}`);
             let wgs84BoundingBox = proj.getWGS84TileBounds(tile)
             if(layer === "local") {
                 try {
@@ -127,7 +127,7 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
                     console.log(error);
                 }
             }
-        }
+        // }
         if (vectortile) {
             response = {
                 statusCode: 200,

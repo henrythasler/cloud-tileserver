@@ -77,3 +77,7 @@ resource "aws_api_gateway_base_path_mapping" "tileserver_mapping" {
   stage_name  = "${aws_api_gateway_deployment.testing.stage_name}"
   domain_name = "${aws_api_gateway_domain_name.tileserver_domain.domain_name}"
 }
+
+# output "base_url" {
+#   value = "${aws_api_gateway_deployment.testing.invoke_url}"
+# }

@@ -1,6 +1,6 @@
 resource "aws_s3_bucket" "website" {
-  bucket = "${var.domain}"
-  acl = "public-read"
+  bucket        = "${var.domain}"
+  acl           = "public-read"
   force_destroy = true
 
   website {
@@ -50,8 +50,24 @@ resource "aws_s3_bucket" "tilecache" {
     allowed_headers = ["*"]
     allowed_methods = ["GET"]
     allowed_origins = ["*"]
-    expose_headers  = ["ETag"]
+    expose_headers = ["ETag"]
     max_age_seconds = 3600
+  }
+
+  website {
+    index_document = "index.html"
+    routing_rules = <<EOF
+[{
+    "Condition": {
+        "HttpErrorCodeReturnedEquals": "404"
+    },
+    "Redirect": {
+        "HostName": "tileserver.cyclemap.link",
+        "HttpRedirectCode" : "307",
+        "Protocol": "https"
+    }
+}]
+EOF  
   }
 }
 
