@@ -1,0 +1,139 @@
+[[sources]]
+  name = "local"
+  host   = "localhost"
+  database = "local"
+  port   = 5432
+  buffer    = 256
+  extend    = 4096
+  [[sources.layers]]
+    minzoom   = 14
+    name      = "buildings"
+    srid      = 3857
+    table     = "import.buildings"
+    geom      = "geometry"
+    buffer    = 64
+    keys      = ["id"]
+    where     = ["ST_Area(geometry)>80"]
+    clip_geom = true
+    [[sources.layers.variants]]
+      minzoom = 15
+      where = [""]
+ 
+  [[sources.layers]]
+    name      = "landcover"
+    minzoom   = 8
+    table     = "import.landcover_gen8"
+    geom      = "geometry"
+    keys      = ["osm_id as id", "class", "subclass", "area", "surface", "name"]
+    [[sources.layers.variants]]
+      minzoom = 9
+      table   = "import.landcover_gen9"
+    [[sources.layers.variants]]
+      minzoom = 10
+      table   = "import.landcover_gen10"
+    [[sources.layers.variants]]
+      minzoom = 11
+      table   = "import.landcover_gen11"
+    [[sources.layers.variants]]
+      minzoom = 12
+      table   = "import.landcover_gen12"
+    [[sources.layers.variants]]
+      minzoom = 13
+      table   = "import.landcover_gen13"
+    [[sources.layers.variants]]
+      minzoom = 14
+      table   = "import.landcover_gen14"
+    [[sources.layers.variants]]
+      minzoom = 15
+      table   = "import.landcover"
+
+  [[sources.layers]]
+    name      = "waterarea"
+    minzoom   = 7
+    table     = "import.waterarea_gen8"
+    geom      = "geometry"
+    keys      = ["osm_id as gid"]
+    [[sources.layers.variants]]
+      minzoom = 9
+      table   = "import.waterarea_gen9"
+    [[sources.layers.variants]]
+      minzoom = 10
+      table   = "import.waterarea_gen10"
+    [[sources.layers.variants]]
+      minzoom = 11
+      table   = "import.waterarea_gen11"
+    [[sources.layers.variants]]
+      minzoom = 12
+      table   = "import.waterarea_gen12"
+    [[sources.layers.variants]]
+      minzoom = 13
+      table   = "import.waterarea_gen13"
+    [[sources.layers.variants]]
+      minzoom = 14
+      table   = "import.waterarea_gen14"
+    [[sources.layers.variants]]
+      minzoom = 15
+      table   = "import.waterarea"
+
+  [[sources.layers]]
+    name      = "roads"
+    minzoom   = 8
+    table     = "import.roads_gen8"
+    geom      = "geometry"
+    keys      = [
+      "osm_id as gid", 
+      "class", 
+      "subclass", 
+      "oneway", 
+      "tracktype", 
+      "bridge", 
+      "tunnel", 
+      "service", 
+      "CASE WHEN layer IS NULL THEN 0 ELSE layer END as layer", 
+      "rank", 
+      "bicycle", 
+      "scale", 
+      "substring(ref from '\\w+') as ref_prefix", 
+      "substring(ref from '\\d+') as ref_num", 
+      "NULL as name"]
+    [[sources.layers.variants]]
+      minzoom = 9
+      table   = "import.roads_gen9"
+    [[sources.layers.variants]]
+      minzoom = 10
+      table   = "import.roads_gen10"
+    [[sources.layers.variants]]
+      minzoom = 11
+      table   = "import.roads_gen11"
+    [[sources.layers.variants]]
+      minzoom = 12
+      table   = "import.roads_gen12"
+    [[sources.layers.variants]]
+      minzoom = 13
+      table   = "import.roads_gen13"
+    [[sources.layers.variants]]
+      minzoom = 14
+      table   = "import.roads_gen14"
+    [[sources.layers.variants]]
+      minzoom = 15
+      table   = "import.roads_gen15"
+    [[sources.layers.variants]]
+      minzoom = 16
+      table   = "import.roads"
+      keys      = [
+        "osm_id as gid", 
+        "class", 
+        "subclass", 
+        "oneway", 
+        "tracktype", 
+        "bridge", 
+        "tunnel", 
+        "service", 
+        "CASE WHEN layer IS NULL THEN 0 ELSE layer END as layer", 
+        "rank", 
+        "bicycle", 
+        "scale", 
+        "substring(ref from '\\w+') as ref_prefix", 
+        "substring(ref from '\\d+') as ref_num", 
+        "name"]
+      postfix = "ORDER BY rank DESC"

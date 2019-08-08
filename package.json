@@ -8,7 +8,7 @@
     "layer": "cd tileserver_layer && npm i",
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
     "sim": "tsc && PGUSER=postgres PGHOST=127.0.0.1 PGDATABASE=slice PGPORT=5432 node_modules/lambda-local/bin/lambda-local -l dist/index.js -h handler -e test/mering.js",
-    "predeploy": "tsc && rm ./dist/*.zip && zip -j ./dist/function.zip ./dist/*.js && cd tileserver_layer && zip -qr ../dist/tileserver_layer.zip nodejs",
+    "predeploy": "tsc && rm ./dist/*.zip && zip -j ./dist/function.zip ./dist/*.js* && cd tileserver_layer && zip -qr ../dist/tileserver_layer.zip nodejs",
     "deploy": "aws lambda update-function-code --function-name tileserver --zip-file fileb://dist/function.zip"
   },
   "repository": {
@@ -32,9 +32,15 @@
   "homepage": "https://github.com/henrythasler/aws-tileserver#readme",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.27",
+    "@types/chai": "^4.2.0",
+    "@types/jest": "^24.0.17",
     "@types/node": "^12.0.12",
     "@types/pg": "^7.4.14",
-    "lambda-local": "^1.6.3"
+    "chai": "^4.2.0",
+    "jest": "^24.8.0",
+    "lambda-local": "^1.6.3",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.3"
   },
   "dependencies": {
     "aws-sdk": "^2.503.0",

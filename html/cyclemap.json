@@ -3,12 +3,6 @@
   "name": "Mapbox Local",
   "metadata": {},
   "sources": {
-    "global": {
-      "type": "vector",
-      "tiles": [
-        "https://tiles.cyclemap.link/global/{z}/{x}/{y}.mvt"
-      ]
-    },
     "local": {
       "type": "vector",
       "minzoom": 8,
@@ -16,8 +10,16 @@
         "https://tiles.cyclemap.link/local/{z}/{x}/{y}.mvt"
       ]
     },
+    "global": {
+      "minzoom": 20,
+      "type": "vector",
+      "tiles": [
+        "https://tiles.cyclemap.link/global/{z}/{x}/{y}.mvt"
+      ]
+    },
     "cluster": {
-      "FIXME": "Clustering currently does not work with vectortiles. Only GeoJson is supported. ",
+      "minzoom": 20,
+        "FIXME": "Clustering currently does not work with vectortiles. Only GeoJson is supported. ",
       "type": "vector",
       "cluster": false,
       "clusterMaxZoom": 14,

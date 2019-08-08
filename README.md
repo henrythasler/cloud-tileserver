@@ -6,8 +6,7 @@ Serve mapbox vectortiles via AWS stack
 These are the main project goals: 
 
 ```
-[ ] Setup required AWS infrastructure with terraform
-
+[ ] Setup the AWS infrastructure with terraform
 [ ] Create an AWS lambda function to handle vectortile queries via REST
 [ ] Create mapbox vectortiles directly with postgis using ST_AsMvtGeom() and ST_AsMVT()
 [ ] Write a parser to read config-files that define the vectortiles layout
@@ -17,6 +16,7 @@ These are the main project goals:
 [ ] Have module tests with tsjest/chai
 [ ] Generate useful documentation with typedocs
 [ ] Learn more about AWS, terraform and typescript
+[ ] Use free-tier if possible.
 [✓] Have fun
 ```
 
@@ -32,8 +32,11 @@ These are the main project goals:
 - http://erajasekar.com/posts/how-to-setup-subdomain-for-aws-api-gateway/
 - https://stackoverflow.com/questions/17193647/difference-between-an-a-rec-and-cname-in-route53
 - https://docs.aws.amazon.com/AmazonS3/latest/dev/how-to-page-redirect.html
+- https://stackoverflow.com/questions/45773074/cloudfront-responds-with-403-forbidden-instead-of-triggering-lambda
 
 ### Typescript
+
+- https://blog.atomist.com/typescript-imports/
 
 ### Terraform
 
