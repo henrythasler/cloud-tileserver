@@ -17,8 +17,8 @@
     clip_geom = true
     [[sources.layers.variants]]
       minzoom = 15
-      where = [""]
- 
+      where = []  # if you need to remove a condition in a variant, use ["TRUE"] or an empty [] array.
+  
   [[sources.layers]]
     name      = "landcover"
     minzoom   = 8

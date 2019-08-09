@@ -37,6 +37,7 @@ These are the main project goals:
 ### Typescript
 
 - https://blog.atomist.com/typescript-imports/
+- https://github.com/gotwarlost/istanbul/blob/master/ignoring-code-for-coverage.md
 
 ### Terraform
 

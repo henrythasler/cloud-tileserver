@@ -25,9 +25,7 @@
           "variants": [
             {
               "minzoom": 15,
-              "where": [
-                ""
-              ]
+              "where": []
             }
           ]
         },

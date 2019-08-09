@@ -15,6 +15,11 @@ const config = layer_json_1.default;
 const cacheBucketName = "tiles.cyclemap.link";
 const proj = new projection_1.Projection();
 const s3 = new s3_1.default({ apiVersion: '2006-03-01' });
+/**
+ * Extract zxy-tile information from a given path. Also checks for a valid file-extension.
+ * @param path a full path including arbitrary prefix-path, layer, tile and extension
+ * @return a tile for subsequent use or null if no valid Tile could be extracted.
+ */
 function extractTile(path) {
     let tile = { x: 0, y: 0, z: 0 };
     let re = new RegExp(/\d+\/\d+\/\d+(?=.mvt)/g);
@@ -28,29 +33,43 @@ function extractTile(path) {
     }
     return null;
 }
+exports.extractTile = extractTile;
+/**
+ * Extracts the layer-name from a given path.
+ * @param path a full path including arbitrary prefix-path, layer, tile and extension
+ * @return the name of the source if found
+ */
 function extractSource(path) {
-    let sourceCandidates = path.match(/(?!\/)\w+(?=\/\d)/);
-    if (sourceCandidates) {
+    // match the last word between slashes before the actual tile (3-numbers + extension)
+    let sourceCandidates = path.match(/(?!\/)\w+(?=\/\d+\/\d+\/\d+\.mvt)/g);
+    if (sourceCandidates != null && sourceCandidates.length > 0) {
         return sourceCandidates[sourceCandidates.length - 1];
     }
     return null;
 }
+exports.extractSource = extractSource;
+/**
+ * Check a given layer and variants against the zoom-level. Merge the **last** matching item in the variant-array into the layer and return it.
+ * Matching the **last** variant item makes the variant-objects shorter as we don't need to give a maxzoom but use a sequence of minzooms for each variant.
+ * @param layer This is the input layer including variants
+ * @param zoom The zoom-level to check the layer incl. variants against
+ * @return The resulting layer where the **last** matching variant is merged into the layer or null if zoom is out of bounds
+ */
 function resolveLayerProperties(layer, zoom) {
     let resolved = layer;
     /** check layer zoom if present */
-    if ((layer.minzoom != undefined) && (zoom < layer.minzoom)) {
-        console.log(`${zoom} < ${layer.minzoom}`);
-        return undefined;
+    if (((layer.minzoom != undefined) && (zoom < layer.minzoom)) ||
+        ((layer.maxzoom != undefined) && (zoom >= layer.maxzoom))) {
+        return null;
     }
-    if ((layer.maxzoom != undefined) && (zoom >= layer.maxzoom)) {
-        console.log(`${zoom} >= ${layer.minzoom}`);
-        return undefined;
-    }
+    /* istanbul ignore else */
     if (layer.variants && layer.variants.length) {
         for (let variant of layer.variants) {
-            let variantMinzoom = (variant.minzoom != undefined) ? variant.minzoom : 0;
+            /** the default zoom-values should cover all use-cases on earth */
+            let variantMinzoom = (variant.minzoom != undefined) ? variant.minzoom : /* istanbul ignore next: This can't happen due to interface definition */ 0;
             let variantMaxzoom = (variant.maxzoom != undefined) ? variant.maxzoom : 32;
             if (zoom >= variantMinzoom && zoom < variantMaxzoom) {
+                /** We have a match: merge the variant with the original layer. */
                 resolved = { ...layer, ...variant };
             }
         }
@@ -59,15 +78,10 @@ function resolveLayerProperties(layer, zoom) {
     delete resolved.variants;
     return resolved;
 }
-function replaceKeywords(source, layer, wgs84BoundingBox, zoom) {
-    let resolved = layer;
-    console.log(`${layer.name}:`);
-    console.log(layer.variants);
-    if (layer.variants && layer.variants.length) {
-        resolved = resolveLayerProperties(layer, zoom);
-        console.log(resolved);
-    }
-    if (resolved === undefined)
+exports.resolveLayerProperties = resolveLayerProperties;
+function buildLayerQuery(source, layer, wgs84BoundingBox, zoom) {
+    let resolved = resolveLayerProperties(layer, zoom);
+    if (resolved === null)
         return "";
     layer = { ...layer, ...resolved };
     let layerExtend = (layer.extend != undefined) ? layer.extend : ((source.extend != undefined) ? source.extend : 4096);
@@ -92,22 +106,23 @@ function replaceKeywords(source, layer, wgs84BoundingBox, zoom) {
         where += " AND (" + layer.where.join(") AND (") + ")";
     }
     return (`(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
-        (SELECT ST_AsMvtGeom(
-            ${geom},
-            ${bbox},
-            ${layerExtend},
-            ${buffer},
-            ${clip_geom}
-            ) AS geom${keys}
-        FROM ${layer.table} WHERE ${geom} && ${bbox}${where}${postfix}) as q)`);
+    (SELECT ST_AsMvtGeom(
+        ${geom},
+        ${bbox},
+        ${layerExtend},
+        ${buffer},
+        ${clip_geom}
+        ) AS geom${keys}
+    FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`);
 }
+exports.buildLayerQuery = buildLayerQuery;
 function buildQuery(source, config, wgs84BoundingBox, zoom) {
     let query = null;
     let layerQueries = [];
     for (let sourceItem of config.sources) {
         if (sourceItem.name === source) {
             for (let layer of sourceItem.layers) {
-                let layerQuery = replaceKeywords(sourceItem, layer, wgs84BoundingBox, zoom);
+                let layerQuery = buildLayerQuery(sourceItem, layer, wgs84BoundingBox, zoom);
                 if (layerQuery.length)
                     layerQueries.push(layerQuery);
             }
@@ -136,45 +151,6 @@ async function fetchTileFromDatabase(query) {
     let client = new pg_1.Client();
     await client.connect();
     let res = await client.query(query);
-    //     let res: QueryResult = await client.query(`SELECT (
-    //         SELECT ST_AsMVT(q, 'buildings', 4096, 'geom') as data FROM
-    // (SELECT ST_AsMvtGeom(
-    //           geometry,
-    //           ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
-    //           4096,
-    //           256,
-    //           true
-    //         ) AS geom, id
-    //       FROM import.buildings
-    //       WHERE geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)
-    // ) as q)
-    // ||
-    // (SELECT ST_AsMVT(q, 'landcover', 4096, 'geom') as data FROM
-    // (SELECT ST_AsMvtGeom(
-    //           geometry,
-    //           ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
-    //           4096,
-    //           256,
-    //           true
-    //         ) AS geom, osm_id as id, class, subclass, area, surface, name
-    //       FROM import.landcover
-    //       WHERE geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)
-    // ) as q)
-    // ||
-    // (SELECT ST_AsMVT(q, 'roads', 4096, 'geom') as data FROM
-    // (SELECT ST_AsMvtGeom(
-    //           geometry,
-    //           ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
-    //           4096,
-    //           256,
-    //           true
-    //         ) AS geom, osm_id as id, class, subclass, oneway, tracktype, bridge, tunnel, service, CASE WHEN layer IS NULL THEN 0 ELSE layer END as layer, rank, bicycle, scale, substring(ref from '\\w+') as ref_prefix, substring(ref from '\\d+') as ref_num, NULL as name
-    //       FROM import.roads
-    //       WHERE geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)
-    // ) as q
-    // ) as data
-    // `)
-    // let vectortile = Buffer.from(res.rows[0].data);
     await client.end();
     return res.rows[0].data;
 }

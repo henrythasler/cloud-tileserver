@@ -12,7 +12,7 @@ interface Event {
     path: string
 }
 
-interface Common {
+export interface Common {
     extend?: number,
     buffer?: number,
     clip_geom?: boolean,
@@ -25,18 +25,22 @@ interface Common {
     postfix?: string,
 }
 
-interface Variants extends Common {
+export interface Variants extends Common {
     minzoom: number,
     table?: string
 }
 
-interface Layer extends Common {
+export interface Layer extends Common {
     name: string,
     table: string,
     variants?: Variants[]
 }
 
-interface Source extends Common {
+export interface SourceBasics extends Common{
+    name: string
+}
+
+export interface Source extends SourceBasics {
     name: string,
     layers: Layer[],
     host?: string,
@@ -44,7 +48,7 @@ interface Source extends Common {
     port?: number,
 }
 
-interface Config {
+export interface Config {
     sources: Source[]
 }
 
@@ -55,6 +59,11 @@ const cacheBucketName = "tiles.cyclemap.link"
 const proj = new Projection();
 const s3 = new S3({ apiVersion: '2006-03-01' });
 
+/**
+ * Extract zxy-tile information from a given path. Also checks for a valid file-extension.
+ * @param path a full path including arbitrary prefix-path, layer, tile and extension
+ * @return a tile for subsequent use or null if no valid Tile could be extracted. 
+ */
 export function extractTile(path: string): Tile | null {
     let tile: Tile = { x: 0, y: 0, z: 0 };
     let re = new RegExp(/\d+\/\d+\/\d+(?=.mvt)/g);
@@ -69,33 +78,47 @@ export function extractTile(path: string): Tile | null {
     return null;
 }
 
+
+/**
+ * Extracts the layer-name from a given path.
+ * @param path a full path including arbitrary prefix-path, layer, tile and extension
+ * @return the name of the source if found
+ */
 export function extractSource(path: string): string | null {
-    let sourceCandidates = path.match(/(?!\/)\w+(?=\/\d)/)
-    if (sourceCandidates) {
+    // match the last word between slashes before the actual tile (3-numbers + extension)
+    let sourceCandidates: RegExpMatchArray|null = path.match(/(?!\/)\w+(?=\/\d+\/\d+\/\d+\.mvt)/g)
+    if (sourceCandidates != null && sourceCandidates.length > 0) {
         return sourceCandidates[sourceCandidates.length - 1];
     }
     return null;
 }
 
-export function resolveLayerProperties(layer: Layer, zoom: number): Layer | undefined {
+/**
+ * Check a given layer and variants against the zoom-level. Merge the **last** matching item in the variant-array into the layer and return it.
+ * Matching the **last** variant item makes the variant-objects shorter as we don't need to give a maxzoom but use a sequence of minzooms for each variant.
+ * @param layer This is the input layer including variants
+ * @param zoom The zoom-level to check the layer incl. variants against
+ * @return The resulting layer where the **last** matching variant is merged into the layer or null if zoom is out of bounds
+ */
+export function resolveLayerProperties(layer: Layer, zoom: number): Layer | null {
     let resolved: Layer = layer;
 
     /** check layer zoom if present */
-    if ((layer.minzoom != undefined) && (zoom < layer.minzoom)) {
-        console.log(`${zoom} < ${layer.minzoom}`)
-        return undefined;
+    if (
+        ((layer.minzoom != undefined) && (zoom < layer.minzoom)) ||
+        ((layer.maxzoom != undefined) && (zoom >= layer.maxzoom))
+     ) {
+        return null;
     }
 
-    if ((layer.maxzoom != undefined) && (zoom >= layer.maxzoom)) {
-        console.log(`${zoom} >= ${layer.minzoom}`)
-        return undefined;
-    }
-
+    /* istanbul ignore else */
     if (layer.variants && layer.variants.length) {
         for (let variant of layer.variants) {
-            let variantMinzoom = (variant.minzoom != undefined) ? variant.minzoom : 0
+            /** the default zoom-values should cover all use-cases on earth */
+            let variantMinzoom = (variant.minzoom != undefined) ? variant.minzoom : /* istanbul ignore next: This can't happen due to interface definition */0
             let variantMaxzoom = (variant.maxzoom != undefined) ? variant.maxzoom : 32
             if (zoom >= variantMinzoom && zoom < variantMaxzoom) {
+                /** We have a match: merge the variant with the original layer. */
                 resolved = { ...layer, ...variant }
             }
         }
@@ -105,17 +128,9 @@ export function resolveLayerProperties(layer: Layer, zoom: number): Layer | unde
     return resolved;
 }
 
-function replaceKeywords(source: Source, layer: Layer, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string {
-
-    let resolved: Layer | undefined = layer;
-
-    console.log(`${layer.name}:`);
-    console.log(layer.variants);
-    if (layer.variants && layer.variants.length) {
-        resolved = resolveLayerProperties(layer, zoom);
-        console.log(resolved);
-    }
-    if (resolved === undefined) return "";
+export function buildLayerQuery(source: SourceBasics, layer: Layer, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string {
+    let resolved: Layer | null = resolveLayerProperties(layer, zoom);
+    if (resolved === null) return "";
 
     layer = {...layer, ...resolved};
 
@@ -144,14 +159,14 @@ function replaceKeywords(source: Source, layer: Layer, wgs84BoundingBox: WGS84Bo
     }
 
     return (`(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
-        (SELECT ST_AsMvtGeom(
-            ${geom},
-            ${bbox},
-            ${layerExtend},
-            ${buffer},
-            ${clip_geom}
-            ) AS geom${keys}
-        FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`);
+    (SELECT ST_AsMvtGeom(
+        ${geom},
+        ${bbox},
+        ${layerExtend},
+        ${buffer},
+        ${clip_geom}
+        ) AS geom${keys}
+    FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`);
 }
 
 
@@ -162,7 +177,7 @@ function buildQuery(source: string, config: Config, wgs84BoundingBox: WGS84Bound
     for (let sourceItem of config.sources) {
         if (sourceItem.name === source) {
             for (let layer of sourceItem.layers) {
-                let layerQuery: string = replaceKeywords(sourceItem, layer, wgs84BoundingBox, zoom);
+                let layerQuery: string = buildLayerQuery(sourceItem, layer, wgs84BoundingBox, zoom);
                 if (layerQuery.length) layerQueries.push(layerQuery);
             }
         }
@@ -191,45 +206,6 @@ async function fetchTileFromDatabase(query: string): Promise<Buffer> {
     let client: Client = new Client();
     await client.connect();
     let res: QueryResult = await client.query(query);
-    //     let res: QueryResult = await client.query(`SELECT (
-    //         SELECT ST_AsMVT(q, 'buildings', 4096, 'geom') as data FROM
-    // (SELECT ST_AsMvtGeom(
-    //           geometry,
-    //           ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
-    //           4096,
-    //           256,
-    //           true
-    //         ) AS geom, id
-    //       FROM import.buildings
-    //       WHERE geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)
-    // ) as q)
-    // ||
-    // (SELECT ST_AsMVT(q, 'landcover', 4096, 'geom') as data FROM
-    // (SELECT ST_AsMvtGeom(
-    //           geometry,
-    //           ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
-    //           4096,
-    //           256,
-    //           true
-    //         ) AS geom, osm_id as id, class, subclass, area, surface, name
-    //       FROM import.landcover
-    //       WHERE geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)
-    // ) as q)
-    // ||
-    // (SELECT ST_AsMVT(q, 'roads', 4096, 'geom') as data FROM
-    // (SELECT ST_AsMvtGeom(
-    //           geometry,
-    //           ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
-    //           4096,
-    //           256,
-    //           true
-    //         ) AS geom, osm_id as id, class, subclass, oneway, tracktype, bridge, tunnel, service, CASE WHEN layer IS NULL THEN 0 ELSE layer END as layer, rank, bicycle, scale, substring(ref from '\\w+') as ref_prefix, substring(ref from '\\d+') as ref_num, NULL as name
-    //       FROM import.roads
-    //       WHERE geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)
-    // ) as q
-    // ) as data
-    // `)
-    // let vectortile = Buffer.from(res.rows[0].data);
     await client.end();
     return res.rows[0].data;
 }

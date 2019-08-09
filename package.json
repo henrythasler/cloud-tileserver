@@ -7,8 +7,9 @@
     "test": "jest --coverage",
     "layer": "cd tileserver_layer && npm i",
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
+    "docs": "node node_modules/typedoc/bin/typedoc",
     "sim": "tsc && PGUSER=postgres PGHOST=127.0.0.1 PGDATABASE=slice PGPORT=5432 node_modules/lambda-local/bin/lambda-local -l dist/index.js -h handler -e test/mering.js",
-    "predeploy": "tsc && rm ./dist/*.zip && zip -j ./dist/function.zip ./dist/*.js* && cd tileserver_layer && zip -qr ../dist/tileserver_layer.zip nodejs",
+    "predeploy": "rm -rf ./dist/* && tsc && cp ./src/layer.json ./dist && zip -j ./dist/function.zip ./dist/*.js* && cd tileserver_layer && zip -qr ../dist/tileserver_layer.zip nodejs",
     "deploy": "aws lambda update-function-code --function-name tileserver --zip-file fileb://dist/function.zip"
   },
   "repository": {
@@ -40,6 +41,7 @@
     "jest": "^24.8.0",
     "lambda-local": "^1.6.3",
     "ts-jest": "^24.0.2",
+    "typedoc": "^0.15.0",
     "typescript": "^3.5.3"
   },
   "dependencies": {

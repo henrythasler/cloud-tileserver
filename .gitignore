@@ -64,3 +64,6 @@ typings/
 .terraform/
 secret.auto.tfvars
 *.tfstate*
+
+# generated typedocs (for now)
+docs/out
