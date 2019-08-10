@@ -84,6 +84,7 @@ describe("resolveLayerProperties", function () {
                 keys: ["osm_id", "name", "pop"],
                 where: ["pop > 0", "name_de <> ''"],
                 postfix: "ORDER BY pop DESC NULLS LAST",
+                prefix: "DISTINCT ON(pop, name)"
 
             }]
         }, 11);
@@ -99,7 +100,8 @@ describe("resolveLayerProperties", function () {
             srid: 3857,
             keys: ["osm_id", "name", "pop"],
             where: ["pop > 0", "name_de <> ''"],
-            postfix: "ORDER BY pop DESC NULLS LAST"
+            postfix: "ORDER BY pop DESC NULLS LAST",
+            prefix: "DISTINCT ON(pop, name)"
         });
     });
 
@@ -347,7 +349,7 @@ describe("buildLayerQuery", function () {
     FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857))) as q)`);
     });
 
-    it("simple layer", function () {
+    it("simple layer with empty arrays", function () {
         let bbox: WGS84BoundingBox = proj.getWGS84TileBounds({ x: 4383, y: 2854, z: 13 });
         let layerQuery: string = buildLayerQuery({
             name: "source"
@@ -387,12 +389,13 @@ describe("buildLayerQuery", function () {
             keys: ["osm_id as id", "name"],
             where: ["TRUE"],
             minzoom: 10,
-            postfix: "ORDER BY id"
+            postfix: "ORDER BY id",
+            prefix: "DISTINCT ON(name)"
         },
         bbox,
         13);
         expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') as data FROM
-    (SELECT ST_AsMvtGeom(
+    (SELECT DISTINCT ON(name)ST_AsMvtGeom(
         geometry,
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
         4096,
@@ -455,7 +458,8 @@ describe("buildLayerQuery", function () {
             keys: ["osm_id as id", "name"],
             where: ["TRUE"],
             minzoom: 10,
-            postfix: "ORDER BY id"
+            postfix: "ORDER BY id",
+            prefix: "DISTINCT ON(name)"
         },
         {
             name: "layer1",
@@ -465,7 +469,7 @@ describe("buildLayerQuery", function () {
         10);
 
         expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') as data FROM
-    (SELECT ST_AsMvtGeom(
+    (SELECT DISTINCT ON(name)ST_AsMvtGeom(
         geometry,
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
         4096,

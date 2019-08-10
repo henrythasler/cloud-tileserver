@@ -22,6 +22,7 @@ export interface Common {
     where?: string[],
     minzoom?: number,
     maxzoom?: number,
+    prefix?: string,
     postfix?: string,
 }
 
@@ -130,8 +131,11 @@ export function resolveLayerProperties(layer: Layer, zoom: number): Layer | null
 
 export function buildLayerQuery(source: SourceBasics, layer: Layer, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string {
     let resolved: Layer | null = resolveLayerProperties(layer, zoom);
+
+    // Layer is empty due to zoom constrains. No further processing needed.
     if (resolved === null) return "";
 
+    // overwrite layer-properties with variant if applicable.
     layer = {...layer, ...resolved};
 
     let layerExtend: number = (layer.extend != undefined) ? layer.extend : ((source.extend != undefined) ? source.extend : 4096);
@@ -140,6 +144,7 @@ export function buildLayerQuery(source: SourceBasics, layer: Layer, wgs84Boundin
     let bbox: string = `ST_Transform(ST_MakeEnvelope(${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}, 4326), ${srid})`;
     let buffer: number = (layer.buffer != undefined) ? layer.buffer : ((source.buffer != undefined) ? source.buffer : 256);
     let clip_geom: boolean = (layer.clip_geom != undefined) ? layer.clip_geom : ((source.clip_geom != undefined) ? source.clip_geom : true);
+    let prefix: string = (layer.prefix != undefined) ? layer.prefix : ((source.prefix != undefined) ? source.prefix : "");
     let postfix: string = (layer.postfix != undefined) ? layer.postfix : ((source.postfix != undefined) ? source.postfix : "");
 
     let keys: string = "";
@@ -159,7 +164,7 @@ export function buildLayerQuery(source: SourceBasics, layer: Layer, wgs84Boundin
     }
 
     return (`(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
-    (SELECT ST_AsMvtGeom(
+    (SELECT ${prefix}ST_AsMvtGeom(
         ${geom},
         ${bbox},
         ${layerExtend},
@@ -187,6 +192,7 @@ function buildQuery(source: string, config: Config, wgs84BoundingBox: WGS84Bound
         query = `SELECT ( ${layers} ) as data`;
     }
     else {
+        // FIXME: Do we really have to create an empty tile?
         query = `
         SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') as data FROM
         (SELECT ST_AsMvtGeom(
@@ -198,7 +204,6 @@ function buildQuery(source: string, config: Config, wgs84BoundingBox: WGS84Bound
             ) AS geom ) as q) ) as data;        
         `;
     }
-    // console.log(layerQueries);
     return query;
 }
 
@@ -256,6 +261,7 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
                 // console.log(s3obj);
             } catch (error) {
                 vectortile = null;
+                response.body = JSON.stringify(error);
                 console.log(error);
             }
         }

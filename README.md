@@ -20,6 +20,58 @@ These are the main project goals:
 [✓] Have fun
 ```
 
+## Architecture
+
+### Creating the `postgis-client` Docker-image
+
+![](docs/img/CodeBuild-Docker.png)
+
+1. User pushes new commit to Github
+2. Github creates webhook for AWS CodeBuild
+3. New Docker-Image is created and pushed to ECR
+
+## Prerequisites 
+
+## Initial Setup
+
+## Lambda Implementation Details
+
+### Vector Tiles 
+
+`aws-tileserver` supports configurable REST-endpoints for vector tiles according to [Vector Tile Specification 2.1](https://github.com/mapbox/vector-tile-spec/tree/master/2.1). Each endpoint provides access to a vectortile with configurable [layers](https://github.com/mapbox/vector-tile-spec/tree/master/2.1#41-layers).
+
+### Layer Properties
+
+property | description | default
+---|---|---
+buffer | buffer around each tile | 256
+
+
+### SQL-Query
+
+Each layer is resolved to the following query:
+```
+(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
+    (SELECT ${prefix}ST_AsMvtGeom(
+        ${geom},
+        ${bbox},
+        ${layerExtend},
+        ${buffer},
+        ${clip_geom}
+        ) AS geom${keys}
+    FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)
+```
+
+All resulting layers are merged into one SQL query:
+
+```
+SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
+```
+
+## Next Steps
+
+- Move database to [Serverless Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.how-it-works.html) to reduce monthly costs.
+
 ## References
 
 ### AWS
@@ -46,3 +98,8 @@ These are the main project goals:
 ### Postgres
 
 - https://node-postgres.com/
+
+### Vectortiles
+
+- https://docs.mapbox.com/vector-tiles/specification/
+- https://github.com/mapbox/vector-tile-spec

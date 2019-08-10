@@ -212,33 +212,6 @@
       }
     },
     {
-      "id": "landuse-swamp-fill",
-      "type": "fill",
-      "source": "local",
-      "source-layer": "landcover",
-      "minzoom": 7,
-      "maxzoom": 24,
-      "filter": ["match", ["get", "subclass"], "wetland", true, false],
-      "paint": {
-        "fill-opacity": 0.2,
-        "fill-color": "rgba(51, 153, 102, 1)",
-        "fill-outline-color": "rgba(0, 0, 0, 0)"
-      }
-    },
-    {
-      "id": "landuse-swamp-pattern",
-      "type": "fill",
-      "source": "local",
-      "source-layer": "landcover",
-      "minzoom": 7,
-      "maxzoom": 24,
-      "filter": ["match", ["get", "subclass"], "wetland", true, false],
-      "paint": {
-        "fill-opacity": 0.6,
-        "fill-pattern": "wetland"
-      }
-    },
-    {
       "id": "landuse-glacier-fill",
       "type": "fill",
       "source": "local",
@@ -270,44 +243,6 @@
         ]
       }
     },
-    {
-      "id": "landuse-military-pattern",
-      "type": "fill",
-      "source": "local",
-      "source-layer": "landuse",
-      "minzoom": 7,
-      "maxzoom": 24,
-      "filter": ["match", ["get", "subclass"], "military", true, false],
-      "paint": {
-        "fill-opacity": 0.2,
-        "fill-pattern": "stripes",
-        "fill-outline-color": "rgba(255, 0, 0, 1)"
-      }
-    },
-    {
-      "FIXME": "Add additional thick translucent line",
-      "id": "landuse-nature_reserve-outline-thin",
-      "type": "line",
-      "source": "local",
-      "source-layer": "landuse",
-      "minzoom": 8,
-      "maxzoom": 24,
-      "filter": ["match", ["get", "subclass"], "nature_reserve", true, false],
-      "layout": {
-        "line-join": "round",
-        "line-cap": "round"
-      },
-      "paint": {
-        "line-blur": 1,
-        "line-opacity": 0.6,
-        "line-color": "rgba(32, 128, 32, 1)",
-        "line-width": [
-          "interpolate", ["exponential", 2], ["zoom"],
-          10, 6,
-          16, 10
-        ]
-      }
-    }, 
     {
       "id": "hillshading",
       "source": "mapbox-terrain-rgb",
@@ -383,6 +318,71 @@
         "fill-outline-color": "rgba(31, 131, 188, 1)"
       }
     },
+    {
+      "id": "landuse-swamp-fill",
+      "type": "fill",
+      "source": "local",
+      "source-layer": "landcover",
+      "minzoom": 7,
+      "maxzoom": 24,
+      "filter": ["match", ["get", "subclass"], "wetland", true, false],
+      "paint": {
+        "fill-opacity": 0.2,
+        "fill-color": "rgba(51, 153, 102, 1)",
+        "fill-outline-color": "rgba(0, 0, 0, 0)"
+      }
+    },
+    {
+      "id": "landuse-swamp-pattern",
+      "type": "fill",
+      "source": "local",
+      "source-layer": "landcover",
+      "minzoom": 7,
+      "maxzoom": 24,
+      "filter": ["match", ["get", "subclass"], "wetland", true, false],
+      "paint": {
+        "fill-opacity": 0.6,
+        "fill-pattern": "wetland"
+      }
+    },
+    {
+      "id": "landuse-military-pattern",
+      "type": "fill",
+      "source": "local",
+      "source-layer": "landuse",
+      "minzoom": 7,
+      "maxzoom": 24,
+      "filter": ["match", ["get", "subclass"], "military", true, false],
+      "paint": {
+        "fill-opacity": 0.2,
+        "fill-pattern": "stripes",
+        "fill-outline-color": "rgba(255, 0, 0, 1)"
+      }
+    },
+    {
+      "FIXME": "Add additional thick translucent line",
+      "id": "landuse-nature_reserve-outline-thin",
+      "type": "line",
+      "source": "local",
+      "source-layer": "landuse",
+      "minzoom": 8,
+      "maxzoom": 24,
+      "filter": ["match", ["get", "subclass"], "nature_reserve", true, false],
+      "layout": {
+        "line-join": "round",
+        "line-cap": "round"
+      },
+      "paint": {
+        "line-blur": 1,
+        "line-opacity": 0.6,
+        "line-color": "rgba(32, 128, 32, 1)",
+        "line-width": [
+          "interpolate", ["exponential", 2], ["zoom"],
+          10, 6,
+          16, 10
+        ]
+      }
+    }, 
     {
       "id": "admin",
       "type": "line",

@@ -90,6 +90,7 @@ function buildLayerQuery(source, layer, wgs84BoundingBox, zoom) {
     let bbox = `ST_Transform(ST_MakeEnvelope(${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}, 4326), ${srid})`;
     let buffer = (layer.buffer != undefined) ? layer.buffer : ((source.buffer != undefined) ? source.buffer : 256);
     let clip_geom = (layer.clip_geom != undefined) ? layer.clip_geom : ((source.clip_geom != undefined) ? source.clip_geom : true);
+    let prefix = (layer.prefix != undefined) ? layer.prefix : ((source.prefix != undefined) ? source.prefix : "");
     let postfix = (layer.postfix != undefined) ? layer.postfix : ((source.postfix != undefined) ? source.postfix : "");
     let keys = "";
     if (source.keys && source.keys.length) {
@@ -106,7 +107,7 @@ function buildLayerQuery(source, layer, wgs84BoundingBox, zoom) {
         where += " AND (" + layer.where.join(") AND (") + ")";
     }
     return (`(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
-    (SELECT ST_AsMvtGeom(
+    (SELECT ${prefix}ST_AsMvtGeom(
         ${geom},
         ${bbox},
         ${layerExtend},
@@ -196,6 +197,7 @@ exports.handler = async (event, context) => {
             }
             catch (error) {
                 vectortile = null;
+                response.body = JSON.stringify(error);
                 console.log(error);
             }
         }

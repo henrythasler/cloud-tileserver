@@ -4,12 +4,13 @@
   "description": "AWS lambda function to handle vectortile queries via REST",
   "main": "index.js",
   "scripts": {
+    "tools": "tsc tools/toml2json.ts",
     "test": "jest --coverage",
     "layer": "cd tileserver_layer && npm i",
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
     "docs": "node node_modules/typedoc/bin/typedoc",
     "sim": "tsc && PGUSER=postgres PGHOST=127.0.0.1 PGDATABASE=slice PGPORT=5432 node_modules/lambda-local/bin/lambda-local -l dist/index.js -h handler -e test/mering.js",
-    "predeploy": "rm -rf ./dist/* && tsc && cp ./src/layer.json ./dist && zip -j ./dist/function.zip ./dist/*.js* && cd tileserver_layer && zip -qr ../dist/tileserver_layer.zip nodejs",
+    "predeploy": "rm -rf ./dist/* && node tools/toml2json.js < src/layer.toml > src/layer.json && tsc && cp ./src/layer.json ./dist && zip -j ./dist/function.zip ./dist/*.js* && cd tileserver_layer && zip -qr ../dist/tileserver_layer.zip nodejs",
     "deploy": "aws lambda update-function-code --function-name tileserver --zip-file fileb://dist/function.zip"
   },
   "repository": {
@@ -32,6 +33,7 @@
   },
   "homepage": "https://github.com/henrythasler/aws-tileserver#readme",
   "devDependencies": {
+    "@iarna/toml": "^2.2.3",
     "@types/aws-lambda": "^8.10.27",
     "@types/chai": "^4.2.0",
     "@types/jest": "^24.0.17",
