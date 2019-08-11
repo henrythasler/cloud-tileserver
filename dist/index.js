@@ -81,8 +81,10 @@ function resolveLayerProperties(layer, zoom) {
 exports.resolveLayerProperties = resolveLayerProperties;
 function buildLayerQuery(source, layer, wgs84BoundingBox, zoom) {
     let resolved = resolveLayerProperties(layer, zoom);
+    // Layer is empty due to zoom constrains. No further processing needed.
     if (resolved === null)
         return "";
+    // overwrite layer-properties with variant if applicable.
     layer = { ...layer, ...resolved };
     let layerExtend = (layer.extend != undefined) ? layer.extend : ((source.extend != undefined) ? source.extend : 4096);
     let geom = (layer.geom != undefined) ? layer.geom : ((source.geom != undefined) ? source.geom : "geometry");
@@ -134,6 +136,7 @@ function buildQuery(source, config, wgs84BoundingBox, zoom) {
         query = `SELECT ( ${layers} ) as data`;
     }
     else {
+        // FIXME: Do we really have to create an empty tile?
         query = `
         SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') as data FROM
         (SELECT ST_AsMvtGeom(
@@ -145,7 +148,6 @@ function buildQuery(source, config, wgs84BoundingBox, zoom) {
             ) AS geom ) as q) ) as data;        
         `;
     }
-    // console.log(layerQueries);
     return query;
 }
 async function fetchTileFromDatabase(query) {
@@ -188,10 +190,7 @@ exports.handler = async (event, context) => {
                     Bucket: cacheBucketName,
                     Key: `${source}/${tile.z}/${tile.x}/${tile.y}.mvt`,
                     ContentType: "application/vnd.mapbox-vector-tile",
-                    ContentEncoding: "gzip",
-                    Metadata: {
-                        "wgs84BoundingBox": `${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}`
-                    }
+                    ContentEncoding: "gzip"
                 }).promise();
                 // console.log(s3obj);
             }
@@ -213,7 +212,7 @@ exports.handler = async (event, context) => {
                 isBase64Encoded: true
             };
         }
-        console.log(`${response.statusCode}: ${source}/${tile.z}/${tile.x}/${tile.y}  ${stats.uncompressedBytes} -> ${stats.compressedBytes}`);
+        console.log(`${event.path} ${response.statusCode}: ${source}/${tile.z}/${tile.x}/${tile.y}  ${stats.uncompressedBytes} -> ${stats.compressedBytes}`);
     }
     return Promise.resolve(response);
 };

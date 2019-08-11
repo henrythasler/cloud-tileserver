@@ -253,10 +253,7 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
                     Bucket: cacheBucketName,
                     Key: `${source}/${tile.z}/${tile.x}/${tile.y}.mvt`,
                     ContentType: "application/vnd.mapbox-vector-tile",
-                    ContentEncoding: "gzip",
-                    Metadata: {
-                        "wgs84BoundingBox": `${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}`
-                    }
+                    ContentEncoding: "gzip"
                 }).promise();
                 // console.log(s3obj);
             } catch (error) {
@@ -277,7 +274,7 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
                 isBase64Encoded: true
             }
         }
-        console.log(`${response.statusCode}: ${source}/${tile.z}/${tile.x}/${tile.y}  ${stats.uncompressedBytes} -> ${stats.compressedBytes}`);
+        console.log(`${event.path} ${response.statusCode}: ${source}/${tile.z}/${tile.x}/${tile.y}  ${stats.uncompressedBytes} -> ${stats.compressedBytes}`);
     }
     return Promise.resolve(response)
 }

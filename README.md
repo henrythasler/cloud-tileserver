@@ -8,7 +8,7 @@ These are the main project goals:
 ```
 [ ] Setup the AWS infrastructure with terraform
 [ ] Create an AWS lambda function to handle vectortile queries via REST
-[ ] Create mapbox vectortiles directly with postgis using ST_AsMvtGeom() and ST_AsMVT()
+[✓] Create mapbox vectortiles directly with postgis using ST_AsMvtGeom() and ST_AsMVT()
 [ ] Write a parser to read config-files that define the vectortiles layout
 [ ] Create fully automated deployment pipeline.
 [ ] Use some caching mechanism for vectortiles
@@ -71,6 +71,7 @@ SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 ## Next Steps
 
 - Move database to [Serverless Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.how-it-works.html) to reduce monthly costs.
+- Security-Review for Lambda-Code (e.g. SQL-Injection, ...)
 
 ## References
 
