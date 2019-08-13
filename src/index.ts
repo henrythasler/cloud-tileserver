@@ -1,6 +1,6 @@
 import { promisify } from "util";
 import { Handler, Context } from 'aws-lambda';
-import { Client, QueryResult } from "pg";
+import { Client, QueryResult, ClientConfig } from "pg";
 import { Projection, WGS84BoundingBox, Tile } from "./projection";
 import S3 from 'aws-sdk/clients/s3';
 import { gzip } from 'zlib';
@@ -37,16 +37,17 @@ export interface Layer extends Common {
     variants?: Variants[]
 }
 
-export interface SourceBasics extends Common{
+export interface SourceBasics extends Common {
     name: string
-}
-
-export interface Source extends SourceBasics {
-    name: string,
-    layers: Layer[],
     host?: string,
     database?: string,
     port?: number,
+    user?: string,
+    password?:string
+}
+
+export interface Source extends SourceBasics {
+    layers: Layer[],
 }
 
 export interface Config {
@@ -87,7 +88,7 @@ export function extractTile(path: string): Tile | null {
  */
 export function extractSource(path: string): string | null {
     // match the last word between slashes before the actual tile (3-numbers + extension)
-    let sourceCandidates: RegExpMatchArray|null = path.match(/(?!\/)\w+(?=\/\d+\/\d+\/\d+\.mvt)/g)
+    let sourceCandidates: RegExpMatchArray | null = path.match(/(?!\/)\w+(?=\/\d+\/\d+\/\d+\.mvt)/g)
     if (sourceCandidates != null && sourceCandidates.length > 0) {
         return sourceCandidates[sourceCandidates.length - 1];
     }
@@ -108,11 +109,10 @@ export function resolveLayerProperties(layer: Layer, zoom: number): Layer | null
     if (
         ((layer.minzoom != undefined) && (zoom < layer.minzoom)) ||
         ((layer.maxzoom != undefined) && (zoom >= layer.maxzoom))
-     ) {
+    ) {
         return null;
     }
 
-    /* istanbul ignore else */
     if (layer.variants && layer.variants.length) {
         for (let variant of layer.variants) {
             /** the default zoom-values should cover all use-cases on earth */
@@ -129,14 +129,23 @@ export function resolveLayerProperties(layer: Layer, zoom: number): Layer | null
     return resolved;
 }
 
-export function buildLayerQuery(source: SourceBasics, layer: Layer, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string {
+/**
+ * This will create the SQL-Query for a given layer. Source-specific properties (if given) will be used 
+ * if not defined for the layer.
+ * @param source This is the source object. It can also be a simplified Source-Object w/o 
+ * the layer information as it's not needed here (used for simplified unit-tests)).
+ * @param layer The layer that we need the SQL-Query for. Can include variants.
+ * @param wgs84BoundingBox The boundingbox for the tile
+ * @param zoom Zoom level 
+ */
+export function buildLayerQuery(source: Source | SourceBasics, layer: Layer, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string | null {
     let resolved: Layer | null = resolveLayerProperties(layer, zoom);
 
     // Layer is empty due to zoom constrains. No further processing needed.
-    if (resolved === null) return "";
+    if (resolved === null) return null;
 
     // overwrite layer-properties with variant if applicable.
-    layer = {...layer, ...resolved};
+    layer = { ...layer, ...resolved };
 
     let layerExtend: number = (layer.extend != undefined) ? layer.extend : ((source.extend != undefined) ? source.extend : 4096);
     let geom: string = (layer.geom != undefined) ? layer.geom : ((source.geom != undefined) ? source.geom : "geometry");
@@ -175,15 +184,15 @@ export function buildLayerQuery(source: SourceBasics, layer: Layer, wgs84Boundin
 }
 
 
-function buildQuery(source: string, config: Config, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string | null {
+export function buildQuery(source: string, config: Config, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string | null {
     let query: string | null = null;
     let layerQueries: string[] = [];
 
     for (let sourceItem of config.sources) {
         if (sourceItem.name === source) {
             for (let layer of sourceItem.layers) {
-                let layerQuery: string = buildLayerQuery(sourceItem, layer, wgs84BoundingBox, zoom);
-                if (layerQuery.length) layerQueries.push(layerQuery);
+                let layerQuery: string | null = buildLayerQuery(sourceItem, layer, wgs84BoundingBox, zoom);
+                if (layerQuery) layerQueries.push(layerQuery);
             }
         }
     }
@@ -207,12 +216,24 @@ function buildQuery(source: string, config: Config, wgs84BoundingBox: WGS84Bound
     return query;
 }
 
-async function fetchTileFromDatabase(query: string): Promise<Buffer> {
-    let client: Client = new Client();
+async function fetchTileFromDatabase(query: string, clientConfig:ClientConfig): Promise<Buffer> {
+    let client: Client = new Client(clientConfig);
     await client.connect();
     let res: QueryResult = await client.query(query);
     await client.end();
     return res.rows[0].data;
+}
+
+export function getClientConfig(source: string, config:Config):ClientConfig{
+    let clientConfig:ClientConfig = {};
+
+    for (let sourceItem of config.sources) {
+        if (sourceItem.name === source) {
+            // pick only the connection info from the sourceItem
+            clientConfig = (({ host, port, user, password}) => ({ host, port, user, password }))(sourceItem); 
+        }
+    }
+    return clientConfig;
 }
 
 export const handler: Handler = async (event: Event, context: Context): Promise<any> => {
@@ -244,7 +265,8 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
         console.log(query);
         if (query) {
             try {
-                vectortile = await fetchTileFromDatabase(query);
+                let pgConfig = getClientConfig(source, config);
+                vectortile = await fetchTileFromDatabase(query, pgConfig);
                 stats.uncompressedBytes = vectortile.byteLength;
                 vectortile = await <Buffer><unknown>asyncgzip(vectortile);
                 stats.compressedBytes = vectortile.byteLength;

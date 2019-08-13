@@ -2,6 +2,7 @@
   "sources": [
     {
       "name": "local",
+      "database": "local",
       "layers": [
         {
           "name": "landuse",

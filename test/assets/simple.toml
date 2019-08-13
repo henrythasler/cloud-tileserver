@@ -1,0 +1,7 @@
+[[sources]]
+  name = "local"
+
+  [[sources.layers]]
+    name      = "landuse"
+    minzoom   = 8
+    table     = "import.landuse_gen8"

@@ -62,7 +62,6 @@ function resolveLayerProperties(layer, zoom) {
         ((layer.maxzoom != undefined) && (zoom >= layer.maxzoom))) {
         return null;
     }
-    /* istanbul ignore else */
     if (layer.variants && layer.variants.length) {
         for (let variant of layer.variants) {
             /** the default zoom-values should cover all use-cases on earth */
@@ -79,11 +78,20 @@ function resolveLayerProperties(layer, zoom) {
     return resolved;
 }
 exports.resolveLayerProperties = resolveLayerProperties;
+/**
+ * This will create the SQL-Query for a given layer. Source-specific properties (if given) will be used
+ * if not defined for the layer.
+ * @param source This is the source object. It can also be a simplified Source-Object w/o
+ * the layer information as it's not needed here (used for simplified unit-tests)).
+ * @param layer The layer that we need the SQL-Query for. Can include variants.
+ * @param wgs84BoundingBox The boundingbox for the tile
+ * @param zoom Zoom level
+ */
 function buildLayerQuery(source, layer, wgs84BoundingBox, zoom) {
     let resolved = resolveLayerProperties(layer, zoom);
     // Layer is empty due to zoom constrains. No further processing needed.
     if (resolved === null)
-        return "";
+        return null;
     // overwrite layer-properties with variant if applicable.
     layer = { ...layer, ...resolved };
     let layerExtend = (layer.extend != undefined) ? layer.extend : ((source.extend != undefined) ? source.extend : 4096);
@@ -126,7 +134,7 @@ function buildQuery(source, config, wgs84BoundingBox, zoom) {
         if (sourceItem.name === source) {
             for (let layer of sourceItem.layers) {
                 let layerQuery = buildLayerQuery(sourceItem, layer, wgs84BoundingBox, zoom);
-                if (layerQuery.length)
+                if (layerQuery)
                     layerQueries.push(layerQuery);
             }
         }
@@ -150,13 +158,25 @@ function buildQuery(source, config, wgs84BoundingBox, zoom) {
     }
     return query;
 }
-async function fetchTileFromDatabase(query) {
-    let client = new pg_1.Client();
+exports.buildQuery = buildQuery;
+async function fetchTileFromDatabase(query, clientConfig) {
+    let client = new pg_1.Client(clientConfig);
     await client.connect();
     let res = await client.query(query);
     await client.end();
     return res.rows[0].data;
 }
+function getClientConfig(source, config) {
+    let clientConfig = {};
+    for (let sourceItem of config.sources) {
+        if (sourceItem.name === source) {
+            // pick only the connection info from the sourceItem
+            clientConfig = (({ host, port, user, password }) => ({ host, port, user, password }))(sourceItem);
+        }
+    }
+    return clientConfig;
+}
+exports.getClientConfig = getClientConfig;
 exports.handler = async (event, context) => {
     let stats = {
         uncompressedBytes: 0,
@@ -181,7 +201,8 @@ exports.handler = async (event, context) => {
         console.log(query);
         if (query) {
             try {
-                vectortile = await fetchTileFromDatabase(query);
+                let pgConfig = getClientConfig(source, config);
+                vectortile = await fetchTileFromDatabase(query, pgConfig);
                 stats.uncompressedBytes = vectortile.byteLength;
                 vectortile = await asyncgzip(vectortile);
                 stats.compressedBytes = vectortile.byteLength;

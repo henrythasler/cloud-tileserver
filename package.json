@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "tools": "tsc tools/toml2json.ts",
+    "gen:toml": "node tools/toml2json.js < src/layer.toml > src/layer.json",
     "test": "jest --coverage",
     "layer": "cd tileserver_layer && npm i",
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",

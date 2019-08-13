@@ -1,5 +1,6 @@
 [[sources]]
   name = "local"
+  database = "local"
 
   [[sources.layers]]
     name      = "landuse"
