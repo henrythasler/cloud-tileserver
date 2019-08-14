@@ -205,7 +205,7 @@ export function buildQuery(source: string, config: Config, wgs84BoundingBox: WGS
         query = `
         SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') as data FROM
         (SELECT ST_AsMvtGeom(
-            st_point(0,0),
+            ST_GeomFromText('POLYGON EMPTY'),
             ST_MakeEnvelope(0, 1, 1, 0, 4326),
             4096,
             256,
@@ -213,7 +213,7 @@ export function buildQuery(source: string, config: Config, wgs84BoundingBox: WGS
             ) AS geom ) as q) ) as data;        
         `;
     }
-    return query;
+    return query.replace(/\s+/g, ' ');
 }
 
 async function fetchTileFromDatabase(query: string, clientConfig:ClientConfig): Promise<Buffer> {
@@ -230,7 +230,12 @@ export function getClientConfig(source: string, config:Config):ClientConfig{
     for (let sourceItem of config.sources) {
         if (sourceItem.name === source) {
             // pick only the connection info from the sourceItem
-            clientConfig = (({ host, port, user, password}) => ({ host, port, user, password }))(sourceItem); 
+            if("host" in sourceItem) clientConfig.host = sourceItem.host;
+            if("port" in sourceItem) clientConfig.port = sourceItem.port;
+            if("user" in sourceItem) clientConfig.user = sourceItem.user;
+            if("password" in sourceItem) clientConfig.password = sourceItem.password;
+            if("database" in sourceItem) clientConfig.database = sourceItem.database;
+            // clientConfig = (({ host, port, user, password}) => ({ host, port, user, password }))(sourceItem); 
         }
     }
     return clientConfig;

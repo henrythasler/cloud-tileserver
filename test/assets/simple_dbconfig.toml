@@ -1,0 +1,12 @@
+[[sources]]
+  name = "local"
+  host = "localhost"
+  port = 5432
+  database = "local"
+  user = "user"
+  password = "secret"
+
+  [[sources.layers]]
+    name      = "landuse"
+    minzoom   = 8
+    table     = "import.landuse_gen8"
