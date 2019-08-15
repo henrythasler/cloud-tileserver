@@ -60,8 +60,8 @@
         }
 
     </style>
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.2.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.2.0/mapbox-gl.css' rel='stylesheet' />
 
     <script src='https://mapbox-gl-inspect.lukasmartinelli.ch/dist/mapbox-gl-inspect.min.js'></script>
     <link href='https://mapbox-gl-inspect.lukasmartinelli.ch/dist/mapbox-gl-inspect.css' rel='stylesheet' />
@@ -101,23 +101,34 @@
 
     <script type="text/javascript">
 
-        function loadJSON(callback) {
-            var xobj = new XMLHttpRequest();
-            xobj.overrideMimeType("application/json");
-            xobj.open('GET', 'cyclemap.json', true); 
-            xobj.onreadystatechange = function () {
-                if (xobj.readyState == 4 && xobj.status == "200") {
-                    // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-                    callback(xobj.responseText);
+        function loadJson(file) {
+            return new Promise(function(resolve, reject) {
+            var request = new XMLHttpRequest();
+            request.open('GET', file);
+            request.responseType = 'json';
+            request.onload = function() {
+                if (request.status === 200) {
+                resolve(request.response);
+                } else {
+                reject(Error('Didn\'t load successfully; error code:' + request.statusText));
                 }
             };
-            xobj.send(null);
-        }
+            request.onerror = function() {
+                reject(Error('There was a network error.'));
+            };
+            request.send();
+            });
+        }    
 
-        loadJSON(function (response) {
-            // Parse JSON string into object
-            var myStyle = JSON.parse(response);
+        Promise.all([loadJson("cyclemap.json"), loadJson("layers.json")]).then(function(responses) {
+            // responses contains the parsed JSON objects in the order of requests
+            setupMap(responses[0], responses[1]);
+        }).catch(function(error) {
+            console.log(error);
+        });        
 
+        function setupMap(myStyle, layers) {
+            myStyle.layers = layers;
             // TODO: Enter your mapbox gl access token on the line below
             mapboxgl.accessToken = 'pk.eyJ1IjoibXljeWNsZW1hcCIsImEiOiJjaXJhYnoxcGEwMDRxaTlubnk3cGZpbTBmIn0.TEO9UhyyX1nFKDTwO4K1xg'
             var map = new mapboxgl.Map({
@@ -360,7 +371,7 @@
 
             var gpxButton = new DownloadButton({ action: exportData, type: "gpx" });
             map.addControl(gpxButton, "top-left");
-        });
+        }
     </script>
 </body>
 
