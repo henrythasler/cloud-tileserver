@@ -234,6 +234,11 @@
           ]
         },
         {
+          "minzoom": 11,
+          "name": "cycleroute",
+          "sql": "SELECT row_number() over () as gid, ref, name, ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!) AS geom from import.cycleroute where (geometry && !BBOX!) AND ST_GeometryType(geometry)='ST_LineString' group by ref, name order by ref desc NULLS last, name desc NULLS last"
+        },
+        {
           "minzoom": 9,
           "name": "railway",
           "table": "import.railway",

@@ -95,6 +95,7 @@ function buildLayerQuery(source, layer, wgs84BoundingBox, zoom) {
     // overwrite layer-properties with variant if applicable.
     layer = { ...layer, ...resolved };
     let layerExtend = (layer.extend != undefined) ? layer.extend : ((source.extend != undefined) ? source.extend : 4096);
+    let sql = (layer.sql != undefined) ? layer.sql : ((source.sql != undefined) ? source.sql : "");
     let geom = (layer.geom != undefined) ? layer.geom : ((source.geom != undefined) ? source.geom : "geometry");
     let srid = (layer.srid != undefined) ? layer.srid : ((source.srid != undefined) ? source.srid : 3857);
     let bbox = `ST_Transform(ST_MakeEnvelope(${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}, 4326), ${srid})`;
@@ -116,15 +117,21 @@ function buildLayerQuery(source, layer, wgs84BoundingBox, zoom) {
     if (layer.where && layer.where.length) {
         where += " AND (" + layer.where.join(") AND (") + ")";
     }
-    return (`(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
-    (SELECT ${prefix}ST_AsMvtGeom(
-        ${geom},
-        ${bbox},
-        ${layerExtend},
-        ${buffer},
-        ${clip_geom}
-        ) AS geom${keys}
-    FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`);
+    if (sql) {
+        return `(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
+        (${sql}) as q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/!BBOX!/g, `${bbox}`).replace(/\s+/g, ' ');
+    }
+    else {
+        return `(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
+        (SELECT ${prefix}ST_AsMvtGeom(
+            ${geom},
+            ${bbox},
+            ${layerExtend},
+            ${buffer},
+            ${clip_geom}
+            ) AS geom${keys}
+        FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`.replace(/\s+/g, ' ');
+    }
 }
 exports.buildLayerQuery = buildLayerQuery;
 function buildQuery(source, config, wgs84BoundingBox, zoom) {
@@ -148,7 +155,7 @@ function buildQuery(source, config, wgs84BoundingBox, zoom) {
         query = `
         SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') as data FROM
         (SELECT ST_AsMvtGeom(
-            st_point(0,0),
+            ST_GeomFromText('POLYGON EMPTY'),
             ST_MakeEnvelope(0, 1, 1, 0, 4326),
             4096,
             256,
@@ -156,7 +163,7 @@ function buildQuery(source, config, wgs84BoundingBox, zoom) {
             ) AS geom ) as q) ) as data;        
         `;
     }
-    return query;
+    return query.replace(/\s+/g, ' ');
 }
 exports.buildQuery = buildQuery;
 async function fetchTileFromDatabase(query, clientConfig) {
@@ -171,7 +178,17 @@ function getClientConfig(source, config) {
     for (let sourceItem of config.sources) {
         if (sourceItem.name === source) {
             // pick only the connection info from the sourceItem
-            clientConfig = (({ host, port, user, password }) => ({ host, port, user, password }))(sourceItem);
+            if ("host" in sourceItem)
+                clientConfig.host = sourceItem.host;
+            if ("port" in sourceItem)
+                clientConfig.port = sourceItem.port;
+            if ("user" in sourceItem)
+                clientConfig.user = sourceItem.user;
+            if ("password" in sourceItem)
+                clientConfig.password = sourceItem.password;
+            if ("database" in sourceItem)
+                clientConfig.database = sourceItem.database;
+            // clientConfig = (({ host, port, user, password}) => ({ host, port, user, password }))(sourceItem); 
         }
     }
     return clientConfig;

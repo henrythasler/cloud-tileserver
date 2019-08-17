@@ -24,6 +24,7 @@ export interface Common {
     maxzoom?: number,
     prefix?: string,
     postfix?: string,
+    sql?: string
 }
 
 export interface Variants extends Common {
@@ -33,7 +34,7 @@ export interface Variants extends Common {
 
 export interface Layer extends Common {
     name: string,
-    table: string,
+    table?: string,
     variants?: Variants[]
 }
 
@@ -148,6 +149,7 @@ export function buildLayerQuery(source: Source | SourceBasics, layer: Layer, wgs
     layer = { ...layer, ...resolved };
 
     let layerExtend: number = (layer.extend != undefined) ? layer.extend : ((source.extend != undefined) ? source.extend : 4096);
+    let sql: string = (layer.sql != undefined) ? layer.sql : ((source.sql != undefined) ? source.sql : "");
     let geom: string = (layer.geom != undefined) ? layer.geom : ((source.geom != undefined) ? source.geom : "geometry");
     let srid: number = (layer.srid != undefined) ? layer.srid : ((source.srid != undefined) ? source.srid : 3857);
     let bbox: string = `ST_Transform(ST_MakeEnvelope(${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}, 4326), ${srid})`;
@@ -172,15 +174,21 @@ export function buildLayerQuery(source: Source | SourceBasics, layer: Layer, wgs
         where += " AND (" + layer.where.join(") AND (") + ")"
     }
 
-    return (`(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
-    (SELECT ${prefix}ST_AsMvtGeom(
-        ${geom},
-        ${bbox},
-        ${layerExtend},
-        ${buffer},
-        ${clip_geom}
-        ) AS geom${keys}
-    FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`);
+    if(sql) {
+        return `(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
+        (${sql}) as q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/!BBOX!/g, `${bbox}`).replace(/\s+/g, ' ');
+    }
+    else {
+        return `(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
+        (SELECT ${prefix}ST_AsMvtGeom(
+            ${geom},
+            ${bbox},
+            ${layerExtend},
+            ${buffer},
+            ${clip_geom}
+            ) AS geom${keys}
+        FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`.replace(/\s+/g, ' ');
+    }
 }
 
 

@@ -3,7 +3,7 @@ Serve mapbox vectortiles via AWS stack
 
 ## Goals
 
-These are the main project goals: 
+These are the main project goals:
 
 ```
 [ ] Setup the AWS infrastructure with terraform
@@ -30,13 +30,19 @@ These are the main project goals:
 2. Github creates webhook for AWS CodeBuild
 3. New Docker-Image is created and pushed to ECR
 
-## Prerequisites 
+## Prerequisites
 
 ## Initial Setup
 
+### AWS Credentials
+
+- go to IAM and create a new user
+- create an access key for that user
+- run `aws configure` and enter the access keys incl. secret key as prompted.
+
 ## Lambda Implementation Details
 
-### Vector Tiles 
+### Vector Tiles
 
 `aws-tileserver` supports configurable REST-endpoints for vector tiles according to [Vector Tile Specification 2.1](https://github.com/mapbox/vector-tile-spec/tree/master/2.1). Each endpoint provides access to a vectortile with configurable [layers](https://github.com/mapbox/vector-tile-spec/tree/master/2.1#41-layers).
 
@@ -46,10 +52,10 @@ property | description | default
 ---|---|---
 buffer | buffer around each tile | 256
 
-
 ### SQL-Query
 
 Each layer is resolved to the following query:
+
 ```
 (SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
     (SELECT ${prefix}ST_AsMvtGeom(

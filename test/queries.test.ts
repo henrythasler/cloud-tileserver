@@ -1,7 +1,7 @@
 import { Projection, Tile, WGS84BoundingBox } from "../src/projection";
 import { buildLayerQuery, buildQuery, Config } from "../src/index";
 import { expect } from "chai";
-import {readFileSync} from "fs";
+import { readFileSync } from "fs";
 import { parse } from "@iarna/toml";
 
 import "jest";
@@ -30,7 +30,7 @@ describe("buildLayerQuery", function () {
         256,
         true
         ) AS geom
-    FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857))) as q)`);
+    FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857))) as q)`.replace(/\s+/g, ' '));
     });
 
     it("simple layer with empty arrays", function () {
@@ -54,7 +54,7 @@ describe("buildLayerQuery", function () {
         256,
         true
         ) AS geom
-    FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857))) as q)`);
+    FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857))) as q)`.replace(/\s+/g, ' '));
     });
 
     it("full-featured layer", function () {
@@ -86,7 +86,7 @@ describe("buildLayerQuery", function () {
         64,
         false
         ) AS geom, osm_id as id, name
-    FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AND (TRUE)ORDER BY id) as q)`);
+    FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AND (TRUE)ORDER BY id) as q)`.replace(/\s+/g, ' '));
     });
 
     it("full-featured layer gets rejected due to minzoom", function () {
@@ -160,15 +160,35 @@ describe("buildLayerQuery", function () {
         64,
         false
         ) AS geom, osm_id as id, name
-    FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AND (TRUE)ORDER BY id) as q)`);
+    FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AND (TRUE)ORDER BY id) as q)`.replace(/\s+/g, ' '));
     });
+
+
+    it("layer with sql-statement", function () {
+        let bbox: WGS84BoundingBox = proj.getWGS84TileBounds({ x: 4383, y: 2854, z: 13 });
+        let layerQuery: string | null = buildLayerQuery({
+            name: "source"
+        },
+            {
+                name: "layer1",
+                table: "table2",
+                where: ["TRUE"],
+                sql: "SELECT ST_AsMvtGeom(geometry, !BBOX!) AS geom FROM table1 WHERE (geometry && !BBOX!) AND !ZOOM!<14"
+            },
+            bbox,
+            13);
+        expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') as data FROM
+    (SELECT ST_AsMvtGeom(geometry,
+        ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AS geom
+    FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AND 13<14) as q)`.replace(/\s+/g, ' '));
+    });    
 })
 
 describe("buildQuery", function () {
     it("simple query", function () {
         let bbox: WGS84BoundingBox = proj.getWGS84TileBounds({ x: 4383, y: 2854, z: 13 });
         let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}simple.toml`, "utf8"));
-        let query: string|null = buildQuery("local", config, bbox, 13);
+        let query: string | null = buildQuery("local", config, bbox, 13);
         let expected = readFileSync(`${testAssetsPath}simple_z13.sql`, "utf8")
             .replace(/!BBOX!/g, `${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}`)
             .replace(/\s+/g, ' ');
