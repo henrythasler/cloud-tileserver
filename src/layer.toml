@@ -1,4 +1,50 @@
 [[sources]]
+  name = "global"
+  database = "shapes"
+
+  [[sources.layers]]
+    minzoom   = 7
+    name      = "water"
+    table     = "public.simplified_water_polygons"
+  [[sources.layers.variants]]
+      minzoom = 8
+      table   = "public.water_polygons"
+
+  [[sources.layers]]
+    minzoom   = 3
+    name      = "bathymetry"
+    table     = "public.bathymetry_gen3"
+    keys      = ["depth"]
+    postfix   = "ORDER BY depth"
+  [[sources.layers.variants]]
+      minzoom = 4
+      table   = "public.bathymetry_gen3"
+  [[sources.layers.variants]]
+      minzoom = 5
+      table   = "public.bathymetry"
+
+  [[sources.layers]]
+    minzoom   = 3
+    name      = "lakes"
+    table     = "public.lakes"
+    keys      = ["name"]
+    where     = ["minzoom <= !ZOOM!"]
+
+  [[sources.layers]]
+    minzoom   = 3
+    name      = "urban_areas"
+    table     = "public.ne_10m_urban_areas"
+    where     = ["min_zoom <= !ZOOM!"]
+
+  [[sources.layers]]
+    minzoom   = 3
+    name      = "places"
+    table     = "public.ne_10m_populated_places_simple"
+    keys      = ["name", "featurecla as subclass"]
+    where     = ["min_zoom <= !ZOOM!"]
+    postfix   = "ORDER BY scalerank"
+
+[[sources]]
   name = "local"
   database = "local"
 

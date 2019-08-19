@@ -92,6 +92,7 @@ function buildLayerQuery(source, layer, wgs84BoundingBox, zoom) {
     // Layer is empty due to zoom constrains. No further processing needed.
     if (resolved === null)
         return null;
+    // FIXME: minzoom and maxzoom must be propagated from source into layer
     // overwrite layer-properties with variant if applicable.
     layer = { ...layer, ...resolved };
     let layerExtend = (layer.extend != undefined) ? layer.extend : ((source.extend != undefined) ? source.extend : 4096);
@@ -130,7 +131,7 @@ function buildLayerQuery(source, layer, wgs84BoundingBox, zoom) {
             ${buffer},
             ${clip_geom}
             ) AS geom${keys}
-        FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`.replace(/\s+/g, ' ');
+        FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/\s+/g, ' ');
     }
 }
 exports.buildLayerQuery = buildLayerQuery;

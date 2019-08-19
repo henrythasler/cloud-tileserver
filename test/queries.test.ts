@@ -182,6 +182,33 @@ describe("buildLayerQuery", function () {
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AS geom
     FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AND 13<14) as q)`.replace(/\s+/g, ' '));
     });    
+
+    it("replacing !ZOOM! variable", function () {
+        let bbox: WGS84BoundingBox = proj.getWGS84TileBounds({ x: 4383, y: 2854, z: 13 });
+        let layerQuery: string | null = buildLayerQuery({
+            name: "source"
+        },
+            {
+                name: "layer1",
+                table: "table1",
+                keys: ["!ZOOM! as zoom", "'!ZOOM!' as name"],
+                where: ["!ZOOM! < 14", "!ZOOM!+1 < 14"],
+                postfix: "!ZOOM!",
+                prefix: "!ZOOM!"
+            },
+            bbox,
+            13);
+        expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') as data FROM
+    (SELECT 13ST_AsMvtGeom(
+        geometry,
+        ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
+        4096,
+        256,
+        true
+        ) AS geom, 13 as zoom, '13' as name
+    FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) 
+    AND (13 < 14) AND (13+1 < 14)13) as q)`.replace(/\s+/g, ' '));
+    });
 })
 
 describe("buildQuery", function () {

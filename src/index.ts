@@ -144,6 +144,7 @@ export function buildLayerQuery(source: Source | SourceBasics, layer: Layer, wgs
 
     // Layer is empty due to zoom constrains. No further processing needed.
     if (resolved === null) return null;
+    // FIXME: minzoom and maxzoom must be propagated from source into layer
 
     // overwrite layer-properties with variant if applicable.
     layer = { ...layer, ...resolved };
@@ -187,7 +188,7 @@ export function buildLayerQuery(source: Source | SourceBasics, layer: Layer, wgs
             ${buffer},
             ${clip_geom}
             ) AS geom${keys}
-        FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`.replace(/\s+/g, ' ');
+        FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/\s+/g, ' ');
     }
 }
 

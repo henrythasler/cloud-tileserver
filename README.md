@@ -78,6 +78,8 @@ SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 
 - Move database to [Serverless Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.how-it-works.html) to reduce monthly costs.
 - Security-Review for Lambda-Code (e.g. SQL-Injection, ...)
+- Switch to Postgres environment variables (PGUSER, ...)
+- Omit Postgres credentials altogether and use IAM-role instead
 
 ## References
 
@@ -101,6 +103,7 @@ SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 ### Terraform
 
 - https://learn.hashicorp.com/terraform/aws/lambda-api-gateway
+- [How to manage Terraform state - A guide to file layout, isolation, and locking for Terraform projects](https://blog.gruntwork.io/how-to-manage-terraform-state-28f5697e68fa)
 
 ### Postgres
 

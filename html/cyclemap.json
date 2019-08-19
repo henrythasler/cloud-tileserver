@@ -11,7 +11,7 @@
       ]
     },
     "global": {
-      "minzoom": 20,
+      "minzoom": 3,
       "type": "vector",
       "tiles": [
         "https://tiles.cyclemap.link/global/{z}/{x}/{y}.mvt"
@@ -31,6 +31,7 @@
     "mapbox-terrain-rgb": {
       "type": "raster-dem",
       "tileSize": 256,
+      "minzoom": 20,
       "maxzoom": 14,
       "encoding": "terrarium",
       "tiles": [
@@ -38,6 +39,7 @@
       ]
     },
     "contour-lines": {
+      "minzoom": 20,
       "type": "vector",
       "url": "mapbox://mapbox.mapbox-terrain-v2"
       }
