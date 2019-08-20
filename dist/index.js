@@ -229,7 +229,11 @@ exports.handler = async (event, context) => {
                     Bucket: cacheBucketName,
                     Key: `${source}/${tile.z}/${tile.x}/${tile.y}.mvt`,
                     ContentType: "application/vnd.mapbox-vector-tile",
-                    ContentEncoding: "gzip"
+                    ContentEncoding: "gzip",
+                    Metadata: {
+                        "uncompressedBytes": `${stats.uncompressedBytes}`,
+                        "compressedBytes": `${stats.compressedBytes}`
+                    }
                 }).promise();
                 // console.log(s3obj);
             }
