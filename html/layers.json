@@ -2139,7 +2139,7 @@
   {
     "id": "poi",
     "type": "symbol",
-    "source": "cluster",
+    "source": "local",
     "source-layer": "poi",
     "filter": ["match", ["get", "subclass"], ["station", "halt", "bus_stop", "tram_stop", "restaurant", "biergarten", "hotel"], false, true],
     "minzoom": 11,
@@ -2243,7 +2243,7 @@
   {
     "id": "poi-prio",
     "type": "symbol",
-    "source": "cluster",
+    "source": "local",
     "source-layer": "poi",
     "filter": ["match", ["get", "subclass"], ["station", "halt", "bus_stop", "tram_stop", "restaurant", "biergarten", "hotel"], true, false],
     "minzoom": 11,

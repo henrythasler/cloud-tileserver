@@ -398,17 +398,14 @@
         {
           "minzoom": 14,
           "name": "buildings",
-          "table": "import.buildings",
+          "table": "import.buildings_gen14",
           "keys": [
             "id"
-          ],
-          "where": [
-            "ST_Area(geometry)>80"
           ],
           "variants": [
             {
               "minzoom": 15,
-              "where": []
+              "table": "import.buildings"
             }
           ]
         },
@@ -466,6 +463,65 @@
             "pop"
           ],
           "postfix": "ORDER BY pop DESC NULLS LAST, name"
+        },
+        {
+          "minzoom": 11,
+          "name": "poi",
+          "table": "import.poi_cluster_gen11",
+          "keys": [
+            "id",
+            "count",
+            "class",
+            "subclass",
+            "name",
+            "ele",
+            "access",
+            "subway",
+            "religion",
+            "parking"
+          ],
+          "variants": [
+            {
+              "minzoom": 12,
+              "table": "import.poi_cluster_gen12"
+            },
+            {
+              "minzoom": 13,
+              "table": "import.poi_cluster_gen13"
+            },
+            {
+              "minzoom": 14,
+              "table": "import.poi_cluster_gen14"
+            },
+            {
+              "minzoom": 15,
+              "table": "import.poi_cluster_gen15"
+            },
+            {
+              "minzoom": 16,
+              "table": "import.poi_cluster_gen16"
+            },
+            {
+              "minzoom": 17,
+              "table": "import.poi_cluster_gen17"
+            },
+            {
+              "minzoom": 18,
+              "table": "import.poi",
+              "keys": [
+                "osm_id as id",
+                "1 as count",
+                "class",
+                "subclass",
+                "name",
+                "ele",
+                "access",
+                "subway",
+                "religion",
+                "parking"
+              ]
+            }
+          ]
         }
       ]
     }

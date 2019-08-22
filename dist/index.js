@@ -56,7 +56,7 @@ exports.extractSource = extractSource;
  * @return The resulting layer where the **last** matching variant is merged into the layer or null if zoom is out of bounds
  */
 function resolveLayerProperties(layer, zoom) {
-    let resolved = layer;
+    let resolved = { ...layer };
     /** check layer zoom if present */
     if (((layer.minzoom != undefined) && (zoom < layer.minzoom)) ||
         ((layer.maxzoom != undefined) && (zoom >= layer.maxzoom))) {
@@ -94,36 +94,36 @@ function buildLayerQuery(source, layer, wgs84BoundingBox, zoom) {
         return null;
     // FIXME: minzoom and maxzoom must be propagated from source into layer
     // overwrite layer-properties with variant if applicable.
-    layer = { ...layer, ...resolved };
-    let layerExtend = (layer.extend != undefined) ? layer.extend : ((source.extend != undefined) ? source.extend : 4096);
-    let sql = (layer.sql != undefined) ? layer.sql : ((source.sql != undefined) ? source.sql : "");
-    let geom = (layer.geom != undefined) ? layer.geom : ((source.geom != undefined) ? source.geom : "geometry");
-    let srid = (layer.srid != undefined) ? layer.srid : ((source.srid != undefined) ? source.srid : 3857);
+    // layer = { ...layer, ...resolved };
+    let layerExtend = (resolved.extend != undefined) ? resolved.extend : ((source.extend != undefined) ? source.extend : 4096);
+    let sql = (resolved.sql != undefined) ? resolved.sql : ((source.sql != undefined) ? source.sql : "");
+    let geom = (resolved.geom != undefined) ? resolved.geom : ((source.geom != undefined) ? source.geom : "geometry");
+    let srid = (resolved.srid != undefined) ? resolved.srid : ((source.srid != undefined) ? source.srid : 3857);
     let bbox = `ST_Transform(ST_MakeEnvelope(${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}, 4326), ${srid})`;
-    let buffer = (layer.buffer != undefined) ? layer.buffer : ((source.buffer != undefined) ? source.buffer : 256);
-    let clip_geom = (layer.clip_geom != undefined) ? layer.clip_geom : ((source.clip_geom != undefined) ? source.clip_geom : true);
-    let prefix = (layer.prefix != undefined) ? layer.prefix : ((source.prefix != undefined) ? source.prefix : "");
-    let postfix = (layer.postfix != undefined) ? layer.postfix : ((source.postfix != undefined) ? source.postfix : "");
+    let buffer = (resolved.buffer != undefined) ? resolved.buffer : ((source.buffer != undefined) ? source.buffer : 256);
+    let clip_geom = (resolved.clip_geom != undefined) ? resolved.clip_geom : ((source.clip_geom != undefined) ? source.clip_geom : true);
+    let prefix = (resolved.prefix != undefined) ? resolved.prefix : ((source.prefix != undefined) ? source.prefix : "");
+    let postfix = (resolved.postfix != undefined) ? resolved.postfix : ((source.postfix != undefined) ? source.postfix : "");
     let keys = "";
     if (source.keys && source.keys.length) {
         keys += ", " + source.keys.join(", ");
     }
-    if (layer.keys && layer.keys.length) {
-        keys += ", " + layer.keys.join(", ");
+    if (resolved.keys && resolved.keys.length) {
+        keys += ", " + resolved.keys.join(", ");
     }
     let where = "";
     if (source.where && source.where.length) {
         where += " AND (" + source.where.join(") AND (") + ")";
     }
-    if (layer.where && layer.where.length) {
-        where += " AND (" + layer.where.join(") AND (") + ")";
+    if (resolved.where && resolved.where.length) {
+        where += " AND (" + resolved.where.join(") AND (") + ")";
     }
     if (sql) {
-        return `(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
+        return `(SELECT ST_AsMVT(q, '${resolved.name}', ${layerExtend}, 'geom') as data FROM
         (${sql}) as q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/!BBOX!/g, `${bbox}`).replace(/\s+/g, ' ');
     }
     else {
-        return `(SELECT ST_AsMVT(q, '${layer.name}', ${layerExtend}, 'geom') as data FROM
+        return `(SELECT ST_AsMVT(q, '${resolved.name}', ${layerExtend}, 'geom') as data FROM
         (SELECT ${prefix}ST_AsMvtGeom(
             ${geom},
             ${bbox},
@@ -131,7 +131,7 @@ function buildLayerQuery(source, layer, wgs84BoundingBox, zoom) {
             ${buffer},
             ${clip_geom}
             ) AS geom${keys}
-        FROM ${layer.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/\s+/g, ' ');
+        FROM ${resolved.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/\s+/g, ' ');
     }
 }
 exports.buildLayerQuery = buildLayerQuery;

@@ -95,6 +95,10 @@ SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 - https://docs.aws.amazon.com/AmazonS3/latest/dev/how-to-page-redirect.html
 - https://stackoverflow.com/questions/45773074/cloudfront-responds-with-403-forbidden-instead-of-triggering-lambda
 
+### JavaScript
+
+- https://lucybain.com/blog/2018/js-es6-spread-operator/
+
 ### Typescript
 
 - https://blog.atomist.com/typescript-imports/

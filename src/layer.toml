@@ -265,12 +265,11 @@
   [[sources.layers]]
     minzoom   = 14
     name      = "buildings"
-    table     = "import.buildings"
+    table     = "import.buildings_gen14"
     keys      = ["id"]
-    where     = ["ST_Area(geometry)>80"]
     [[sources.layers.variants]]
       minzoom = 15
-      where = []  # if you need to remove a condition in a variant, use ["TRUE"] or an empty [] array.
+      table   = "import.buildings"
 
   [[sources.layers]]
     minzoom   = 18
@@ -303,3 +302,32 @@
     prefix    = "DISTINCT ON(pop, name)"
     keys      = ["row_number() over (ORDER by pop desc NULLS LAST) as id", "class", "subclass", "name", "ele", "pop"]
     postfix   = "ORDER BY pop DESC NULLS LAST, name"
+
+  [[sources.layers]]
+    minzoom   = 11
+    name      = "poi"
+    table     = "import.poi_cluster_gen11"
+    keys      = ["id", "count", "class", "subclass", "name", "ele", "access", "subway", "religion", "parking"]
+    [[sources.layers.variants]]
+      minzoom = 12
+      table   = "import.poi_cluster_gen12"
+    [[sources.layers.variants]]
+      minzoom = 13
+      table   = "import.poi_cluster_gen13"
+    [[sources.layers.variants]]
+      minzoom = 14
+      table   = "import.poi_cluster_gen14"
+    [[sources.layers.variants]]
+      minzoom = 15
+      table   = "import.poi_cluster_gen15"
+    [[sources.layers.variants]]
+      minzoom = 16
+      table   = "import.poi_cluster_gen16"
+    [[sources.layers.variants]]
+      minzoom = 17
+      table   = "import.poi_cluster_gen17"
+    [[sources.layers.variants]]
+      minzoom = 18
+      table   = "import.poi"
+      keys    = ["osm_id as id", "1 as count", "class", "subclass", "name", "ele", "access", "subway", "religion", "parking"]
+
