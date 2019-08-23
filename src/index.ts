@@ -4,9 +4,25 @@ import { Client, QueryResult, ClientConfig } from "pg";
 import { Projection, WGS84BoundingBox, Tile } from "./projection";
 import S3 from 'aws-sdk/clients/s3';
 import { gzip } from 'zlib';
-import configJSON from './layer.json';
+import configJSON from './sources.json';
 
 const asyncgzip = promisify(gzip);
+
+const LOG_SILENT = 0;
+const LOG_ERROR = 1;
+const LOG_INFO = 2;
+const LOG_TRACE = 3;
+const LOG_DEBUG = 4;
+const LOG_LEVEL = LOG_TRACE;
+
+/**
+ * Wrapper for Debug-Outputs to console
+ * @param msg object to log
+ * @param level log-level
+ */
+export function log(msg: any, level: number) {
+    if(level <= LOG_LEVEL) console.log(msg);
+}
 
 interface Event {
     path: string
@@ -146,9 +162,6 @@ export function buildLayerQuery(source: Source | SourceBasics, layer: Layer, wgs
     if (resolved === null) return null;
     // FIXME: minzoom and maxzoom must be propagated from source into layer
 
-    // overwrite layer-properties with variant if applicable.
-    // layer = { ...layer, ...resolved };
-
     let layerExtend: number = (resolved.extend != undefined) ? resolved.extend : ((source.extend != undefined) ? source.extend : 4096);
     let sql: string = (resolved.sql != undefined) ? resolved.sql : ((source.sql != undefined) ? source.sql : "");
     let geom: string = (resolved.geom != undefined) ? resolved.geom : ((source.geom != undefined) ? source.geom : "geometry");
@@ -196,12 +209,22 @@ export function buildLayerQuery(source: Source | SourceBasics, layer: Layer, wgs
 export function buildQuery(source: string, config: Config, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string | null {
     let query: string | null = null;
     let layerQueries: string[] = [];
+    let layerNames: string[] = [];
 
     for (let sourceItem of config.sources) {
         if (sourceItem.name === source) {
             for (let layer of sourceItem.layers) {
-                let layerQuery: string | null = buildLayerQuery(sourceItem, layer, wgs84BoundingBox, zoom);
-                if (layerQuery) layerQueries.push(layerQuery);
+                /** Accoring to https://github.com/mapbox/vector-tile-spec/tree/master/2.1#41-layers: 
+                 *    Prior to appending a layer to an existing Vector Tile, an encoder MUST check the existing name fields in order to prevent duplication.
+                 *  implementation solution: ignore subsequent duplicates and log an error*/
+                if(!layerNames.includes(layer.name) ) {
+                    layerNames.push(layer.name);
+                    let layerQuery: string | null = buildLayerQuery(sourceItem, layer, wgs84BoundingBox, zoom);
+                    if (layerQuery) layerQueries.push(layerQuery);
+                }
+                else {
+                    log(`ERROR - Duplicate layer name: ${layer.name}`, LOG_ERROR);
+                }
             }
         }
     }
@@ -244,7 +267,6 @@ export function getClientConfig(source: string, config:Config):ClientConfig{
             if("user" in sourceItem) clientConfig.user = sourceItem.user;
             if("password" in sourceItem) clientConfig.password = sourceItem.password;
             if("database" in sourceItem) clientConfig.database = sourceItem.database;
-            // clientConfig = (({ host, port, user, password}) => ({ host, port, user, password }))(sourceItem); 
         }
     }
     return clientConfig;
@@ -263,6 +285,7 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
             'Content-Type': 'text/html',
             'access-control-allow-origin': '*',
             'Content-Encoding': 'identity',
+            'Server': 'AWS-TileServer'
         },
         body: "Error",
         isBase64Encoded: false
@@ -276,7 +299,7 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
 
         let wgs84BoundingBox = proj.getWGS84TileBounds(tile)
         let query = buildQuery(source, config, wgs84BoundingBox, tile.z)
-        console.log(query);
+        log(query, LOG_TRACE);
         if (query) {
             try {
                 let pgConfig = getClientConfig(source, config);
@@ -290,16 +313,17 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
                     Key: `${source}/${tile.z}/${tile.x}/${tile.y}.mvt`,
                     ContentType: "application/vnd.mapbox-vector-tile",
                     ContentEncoding: "gzip",
-                    Metadata: {
-                        "uncompressedBytes": `${stats.uncompressedBytes}`,
-                        "compressedBytes": `${stats.compressedBytes}`
-                    }
+                    CacheControl: "86400",
+                    // Metadata: {
+                    //     "rawBytes": `${stats.uncompressedBytes}`,
+                    //     "gzippedBytes": `${stats.compressedBytes}`
+                    // }
                 }).promise();
-                // console.log(s3obj);
+                log(s3obj, LOG_DEBUG);
             } catch (error) {
                 vectortile = null;
                 response.body = JSON.stringify(error);
-                console.log(error);
+                log(error, LOG_ERROR);
             }
         }
         if (vectortile) {
@@ -308,13 +332,14 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
                 headers: {
                     'Content-Type': 'application/vnd.mapbox-vector-tile',
                     'Content-Encoding': 'gzip',
-                    'access-control-allow-origin': '*'
+                    'access-control-allow-origin': '*',
+                    'Server': 'AWS-TileServer'
                 },
                 body: vectortile.toString('base64'),
                 isBase64Encoded: true
             }
         }
-        console.log(`${event.path} ${response.statusCode}: ${source}/${tile.z}/${tile.x}/${tile.y}  ${stats.uncompressedBytes} -> ${stats.compressedBytes}`);
+        log(`${event.path} ${response.statusCode}: ${source}/${tile.z}/${tile.x}/${tile.y}  ${stats.uncompressedBytes} -> ${stats.compressedBytes}`, LOG_INFO);
     }
     return Promise.resolve(response)
 }

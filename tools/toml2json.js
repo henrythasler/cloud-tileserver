@@ -1,7 +1,5 @@
 "use strict";
 exports.__esModule = true;
 var toml_1 = require("@iarna/toml");
-var fs = require("fs");
-var input = fs.readFileSync("/dev/stdin", "utf8");
-var obj = toml_1.parse(input);
-console.log(JSON.stringify(obj, null, 2));
+var fs_1 = require("fs");
+console.log(JSON.stringify(toml_1.parse(fs_1.readFileSync("/dev/stdin", "utf8")), null, 2));

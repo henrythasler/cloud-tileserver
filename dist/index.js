@@ -8,9 +8,9 @@ const pg_1 = require("pg");
 const projection_1 = require("./projection");
 const s3_1 = __importDefault(require("aws-sdk/clients/s3"));
 const zlib_1 = require("zlib");
-const layer_json_1 = __importDefault(require("./layer.json"));
+const sources_json_1 = __importDefault(require("./sources.json"));
 const asyncgzip = util_1.promisify(zlib_1.gzip);
-const config = layer_json_1.default;
+const config = sources_json_1.default;
 // const config: Config = {sources: [{minzoom: 2, name:"434", layers:[{name:"eqw", table:"fdf", maxzoom: 2, variants:[{minzoom: 2}]}]}]};
 const cacheBucketName = "tiles.cyclemap.link";
 const proj = new projection_1.Projection();
@@ -206,6 +206,7 @@ exports.handler = async (event, context) => {
             'Content-Type': 'text/html',
             'access-control-allow-origin': '*',
             'Content-Encoding': 'identity',
+            'Server': 'AWS-TileServer'
         },
         body: "Error",
         isBase64Encoded: false
@@ -230,10 +231,7 @@ exports.handler = async (event, context) => {
                     Key: `${source}/${tile.z}/${tile.x}/${tile.y}.mvt`,
                     ContentType: "application/vnd.mapbox-vector-tile",
                     ContentEncoding: "gzip",
-                    Metadata: {
-                        "uncompressedBytes": `${stats.uncompressedBytes}`,
-                        "compressedBytes": `${stats.compressedBytes}`
-                    }
+                    CacheControl: "86400",
                 }).promise();
                 // console.log(s3obj);
             }
@@ -249,7 +247,8 @@ exports.handler = async (event, context) => {
                 headers: {
                     'Content-Type': 'application/vnd.mapbox-vector-tile',
                     'Content-Encoding': 'gzip',
-                    'access-control-allow-origin': '*'
+                    'access-control-allow-origin': '*',
+                    'Server': 'AWS-TileServer'
                 },
                 body: vectortile.toString('base64'),
                 isBase64Encoded: true

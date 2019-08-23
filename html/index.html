@@ -120,7 +120,7 @@
             });
         }    
 
-        Promise.all([loadJson("cyclemap.json"), loadJson("layers.json")]).then(function(responses) {
+        Promise.all([loadJson("map.json"), loadJson("layers.json")]).then(function(responses) {
             // responses contains the parsed JSON objects in the order of requests
             setupMap(responses[0], responses[1]);
         }).catch(function(error) {

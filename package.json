@@ -5,13 +5,13 @@
   "main": "index.js",
   "scripts": {
     "tools": "tsc tools/toml2json.ts",
-    "gen:toml": "node tools/toml2json.js < src/layer.toml > src/layer.json",
+    "gen:sources": "node tools/toml2json.js < src/sources.toml > src/sources.json",
     "test": "jest --coverage",
     "layer": "cd tileserver_layer && npm i",
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
     "docs": "node node_modules/typedoc/bin/typedoc",
-    "sim": "tsc && PGUSER=postgres PGHOST=127.0.0.1 PGDATABASE=slice PGPORT=5432 node_modules/lambda-local/bin/lambda-local -l dist/index.js -h handler -e test/mering.js",
-    "predeploy": "rm -rf ./dist/* && node tools/toml2json.js < src/layer.toml > src/layer.json && tsc && cp ./src/layer.json ./dist && zip -j ./dist/function.zip ./dist/*.js* && cd tileserver_layer && zip -qr ../dist/tileserver_layer.zip nodejs",
+    "sim": "tsc && PGUSER=postgres PGHOST=127.0.0.1 PGDATABASE=slice PGPORT=5432 node_modules/lambda-local/bin/lambda-local -l dist/index.js -h handler -e test/assets/local_14_8691_5677.js",
+    "predeploy": "rm -rf ./dist/* && npm run gen:sources && tsc && cp ./src/sources.json ./dist && zip -j ./dist/function.zip ./dist/*.js* && cd tileserver_layer && zip -qr ../dist/tileserver_layer.zip nodejs",
     "deploy": "aws lambda update-function-code --function-name tileserver --zip-file fileb://dist/function.zip"
   },
   "repository": {

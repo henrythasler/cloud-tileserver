@@ -387,7 +387,7 @@
           "minzoom": 13,
           "maxzoom": 15,
           "name": "buildings-large",
-          "table": "import.buildings",
+          "table": "import.buildings_gen14",
           "keys": [
             "id"
           ],
