@@ -1,10 +1,10 @@
 import { promisify } from "util";
-import { Handler, Context } from 'aws-lambda';
+import { Handler, Context } from "aws-lambda";
 import { Client, QueryResult, ClientConfig } from "pg";
 import { Projection, WGS84BoundingBox, Tile } from "./projection";
-import S3 from 'aws-sdk/clients/s3';
-import { gzip } from 'zlib';
-import configJSON from './sources.json';
+import { S3 } from "aws-sdk";
+import { gzip } from "zlib";
+import configJSON from "./sources.json";
 
 const asyncgzip = promisify(gzip);
 
@@ -21,7 +21,7 @@ const LOG_LEVEL = LOG_TRACE;
  * @param level log-level
  */
 export function log(msg: any, level: number) {
-    if(level <= LOG_LEVEL) console.log(msg);
+    if (level <= LOG_LEVEL) console.log(msg);
 }
 
 interface Event {
@@ -60,7 +60,7 @@ export interface SourceBasics extends Common {
     database?: string,
     port?: number,
     user?: string,
-    password?:string
+    password?: string
 }
 
 export interface Source extends SourceBasics {
@@ -71,12 +71,10 @@ export interface Config {
     sources: Source[]
 }
 
+// global constants
 const config: Config = configJSON;
-// const config: Config = {sources: [{minzoom: 2, name:"434", layers:[{name:"eqw", table:"fdf", maxzoom: 2, variants:[{minzoom: 2}]}]}]};
-
 const cacheBucketName = "tiles.cyclemap.link"
 const proj = new Projection();
-const s3 = new S3({ apiVersion: '2006-03-01' });
 
 /**
  * Extract zxy-tile information from a given path. Also checks for a valid file-extension.
@@ -120,7 +118,7 @@ export function extractSource(path: string): string | null {
  * @return The resulting layer where the **last** matching variant is merged into the layer or null if zoom is out of bounds
  */
 export function resolveLayerProperties(layer: Layer, zoom: number): Layer | null {
-    let resolved: Layer = {...layer};
+    let resolved: Layer = { ...layer };
 
     /** check layer zoom if present */
     if (
@@ -188,7 +186,7 @@ export function buildLayerQuery(source: Source | SourceBasics, layer: Layer, wgs
         where += " AND (" + resolved.where.join(") AND (") + ")"
     }
 
-    if(sql) {
+    if (sql) {
         return `(SELECT ST_AsMVT(q, '${resolved.name}', ${layerExtend}, 'geom') as data FROM
         (${sql}) as q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/!BBOX!/g, `${bbox}`).replace(/\s+/g, ' ');
     }
@@ -217,7 +215,7 @@ export function buildQuery(source: string, config: Config, wgs84BoundingBox: WGS
                 /** Accoring to https://github.com/mapbox/vector-tile-spec/tree/master/2.1#41-layers: 
                  *    Prior to appending a layer to an existing Vector Tile, an encoder MUST check the existing name fields in order to prevent duplication.
                  *  implementation solution: ignore subsequent duplicates and log an error*/
-                if(!layerNames.includes(layer.name) ) {
+                if (!layerNames.includes(layer.name)) {
                     layerNames.push(layer.name);
                     let layerQuery: string | null = buildLayerQuery(sourceItem, layer, wgs84BoundingBox, zoom);
                     if (layerQuery) layerQueries.push(layerQuery);
@@ -234,21 +232,19 @@ export function buildQuery(source: string, config: Config, wgs84BoundingBox: WGS
     }
     else {
         // FIXME: Do we really have to create an empty tile?
-        query = `
-        SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') as data FROM
+        query = `SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') as data FROM
         (SELECT ST_AsMvtGeom(
             ST_GeomFromText('POLYGON EMPTY'),
             ST_MakeEnvelope(0, 1, 1, 0, 4326),
             4096,
             256,
             true
-            ) AS geom ) as q) ) as data;        
-        `;
+            ) AS geom ) as q) ) as data;`;
     }
     return query.replace(/\s+/g, ' ');
 }
 
-async function fetchTileFromDatabase(query: string, clientConfig:ClientConfig): Promise<Buffer> {
+export async function fetchTileFromDatabase(query: string, clientConfig: ClientConfig): Promise<Buffer> {
     let client: Client = new Client(clientConfig);
     await client.connect();
     let res: QueryResult = await client.query(query);
@@ -256,23 +252,26 @@ async function fetchTileFromDatabase(query: string, clientConfig:ClientConfig): 
     return res.rows[0].data;
 }
 
-export function getClientConfig(source: string, config:Config):ClientConfig{
-    let clientConfig:ClientConfig = {};
+export function getClientConfig(source: string, config: Config): ClientConfig {
+    let clientConfig: ClientConfig = {};
 
     for (let sourceItem of config.sources) {
         if (sourceItem.name === source) {
             // pick only the connection info from the sourceItem
-            if("host" in sourceItem) clientConfig.host = sourceItem.host;
-            if("port" in sourceItem) clientConfig.port = sourceItem.port;
-            if("user" in sourceItem) clientConfig.user = sourceItem.user;
-            if("password" in sourceItem) clientConfig.password = sourceItem.password;
-            if("database" in sourceItem) clientConfig.database = sourceItem.database;
+            if ("host" in sourceItem) clientConfig.host = sourceItem.host;
+            if ("port" in sourceItem) clientConfig.port = sourceItem.port;
+            if ("user" in sourceItem) clientConfig.user = sourceItem.user;
+            if ("password" in sourceItem) clientConfig.password = sourceItem.password;
+            if ("database" in sourceItem) clientConfig.database = sourceItem.database;
         }
     }
     return clientConfig;
 }
 
 export const handler: Handler = async (event: Event, context: Context): Promise<any> => {
+
+    /** This MUST be placed here for the mock to work correctly */
+    const s3 = new S3({ apiVersion: '2006-03-01' });
 
     let stats = {
         uncompressedBytes: 0,
@@ -284,8 +283,7 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
         headers: {
             'Content-Type': 'text/html',
             'access-control-allow-origin': '*',
-            'Content-Encoding': 'identity',
-            'Server': 'AWS-TileServer'
+            'Content-Encoding': 'identity'
         },
         body: "Error",
         isBase64Encoded: false
@@ -300,6 +298,7 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
         let wgs84BoundingBox = proj.getWGS84TileBounds(tile)
         let query = buildQuery(source, config, wgs84BoundingBox, tile.z)
         log(query, LOG_TRACE);
+        /* istanbul ignore else: This can't happen due to implementation of buildQuery() */
         if (query) {
             try {
                 let pgConfig = getClientConfig(source, config);
@@ -332,8 +331,7 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
                 headers: {
                     'Content-Type': 'application/vnd.mapbox-vector-tile',
                     'Content-Encoding': 'gzip',
-                    'access-control-allow-origin': '*',
-                    'Server': 'AWS-TileServer'
+                    'access-control-allow-origin': '*'
                 },
                 body: vectortile.toString('base64'),
                 isBase64Encoded: true

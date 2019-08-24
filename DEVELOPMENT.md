@@ -80,6 +80,7 @@ SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 - https://docs.aws.amazon.com/AmazonS3/latest/dev/how-to-page-redirect.html
 - https://stackoverflow.com/questions/45773074/cloudfront-responds-with-403-forbidden-instead-of-triggering-lambda
 - [CloudFront cache settings](https://aws.amazon.com/premiumsupport/knowledge-center/cloudfront-custom-object-caching)
+- [Mocking aws-sdk with jest](https://github.com/aws/aws-sdk-js/issues/1963)
 
 ### JavaScript
 
