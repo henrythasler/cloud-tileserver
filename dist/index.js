@@ -6,15 +6,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = require("util");
 const pg_1 = require("pg");
 const projection_1 = require("./projection");
-const s3_1 = __importDefault(require("aws-sdk/clients/s3"));
+const aws_sdk_1 = require("aws-sdk");
 const zlib_1 = require("zlib");
 const sources_json_1 = __importDefault(require("./sources.json"));
 const asyncgzip = util_1.promisify(zlib_1.gzip);
+const LOG_SILENT = 0;
+const LOG_ERROR = 1;
+const LOG_INFO = 2;
+const LOG_TRACE = 3;
+const LOG_DEBUG = 4;
+const LOG_LEVEL = LOG_TRACE;
+/**
+ * Wrapper for Debug-Outputs to console
+ * @param msg object to log
+ * @param level log-level
+ */
+function log(msg, level) {
+    if (level <= LOG_LEVEL)
+        console.log(msg);
+}
+exports.log = log;
+// global constants
 const config = sources_json_1.default;
-// const config: Config = {sources: [{minzoom: 2, name:"434", layers:[{name:"eqw", table:"fdf", maxzoom: 2, variants:[{minzoom: 2}]}]}]};
 const cacheBucketName = "tiles.cyclemap.link";
 const proj = new projection_1.Projection();
-const s3 = new s3_1.default({ apiVersion: '2006-03-01' });
 /**
  * Extract zxy-tile information from a given path. Also checks for a valid file-extension.
  * @param path a full path including arbitrary prefix-path, layer, tile and extension
@@ -93,8 +108,6 @@ function buildLayerQuery(source, layer, wgs84BoundingBox, zoom) {
     if (resolved === null)
         return null;
     // FIXME: minzoom and maxzoom must be propagated from source into layer
-    // overwrite layer-properties with variant if applicable.
-    // layer = { ...layer, ...resolved };
     let layerExtend = (resolved.extend != undefined) ? resolved.extend : ((source.extend != undefined) ? source.extend : 4096);
     let sql = (resolved.sql != undefined) ? resolved.sql : ((source.sql != undefined) ? source.sql : "");
     let geom = (resolved.geom != undefined) ? resolved.geom : ((source.geom != undefined) ? source.geom : "geometry");
@@ -138,12 +151,22 @@ exports.buildLayerQuery = buildLayerQuery;
 function buildQuery(source, config, wgs84BoundingBox, zoom) {
     let query = null;
     let layerQueries = [];
+    let layerNames = [];
     for (let sourceItem of config.sources) {
         if (sourceItem.name === source) {
             for (let layer of sourceItem.layers) {
-                let layerQuery = buildLayerQuery(sourceItem, layer, wgs84BoundingBox, zoom);
-                if (layerQuery)
-                    layerQueries.push(layerQuery);
+                /** Accoring to https://github.com/mapbox/vector-tile-spec/tree/master/2.1#41-layers:
+                 *    Prior to appending a layer to an existing Vector Tile, an encoder MUST check the existing name fields in order to prevent duplication.
+                 *  implementation solution: ignore subsequent duplicates and log an error*/
+                if (!layerNames.includes(layer.name)) {
+                    layerNames.push(layer.name);
+                    let layerQuery = buildLayerQuery(sourceItem, layer, wgs84BoundingBox, zoom);
+                    if (layerQuery)
+                        layerQueries.push(layerQuery);
+                }
+                else {
+                    log(`ERROR - Duplicate layer name: ${layer.name}`, LOG_ERROR);
+                }
             }
         }
     }
@@ -153,16 +176,14 @@ function buildQuery(source, config, wgs84BoundingBox, zoom) {
     }
     else {
         // FIXME: Do we really have to create an empty tile?
-        query = `
-        SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') as data FROM
+        query = `SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') as data FROM
         (SELECT ST_AsMvtGeom(
             ST_GeomFromText('POLYGON EMPTY'),
             ST_MakeEnvelope(0, 1, 1, 0, 4326),
             4096,
             256,
             true
-            ) AS geom ) as q) ) as data;        
-        `;
+            ) AS geom ) as q) ) as data;`;
     }
     return query.replace(/\s+/g, ' ');
 }
@@ -174,6 +195,7 @@ async function fetchTileFromDatabase(query, clientConfig) {
     await client.end();
     return res.rows[0].data;
 }
+exports.fetchTileFromDatabase = fetchTileFromDatabase;
 function getClientConfig(source, config) {
     let clientConfig = {};
     for (let sourceItem of config.sources) {
@@ -189,13 +211,14 @@ function getClientConfig(source, config) {
                 clientConfig.password = sourceItem.password;
             if ("database" in sourceItem)
                 clientConfig.database = sourceItem.database;
-            // clientConfig = (({ host, port, user, password}) => ({ host, port, user, password }))(sourceItem); 
         }
     }
     return clientConfig;
 }
 exports.getClientConfig = getClientConfig;
 exports.handler = async (event, context) => {
+    /** This MUST be placed here for the mock to work correctly */
+    const s3 = new aws_sdk_1.S3({ apiVersion: '2006-03-01' });
     let stats = {
         uncompressedBytes: 0,
         compressedBytes: 0
@@ -205,8 +228,7 @@ exports.handler = async (event, context) => {
         headers: {
             'Content-Type': 'text/html',
             'access-control-allow-origin': '*',
-            'Content-Encoding': 'identity',
-            'Server': 'AWS-TileServer'
+            'Content-Encoding': 'identity'
         },
         body: "Error",
         isBase64Encoded: false
@@ -217,7 +239,8 @@ exports.handler = async (event, context) => {
         let vectortile = null;
         let wgs84BoundingBox = proj.getWGS84TileBounds(tile);
         let query = buildQuery(source, config, wgs84BoundingBox, tile.z);
-        console.log(query);
+        log(query, LOG_TRACE);
+        /* istanbul ignore else: This can't happen due to implementation of buildQuery() */
         if (query) {
             try {
                 let pgConfig = getClientConfig(source, config);
@@ -233,12 +256,12 @@ exports.handler = async (event, context) => {
                     ContentEncoding: "gzip",
                     CacheControl: "86400",
                 }).promise();
-                // console.log(s3obj);
+                log(s3obj, LOG_DEBUG);
             }
             catch (error) {
                 vectortile = null;
                 response.body = JSON.stringify(error);
-                console.log(error);
+                log(error, LOG_ERROR);
             }
         }
         if (vectortile) {
@@ -247,14 +270,13 @@ exports.handler = async (event, context) => {
                 headers: {
                     'Content-Type': 'application/vnd.mapbox-vector-tile',
                     'Content-Encoding': 'gzip',
-                    'access-control-allow-origin': '*',
-                    'Server': 'AWS-TileServer'
+                    'access-control-allow-origin': '*'
                 },
                 body: vectortile.toString('base64'),
                 isBase64Encoded: true
             };
         }
-        console.log(`${event.path} ${response.statusCode}: ${source}/${tile.z}/${tile.x}/${tile.y}  ${stats.uncompressedBytes} -> ${stats.compressedBytes}`);
+        log(`${event.path} ${response.statusCode}: ${source}/${tile.z}/${tile.x}/${tile.y}  ${stats.uncompressedBytes} -> ${stats.compressedBytes}`, LOG_INFO);
     }
     return Promise.resolve(response);
 };

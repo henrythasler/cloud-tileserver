@@ -19,17 +19,20 @@ This page gives a detailled overview of all techiques used for this project.
 2. CloudFront reads/caches static content from public S3 Bucket.
 3. Http-response is sent to Client.
 
-## Prerequisites
+### Serving vectortiles 
 
-## Initial Setup
+![](docs/img/CloudFront-tiles.png)
 
-### AWS Credentials
-
-- go to IAM and create a new user
-- create an access key for that user
-- run `aws configure` and enter the access keys incl. secret key as prompted.
+1. Client sends http-request to URL assigned to CloudFront Distribution.
+2. CloudFront reads/caches vectortiles from S3 Bucket.
+3. Temporary-redirect (307) to tileserver if vectortile is not available on S3.
+4. Tileserver generates vectortile with data from RDS-postgres-instance, sends it to client and also stores it on S3.
 
 ## Lambda Implementation Details
+
+### Database
+
+The database-instance MUST support at least postgis 2.4.0. Otherwise vectortiles can't be created.
 
 ### Vector Tiles
 

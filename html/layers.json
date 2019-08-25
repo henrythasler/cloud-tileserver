@@ -96,7 +96,7 @@
     "source-layer": "landcover",
     "minzoom": 10,
     "maxzoom": 24,
-    "filter": ["match", ["get", "subclass"], ["grass", "park", "playground", "pitch", "golf_course", "recreation_ground", "cemetery"], true, false],
+    "filter": ["match", ["get", "subclass"], ["grass", "park", "playground", "pitch", "golf_course", "recreation_ground", "cemetery", "heath"], true, false],
     "paint": {
       "fill-color": "rgba(222, 233, 186, 1)",
       "fill-outline-color": "rgba(0, 0, 0, 0)"
@@ -584,6 +584,8 @@
     "maxzoom": 24,
     "filter": ["all",
       ["!=", ["get", "service"], ""],
+      ["!=", ["get", "subclass"], "tram"],
+      ["!=", ["get", "subclass"], "subway"],
       ["!=", ["get", "bridge"], true],
       ["==", ["get", "tunnel"], true]
     ],
@@ -608,6 +610,8 @@
     "maxzoom": 24,
     "filter": ["all",
       ["==", ["get", "service"], ""],
+      ["!=", ["get", "subclass"], "tram"],
+      ["!=", ["get", "subclass"], "subway"],
       ["!=", ["get", "bridge"], true],
       ["==", ["get", "tunnel"], true]
     ],
@@ -1076,6 +1080,8 @@
     "maxzoom": 24,
     "filter": ["all",
       ["!=", ["get", "service"], ""],
+      ["!=", ["get", "subclass"], "tram"],
+      ["!=", ["get", "subclass"], "subway"],
       ["!=", ["get", "bridge"], true],
       ["!=", ["get", "tunnel"], true]
     ],
@@ -1097,6 +1103,8 @@
     "maxzoom": 24,
     "filter": ["all",
       ["!=", ["get", "service"], ""],
+      ["!=", ["get", "subclass"], "tram"],
+      ["!=", ["get", "subclass"], "subway"],
       ["!=", ["get", "bridge"], true],
       ["!=", ["get", "tunnel"], true]
     ],
@@ -1121,6 +1129,8 @@
     "maxzoom": 24,
     "filter": ["all",
       ["==", ["get", "service"], ""],
+      ["!=", ["get", "subclass"], "tram"],
+      ["!=", ["get", "subclass"], "subway"],
       ["!=", ["get", "bridge"], true],
       ["!=", ["get", "tunnel"], true]
     ],
@@ -1134,7 +1144,7 @@
       ,
       "line-width": [
         "interpolate", ["exponential", 2], ["zoom"],
-        9, 1,
+        9, 2,
         13, 7,
         18, 14
       ]
@@ -1149,6 +1159,8 @@
     "maxzoom": 24,
     "filter": ["all",
       ["==", ["get", "service"], ""],
+      ["!=", ["get", "subclass"], "tram"],
+      ["!=", ["get", "subclass"], "subway"],
       ["!=", ["get", "bridge"], true],
       ["!=", ["get", "tunnel"], true]
     ],
@@ -1161,6 +1173,29 @@
         "interpolate", ["exponential", 2], ["zoom"],
         13, 4,
         18, 8
+      ]
+    }
+  },
+  {
+    "id": "tram",
+    "type": "line",
+    "source": "local",
+    "source-layer": "railway",
+    "minzoom": 15,
+    "maxzoom": 24,
+    "filter": ["all",
+      ["==", ["get", "subclass"], "tram"],
+      ["!=", ["get", "bridge"], true],
+      ["==", ["get", "service"], ""]
+    ],
+    "layout": {
+    },
+    "paint": {
+      "line-color": "rgba(212, 0, 0, 0.7)",
+      "line-width": [
+        "interpolate", ["exponential", 2], ["zoom"],
+        15, 3,
+        18, 9
       ]
     }
   },    
@@ -1530,6 +1565,8 @@
     "maxzoom": 24,
     "filter": ["all",
       ["!=", ["get", "service"], ""],
+      ["!=", ["get", "subclass"], "tram"],
+      ["!=", ["get", "subclass"], "subway"],
       ["==", ["get", "bridge"], true],
       ["!=", ["get", "tunnel"], true]
     ],
@@ -1551,6 +1588,8 @@
     "maxzoom": 24,
     "filter": ["all",
       ["!=", ["get", "service"], ""],
+      ["!=", ["get", "subclass"], "tram"],
+      ["!=", ["get", "subclass"], "subway"],
       ["==", ["get", "bridge"], true],
       ["!=", ["get", "tunnel"], true]
     ],
@@ -1575,6 +1614,8 @@
     "maxzoom": 24,
     "filter": ["all",
       ["==", ["get", "service"], ""],
+      ["!=", ["get", "subclass"], "tram"],
+      ["!=", ["get", "subclass"], "subway"],
       ["==", ["get", "bridge"], true],
       ["!=", ["get", "tunnel"], true]
     ],
@@ -1603,6 +1644,8 @@
     "maxzoom": 24,
     "filter": ["all",
       ["==", ["get", "service"], ""],
+      ["!=", ["get", "subclass"], "tram"],
+      ["!=", ["get", "subclass"], "subway"],
       ["==", ["get", "bridge"], true],
       ["!=", ["get", "tunnel"], true]
     ],
@@ -1617,7 +1660,30 @@
         18, 8
       ]
     }
-  },    
+  },
+  {
+    "id": "tram-bridge",
+    "type": "line",
+    "source": "local",
+    "source-layer": "railway",
+    "minzoom": 15,
+    "maxzoom": 24,
+    "filter": ["all",
+      ["==", ["get", "subclass"], "tram"],
+      ["==", ["get", "bridge"], true],
+      ["==", ["get", "service"], ""]
+    ],
+    "layout": {
+    },
+    "paint": {
+      "line-color": "rgba(212, 0, 0, 0.7)",
+      "line-width": [
+        "interpolate", ["exponential", 2], ["zoom"],
+        15, 3,
+        18, 9
+      ]
+    }
+  },      
   {
     "id": "roads-bridge-layer2-casing",
     "type": "line",
@@ -1977,7 +2043,7 @@
       "text-halo-width": 2.5,
       "text-halo-blur": 1
     }
-  },    
+  },
   {
     "id": "label-landuse",
     "type": "symbol",
@@ -2161,7 +2227,8 @@
       "icon-allow-overlap": false,
       "icon-ignore-placement": false,
       "icon-image": ["match", ["get", "subclass"], 
-        ["parking", "shelter", "supermarket", "bicycle", "hotel", "bar", "hospital", "caravan_site", "camp_site", "peak", "playground", "information", "viewpoint", "climbing"], ["get", "subclass"], 
+        ["shelter", "supermarket", "bicycle", "hotel", "bar", "hospital", "caravan_site", "camp_site", "peak", "playground", "information", "viewpoint", "climbing"], ["get", "subclass"], 
+        ["parking"], ["match", ["get", "parking"], 0, "parking", "parking.garage"],
         ["pub", "biergarten"], "pub",
         ["bus_stop", "tram_stop"], "bus_stop",
         ["tower", "antenna", "mast", "communications_tower"], "tower",

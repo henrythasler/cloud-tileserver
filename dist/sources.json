@@ -322,6 +322,14 @@
           "where": [
             "subclass NOT IN('subway', 'tram')",
             "(attraction <> '') IS NOT TRUE"
+          ],
+          "variants": [
+            {
+              "minzoom": 15,
+              "where": [
+                "(attraction <> '') IS NOT TRUE"
+              ]
+            }
           ]
         },
         {
@@ -341,23 +349,11 @@
         {
           "minzoom": 10,
           "name": "manmade",
-          "table": "import.manmade_lines_gen13",
-          "keys": [
-            "osm_id as id",
-            "class",
-            "subclass",
-            "ST_Length(geometry)::integer as length",
-            "ST_IsClosed(geometry) as polygon"
-          ],
+          "sql": "select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines_gen13 WHERE (geometry && !BBOX!)",
           "variants": [
             {
               "minzoom": 14,
-              "table": "import.manmade_lines"
-            },
-            {
-              "minzoom": 18,
-              "buffer": 512,
-              "table": "import.manmade_lines"
+              "sql": "select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines WHERE (geometry && !BBOX!) \n                  UNION ALL\n                  select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Perimeter(geometry)::integer as length, TRUE as polygon from import.manmade_polygons WHERE (geometry && !BBOX!) \n                  UNION ALL\n                  select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, 0 as length, FALSE as polygon from import.manmade_points WHERE (geometry && !BBOX!)\n                  "
             }
           ]
         },

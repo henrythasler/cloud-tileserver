@@ -1,4 +1,5 @@
-# aws-tileserver
+# Cloud-Tileserver
+
 Serve mapbox vectortiles via AWS stack.
 
 **THIS README IS WORK-IN-PROGRESS**
@@ -15,13 +16,20 @@ These are the main project goals:
 [ ] Create fully automated deployment pipeline.
 [✓] Use some caching mechanism for vectortiles
 [✓] Use Typescript and typed interfaces where possible
-[ ] Have module tests with tsjest/chai
+[✓] Have module tests with tsjest/chai
 [ ] Generate useful documentation with typedocs
 [ ] Learn more about AWS, terraform and typescript
 [ ] Use free-tier if possible.
 [✓] Have fun
 ```
 Checked items are already fulfilled.
+
+## Overall Architecture
+
+1. Client requests tile from CloudFront/S3 .
+2. Missing tiles are created via API Gateway and Lambda.
+
+![](docs/img/CloudFront-tiles-simple.png)
 
 ## Screenshots, Live Demo
 
@@ -30,8 +38,6 @@ The Live-Demo is available at: [cyclemap.link](https://cyclemap.link)
 [![](docs/img/map_screenshot.png)](https://cyclemap.link/#15/48.17374/11.54676)
 
 [![](docs/img/map_screenshot2.png)](https://cyclemap.link/#14/47.01863/11.5046)
-
-## How to use
 
 ### TOML Source-Definition file
 
@@ -52,6 +58,7 @@ The Lambda-function is configured via a toml-file (`sources.toml`). during the b
 
 property | type | description | default if not given
 ---|---|---|---
+name | `string` | A name for the item | (must be provided)
 minzoom | `number` | minimum (greater-or-equal-than) zoom value where the layer must be provided | `0` 
 maxzoom | `number` | maximum (less-than) zoom value where the layer must be provided | `32` 
 geom | `string` | name of the geometry-column to be used in the vector tile | `"geometry"`
