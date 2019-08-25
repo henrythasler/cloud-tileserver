@@ -67,3 +67,4 @@ secret.auto.tfvars
 
 # generated typedocs (for now)
 docs/out
+.coveralls.yml

@@ -6,7 +6,7 @@
   "scripts": {
     "tools": "tsc tools/toml2json.ts",
     "gen:sources": "node tools/toml2json.js < src/sources.toml > src/sources.json",
-    "test": "jest --coverage",
+    "test": "jest --coverage && coveralls < coverage/lcov.info",
     "layer": "cd tileserver_layer && npm i",
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
     "docs": "node node_modules/typedoc/bin/typedoc",
@@ -41,6 +41,7 @@
     "@types/node": "^12.0.12",
     "@types/pg": "^7.4.14",
     "chai": "^4.2.0",
+    "coveralls": "^3.0.6",
     "jest": "^24.8.0",
     "lambda-local": "^1.6.3",
     "ts-jest": "^24.0.2",
