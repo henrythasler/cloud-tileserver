@@ -270,7 +270,7 @@ export function getClientConfig(source: string, config: Config): ClientConfig {
 
 export const handler: Handler = async (event: Event, context: Context): Promise<any> => {
 
-    /** This MUST be placed here for the mock to work correctly */
+    /** This MUST be placed within this function for the module-tests (mock) to work correctly */
     const s3 = new S3({ apiVersion: '2006-03-01' });
 
     let stats = {

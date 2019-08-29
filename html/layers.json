@@ -207,7 +207,7 @@
       "hillshade-shadow-color": "#000",
       "hillshade-highlight-color": "rgba(0, 0, 0, 0)",
       "hillshade-accent-color": "rgba(0, 0, 0, .5)"
-    }
+    }  
   },
   {
     "id": "contour-lines",
