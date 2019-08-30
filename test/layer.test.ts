@@ -1,11 +1,12 @@
-import { resolveLayerProperties, Layer } from "../src/index";
+import { Tileserver, Layer } from "../src/tileserver";
 import { expect } from "chai";
-
 import "jest";
+
+const dummy = new Tileserver({ sources: [] }, "testBucket");
 
 describe("resolveLayerProperties", function () {
     it("most simple case", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             name: "name",
             table: "table",
             variants: [{
@@ -20,7 +21,7 @@ describe("resolveLayerProperties", function () {
     });
 
     it("most simple case with all features", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             name: "name",
             table: "table",
             variants: [{
@@ -57,7 +58,7 @@ describe("resolveLayerProperties", function () {
     });
 
     it("two simple variants", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             name: "name",
             table: "table",
             variants: [{
@@ -77,7 +78,7 @@ describe("resolveLayerProperties", function () {
     });
 
     it("layer with maxzoom", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             name: "name",
             table: "table",
             maxzoom: 13,
@@ -94,7 +95,7 @@ describe("resolveLayerProperties", function () {
     });
 
     it("variants not applicable due to zoom", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             name: "name",
             table: "table",
             variants: [{
@@ -113,7 +114,7 @@ describe("resolveLayerProperties", function () {
     });
 
     it("layer not applicable due to minzoom", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             minzoom: 9,
             name: "name",
             table: "table",
@@ -130,7 +131,7 @@ describe("resolveLayerProperties", function () {
     });
 
     it("variants not applicable due to zoom", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             minzoom: 9,
             name: "name",
             table: "table",
@@ -151,7 +152,7 @@ describe("resolveLayerProperties", function () {
         });
     });
     it("variant with min- and max-zoom", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             minzoom: 9,
             name: "name",
             table: "table",
@@ -174,7 +175,7 @@ describe("resolveLayerProperties", function () {
     });
 
     it("overwrite keys with variant", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             name: "name",
             table: "table",
             keys: ["one", "two"],
@@ -196,7 +197,7 @@ describe("resolveLayerProperties", function () {
     });
 
     it("delete keys in variant", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             name: "name",
             table: "table",
             keys: ["one", "two"],
@@ -215,7 +216,7 @@ describe("resolveLayerProperties", function () {
     });
 
     it("last variant match is used", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             name: "name",
             table: "table",
             variants: [{
@@ -235,7 +236,7 @@ describe("resolveLayerProperties", function () {
     });
 
     it("consider maxzoom as less-than '<'", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             name: "name",
             table: "table",
             variants: [{
@@ -256,7 +257,7 @@ describe("resolveLayerProperties", function () {
     });
 
     it("layer w/o any variants", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             name: "name",
             table: "table"
         }, 11);
@@ -267,7 +268,7 @@ describe("resolveLayerProperties", function () {
     });
 
     it("layer w/o any variants gets rejected due to zoom", function () {
-        let resolved: Layer | null = resolveLayerProperties({
+        let resolved: Layer | null = dummy.resolveLayerProperties({
             name: "name",
             table: "table",
             minzoom: 12
