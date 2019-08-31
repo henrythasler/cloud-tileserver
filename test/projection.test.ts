@@ -119,6 +119,16 @@ describe("Coordinate Transformation Tests", function () {
         expect(bound.righttop.lat, "bound.righttop.lat").to.be.closeTo(84.738387, 0.00001);
     });
 
+    it("getWGS84TileBounds #5 - out-of-bounds", function () {
+        let bound: WGS84BoundingBox = proj.getWGS84TileBounds({ x: 100, y: 100, z: 0 });
+        expect(bound).to.have.property("leftbottom");
+        expect(bound).to.have.property("righttop");
+        expect(bound.leftbottom.lng, "bound.leftbottom.lng").to.be.closeTo(180, 0.00001);
+        expect(bound.leftbottom.lat, "bound.leftbottom.lat").to.be.closeTo(-90, 0.00001);
+        expect(bound.righttop.lng, "bound.righttop.lng").to.be.closeTo(180, 0.00001);
+        expect(bound.righttop.lat, "bound.righttop.lat").to.be.closeTo(-90, 0.00001);
+    });
+
     it("getWGS84TileCenter #1", function () {
         let center: Wgs84 = proj.getWGS84TileCenter({ x: 0, y: 0, z: 0 });
         expect(center).to.have.property("lng");

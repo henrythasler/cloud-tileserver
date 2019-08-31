@@ -1,26 +1,30 @@
 import { Client, QueryResult, ClientConfig } from "pg";
 import { Projection, WGS84BoundingBox, Tile } from "./projection";
 
+
+export enum LogLevels {SILENT, ERROR, INFO, DEBUG, TRACE};
+
 /**
  * Wrapper for Debug-Outputs to console
  * @param msg object to log
  * @param level log-level
  */
 export class Log {
-    SILENT = 0;
-    ERROR = 1;
-    INFO = 2;
-    TRACE = 3;
-    DEBUG = 4;
-    loglevel:number = this.DEBUG;
+    loglevel:LogLevels = LogLevels.ERROR;
         
-    constructor(level?: number) {
-        this.loglevel = (level)?level:this.DEBUG;
+    constructor(level?: LogLevels) {
+        this.loglevel = (level)?level:LogLevels.DEBUG;
     }
 
     show(msg: any, level: number) {
         if (level <= this.loglevel) console.log(msg);
     }
+}
+
+export interface Vectortile {
+    res: number,
+    data?: Buffer,
+    status?: string
 }
 
 export interface Common {
@@ -69,7 +73,7 @@ export interface Config {
 
 export class Tileserver {
     protected config: Config;
-    protected cacheBucketName = "tiles.cyclemap.link"
+    protected cacheBucketName: string | null = null
     protected proj = new Projection();
     protected log = new Log(3);
 
@@ -79,7 +83,7 @@ export class Tileserver {
      * @param cacheBucketName 
      */
     constructor(config: Config, cacheBucketName: string) {
-        this.cacheBucketName = cacheBucketName;
+        if(cacheBucketName) this.cacheBucketName = cacheBucketName;
         this.config = config;
     }
 
@@ -118,6 +122,7 @@ export class Tileserver {
         return null;
     }
 
+
     /**
      * Check a given layer and variants against the zoom-level. Merge the **last** matching item in the variant-array into the layer and return it.
      * Matching the **last** variant item makes the variant-objects shorter as we don't need to give a maxzoom but use a sequence of minzooms for each variant.
@@ -151,6 +156,7 @@ export class Tileserver {
         delete resolved.variants;
         return resolved;
     }
+
 
     /**
      * This will create the SQL-Query for a given layer. Source-specific properties (if given) will be used 
@@ -195,11 +201,11 @@ export class Tileserver {
         }
 
         if (sql) {
-            return `(SELECT ST_AsMVT(q, '${resolved.name}', ${layerExtend}, 'geom') as data FROM
-        (${sql}) as q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/!BBOX!/g, `${bbox}`).replace(/\s+/g, ' ');
+            return `(SELECT ST_AsMVT(q, '${resolved.name}', ${layerExtend}, 'geom') AS l FROM
+        (${sql}) AS q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/!BBOX!/g, `${bbox}`).replace(/\s+/g, ' ');
         }
         else {
-            return `(SELECT ST_AsMVT(q, '${resolved.name}', ${layerExtend}, 'geom') as data FROM
+            return `(SELECT ST_AsMVT(q, '${resolved.name}', ${layerExtend}, 'geom') AS l FROM
         (SELECT ${prefix}ST_AsMvtGeom(
             ${geom},
             ${bbox},
@@ -207,11 +213,17 @@ export class Tileserver {
             ${buffer},
             ${clip_geom}
             ) AS geom${keys}
-        FROM ${resolved.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/\s+/g, ' ');
+        FROM ${resolved.table} WHERE (${geom} && ${bbox})${where}${postfix}) AS q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/\s+/g, ' ');
         }
     }
 
 
+    /**
+     * Resolves, assembles and merges all layers-queries.
+     * @param source This is the source object as per ClientConfig
+     * @param wgs84BoundingBox The boundingbox for the tile
+     * @param zoom Zoom level
+     */
     buildQuery(source: string, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string | null {
         let query: string | null = null;
         let layerQueries: string[] = [];
@@ -229,25 +241,27 @@ export class Tileserver {
                         if (layerQuery) layerQueries.push(layerQuery);
                     }
                     else {
-                        this.log.show(`ERROR - Duplicate layer name: ${layer.name}`, this.log.ERROR);
+                        this.log.show(`ERROR - Duplicate layer name: ${layer.name}`, LogLevels.ERROR);
                     }
                 }
             }
         }
+
+        /** merge all queries with the string concatenation operator */
         if (layerQueries.length) {
             let layers = layerQueries.join(" || ");
-            query = `SELECT ( ${layers} ) as data`;
+            query = `SELECT ( ${layers} ) AS d`;
         }
         else {
             // FIXME: Do we really have to create an empty tile?
-            query = `SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') as data FROM
+            query = `SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') AS l FROM
         (SELECT ST_AsMvtGeom(
             ST_GeomFromText('POLYGON EMPTY'),
             ST_MakeEnvelope(0, 1, 1, 0, 4326),
             4096,
             256,
             true
-            ) AS geom ) as q) ) as data;`;
+            ) AS geom ) AS q) ) AS d;`;
         }
         return query.replace(/\s+/g, ' ');
     }
@@ -276,4 +290,30 @@ export class Tileserver {
         return clientConfig;
     }
 
+    /**
+     * The main function that returns a vectortile in mvt-format.
+     * @param path a full path including arbitrary prefix-path, layer, tile and extension
+     * @param gzip gzip resulting vetortile
+     */
+    async getVectortile(path: string, gzip: boolean=true): Promise<Vectortile> {
+        let mvt: Vectortile = {res:-1};
+
+        let tile = this.extractTile(path);
+        if (tile) {
+            let source = this.extractSource(path);
+            if(source) {
+                let wgs84BoundingBox = this.proj.getWGS84TileBounds(tile);
+            }
+            else {
+                mvt.res = -3;
+                mvt.status = `[ERROR] - Source not correctly specified in '${path}'`;
+            }
+        }
+        else {
+            mvt.res = -2;
+            mvt.status = `[ERROR] - Tile not correctly specified in '${path}'`;
+        }
+
+        return mvt;
+    }
 }

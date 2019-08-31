@@ -54,5 +54,9 @@ describe("Parsing functions", function () {
         let source: string | null = tileserver.extractSource("foo");
         expect(source).to.be.null;
     });
+    it("extractSource SQL-Injection #1 - `select now()`", function () {
+        let source: string | null = tileserver.extractSource("/select+now%28%29/0/0/0.mvt");
+        expect(source).to.be.equal('29');
+    });
 
 })

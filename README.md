@@ -60,7 +60,7 @@ The Lambda-function is configured via a toml-file (`sources.toml`). during the b
 
 property | type | description | default if not given
 ---|---|---|---
-name | `string` | A name for the item | (must be provided)
+name | `string` | A name for the item. Must be alphanumeric + underscore [A-Za-z0-9_]. No special characters allowed. | (must be provided)
 minzoom | `number` | minimum (greater-or-equal-than) zoom value where the layer must be provided | `0` 
 maxzoom | `number` | maximum (less-than) zoom value where the layer must be provided | `32` 
 geom | `string` | name of the geometry-column to be used in the vector tile | `"geometry"`
