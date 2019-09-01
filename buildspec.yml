@@ -7,8 +7,8 @@ phases:
   pre_build:
     commands:
       - npm i
-      - echo $CODEBUILD_WEBHOOK_BASE_REF
-      - git checkout $CODEBUILD_WEBHOOK_BASE_REF
+      - echo $CODEBUILD_WEBHOOK_HEAD_REF
+      - git checkout $CODEBUILD_WEBHOOK_HEAD_REF
   build:
     commands:
       - echo Build started on `date`
