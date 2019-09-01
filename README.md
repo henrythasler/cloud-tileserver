@@ -1,6 +1,6 @@
 # Cloud-Tileserver
 
-[![Coverage Status](https://coveralls.io/repos/github/henrythasler/cloud-tileserver/badge.svg?branch=master)](https://coveralls.io/github/henrythasler/cloud-tileserver?branch=master)
+![](https://codebuild.eu-central-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoicVdSdXNqM3Fma3poeCs2YUV2V1pLaWNIZ2wwelpXQ2hibldGSFk2UE9rY2tQU1B2NERjcnl5bEtXdUgzUHJNVVlMQTBubkRkYXBma1ZJWlZXRk40R3VNPSIsIml2UGFyYW1ldGVyU3BlYyI6IlN0UWZ6ZXRZZlhNd0MrZ1oiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master) [![Coverage Status](https://coveralls.io/repos/github/henrythasler/cloud-tileserver/badge.svg?branch=master)](https://coveralls.io/github/henrythasler/cloud-tileserver?branch=master)
 
 Serve mapbox vectortiles via AWS stack.
 
@@ -60,7 +60,7 @@ The Lambda-function is configured via a toml-file (`sources.toml`). during the b
 
 property | type | description | default if not given
 ---|---|---|---
-name | `string` | A name for the item | (must be provided)
+name | `string` | A name for the item. Must be alphanumeric + underscore [A-Za-z0-9_]. No special characters allowed. | (must be provided)
 minzoom | `number` | minimum (greater-or-equal-than) zoom value where the layer must be provided | `0` 
 maxzoom | `number` | maximum (less-than) zoom value where the layer must be provided | `32` 
 geom | `string` | name of the geometry-column to be used in the vector tile | `"geometry"`

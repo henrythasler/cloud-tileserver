@@ -1,5 +1,13 @@
+import { promisify } from "util";
+import { gzip } from "zlib";
+import { S3 } from "aws-sdk";
+
 import { Client, QueryResult, ClientConfig } from "pg";
 import { Projection, WGS84BoundingBox, Tile } from "./projection";
+
+const asyncgzip = promisify(gzip);
+
+export enum LogLevels { SILENT = 1, ERROR, INFO, DEBUG, TRACE };
 
 /**
  * Wrapper for Debug-Outputs to console
@@ -7,20 +15,21 @@ import { Projection, WGS84BoundingBox, Tile } from "./projection";
  * @param level log-level
  */
 export class Log {
-    SILENT = 0;
-    ERROR = 1;
-    INFO = 2;
-    TRACE = 3;
-    DEBUG = 4;
-    loglevel:number = this.DEBUG;
-        
-    constructor(level?: number) {
-        this.loglevel = (level)?level:this.DEBUG;
+    loglevel: LogLevels = LogLevels.ERROR;
+
+    constructor(level?: LogLevels) {
+        this.loglevel = (level) ? level : LogLevels.DEBUG;
     }
 
     show(msg: any, level: number) {
         if (level <= this.loglevel) console.log(msg);
     }
+}
+
+export interface Vectortile {
+    res: number,
+    data?: Buffer,
+    status?: string
 }
 
 export interface Common {
@@ -69,18 +78,21 @@ export interface Config {
 
 export class Tileserver {
     protected config: Config;
-    protected cacheBucketName = "tiles.cyclemap.link"
+    protected cacheBucketName: string | null = null
     protected proj = new Projection();
-    protected log = new Log(3);
+    protected log: Log;
+    protected gzip: boolean;
 
     /**
      * @constructor
      * @param config 
      * @param cacheBucketName 
      */
-    constructor(config: Config, cacheBucketName: string) {
-        this.cacheBucketName = cacheBucketName;
+    constructor(config: Config, cacheBucketName?: string, logLevel: number = LogLevels.ERROR, gzip: boolean = true) {
+        if (cacheBucketName) this.cacheBucketName = cacheBucketName;
         this.config = config;
+        this.gzip = gzip;
+        this.log = new Log(logLevel);
     }
 
 
@@ -91,7 +103,7 @@ export class Tileserver {
      */
     extractTile(path: string): Tile | null {
         let tile: Tile = { x: 0, y: 0, z: 0 };
-        let re = new RegExp(/\d+\/\d+\/\d+(?=.mvt)/g);
+        let re = new RegExp(/\d+\/\d+\/\d+(?=\.mvt\b)/g);
         let tilepath = path.match(re);
         if (tilepath) {
             let numbers = tilepath[0].split("/");
@@ -111,12 +123,13 @@ export class Tileserver {
      */
     extractSource(path: string): string | null {
         // match the last word between slashes before the actual tile (3-numbers + extension)
-        let sourceCandidates: RegExpMatchArray | null = path.match(/(?!\/)\w+(?=\/\d+\/\d+\/\d+\.mvt)/g)
+        let sourceCandidates: RegExpMatchArray | null = path.match(/(?!\/)\w+(?=\/\d+\/\d+\/\d+\.mvt\b)/g)
         if (sourceCandidates != null && sourceCandidates.length > 0) {
             return sourceCandidates[sourceCandidates.length - 1];
         }
         return null;
     }
+
 
     /**
      * Check a given layer and variants against the zoom-level. Merge the **last** matching item in the variant-array into the layer and return it.
@@ -151,6 +164,7 @@ export class Tileserver {
         delete resolved.variants;
         return resolved;
     }
+
 
     /**
      * This will create the SQL-Query for a given layer. Source-specific properties (if given) will be used 
@@ -195,11 +209,11 @@ export class Tileserver {
         }
 
         if (sql) {
-            return `(SELECT ST_AsMVT(q, '${resolved.name}', ${layerExtend}, 'geom') as data FROM
-        (${sql}) as q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/!BBOX!/g, `${bbox}`).replace(/\s+/g, ' ');
+            return `(SELECT ST_AsMVT(q, '${resolved.name}', ${layerExtend}, 'geom') AS l FROM
+        (${sql}) AS q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/!BBOX!/g, `${bbox}`).replace(/\s+/g, ' ');
         }
         else {
-            return `(SELECT ST_AsMVT(q, '${resolved.name}', ${layerExtend}, 'geom') as data FROM
+            return `(SELECT ST_AsMVT(q, '${resolved.name}', ${layerExtend}, 'geom') AS l FROM
         (SELECT ${prefix}ST_AsMvtGeom(
             ${geom},
             ${bbox},
@@ -207,11 +221,17 @@ export class Tileserver {
             ${buffer},
             ${clip_geom}
             ) AS geom${keys}
-        FROM ${resolved.table} WHERE (${geom} && ${bbox})${where}${postfix}) as q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/\s+/g, ' ');
+        FROM ${resolved.table} WHERE (${geom} && ${bbox})${where}${postfix}) AS q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/\s+/g, ' ');
         }
     }
 
 
+    /**
+     * Resolves, assembles and merges all layers-queries.
+     * @param source This is the source object as per ClientConfig
+     * @param wgs84BoundingBox The boundingbox for the tile
+     * @param zoom Zoom level
+     */
     buildQuery(source: string, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string | null {
         let query: string | null = null;
         let layerQueries: string[] = [];
@@ -229,25 +249,28 @@ export class Tileserver {
                         if (layerQuery) layerQueries.push(layerQuery);
                     }
                     else {
-                        this.log.show(`ERROR - Duplicate layer name: ${layer.name}`, this.log.ERROR);
+                        this.log.show(`ERROR - Duplicate layer name: ${layer.name}`, LogLevels.ERROR);
                     }
                 }
             }
         }
+
+        /** merge all queries with the string concatenation operator */
         if (layerQueries.length) {
             let layers = layerQueries.join(" || ");
-            query = `SELECT ( ${layers} ) as data`;
+            query = `SELECT ( ${layers} ) AS mvt`;
         }
         else {
+            query = "";
             // FIXME: Do we really have to create an empty tile?
-            query = `SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') as data FROM
-        (SELECT ST_AsMvtGeom(
-            ST_GeomFromText('POLYGON EMPTY'),
-            ST_MakeEnvelope(0, 1, 1, 0, 4326),
-            4096,
-            256,
-            true
-            ) AS geom ) as q) ) as data;`;
+        //     query = `SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') AS l FROM
+        // (SELECT ST_AsMvtGeom(
+        //     ST_GeomFromText('POLYGON EMPTY'),
+        //     ST_MakeEnvelope(0, 1, 1, 0, 4326),
+        //     4096,
+        //     256,
+        //     true
+        //     ) AS geom ) AS q) ) AS d;`;
         }
         return query.replace(/\s+/g, ' ');
     }
@@ -256,8 +279,11 @@ export class Tileserver {
         let client: Client = new Client(clientConfig);
         await client.connect();
         let res: QueryResult = await client.query(query);
+        this.log.show(res.rows[0], LogLevels.TRACE);
         await client.end();
-        return res.rows[0].data;
+        if(res.rows[0].mvt)
+            return res.rows[0].mvt;   // the .d property is taken from the outer AS-alias of the query
+        else throw new Error("Property 'mvt' does not exist in res.rows[0]")
     }
 
     getClientConfig(source: string): ClientConfig {
@@ -276,4 +302,79 @@ export class Tileserver {
         return clientConfig;
     }
 
+    /**
+     * The main function that returns a vectortile in mvt-format.
+     * @param path a full path including arbitrary prefix-path, layer, tile and extension
+     */
+    async getVectortile(path: string): Promise<Vectortile> {
+        let mvt: Vectortile = { res: 0};
+        const s3 = new S3({ apiVersion: '2006-03-01' });
+
+        let tile = this.extractTile(path);
+        if (tile) {
+            let source = this.extractSource(path);
+            if (source) {
+                let wgs84BoundingBox = this.proj.getWGS84TileBounds(tile);
+                let query = this.buildQuery(source, wgs84BoundingBox, tile.z)
+                this.log.show(query, LogLevels.DEBUG);
+                let data: Buffer | null = null;
+                if (query) {
+                    let pgConfig = this.getClientConfig(source);
+                    this.log.show(pgConfig, LogLevels.TRACE);
+                    try {
+                        data = await this.fetchTileFromDatabase(query, pgConfig);
+                    } catch (error) {
+                        mvt.res = -4;
+                        mvt.status = `[ERROR] - Database error: ${error.message}`;
+                        this.log.show(error, LogLevels.DEBUG);
+                    }
+                }
+                else {
+                    mvt.res = 1;    // Empty query => empty tile
+                    mvt.status = `[INFO] - Empty query for '${path}'`;
+                    data = Buffer.from("");
+                }
+                this.log.show(data, LogLevels.TRACE);
+                if (data) {
+                    let uncompressedBytes = data.byteLength;
+                    if (this.gzip) mvt.data = await <Buffer><unknown>asyncgzip(data);
+                    else mvt.data = data;
+                    let compressedBytes = mvt.data.byteLength;
+                    this.log.show(`${path} ${source}/${tile.z}/${tile.x}/${tile.y}  ${uncompressedBytes} -> ${compressedBytes}`, LogLevels.INFO);
+                    if (this.cacheBucketName) {
+                        try {
+                            await s3.putObject({
+                                Body: mvt.data,
+                                Bucket: this.cacheBucketName,
+                                Key: `${source}/${tile.z}/${tile.x}/${tile.y}.mvt`,
+                                ContentType: "application/vnd.mapbox-vector-tile",
+                                ContentEncoding: (this.gzip)?"gzip":"identity",
+                                CacheControl: "604800", // 7 days
+                                // Metadata: {
+                                //     "rawBytes": `${stats.uncompressedBytes}`,
+                                //     "gzippedBytes": `${stats.compressedBytes}`
+                                // }
+                            }).promise();
+                        } catch (error) {
+                            mvt.res = 2;
+                            mvt.status = `[INFO] - Could not put to S3: ${error.message}`;
+                            this.log.show(error, LogLevels.DEBUG);
+                        }
+                    }
+                    else {
+                        this.log.show("[INFO] - env.CACHE_BUCKET not defined. Caching to S3 disabled.", LogLevels.INFO);
+                    }
+                }
+            }
+            else {
+                mvt.res = -3;
+                mvt.status = `[ERROR] - Source not correctly specified in '${path}'`;
+            }
+        }
+        else {
+            mvt.res = -2;
+            mvt.status = `[ERROR] - Tile not correctly specified in '${path}'`;
+        }
+        return mvt;
+    }
 }

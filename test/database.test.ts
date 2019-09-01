@@ -6,14 +6,17 @@ import { parse } from "@iarna/toml";
 import "jest";
 import { ClientConfig } from "pg";
 
+/** Setup mocks for pg */
+const mockQuery = jest.fn();
+
+//const mockQuery = jest.fn().mockResolvedValue({ rows: [{ data: Buffer.from("data") }, { data: Buffer.from("something") }] })
 jest.mock('pg', () => ({
     Client: class {
-        public connect = jest.fn().mockResolvedValue(this)
-        public query = jest.fn()
-            .mockResolvedValue({ rows: [{ data: Buffer.from("data") }, { data: Buffer.from("something") }] })
-        public end = jest.fn().mockResolvedValue(this)
-    },
-}))
+        connect = jest.fn().mockResolvedValue(null)
+        query = mockQuery
+        end = jest.fn().mockResolvedValue(null)
+    }
+}));
 
 const testAssetsPath = "test/assets/";
 const testOutputPath = "test/out/";
@@ -50,13 +53,33 @@ describe("getClientConfig", function () {
 
 
 describe("fetchTileFromDatabase", function () {
+    beforeEach(() => {
+        mockQuery.mockReset();
+    });
+
     it("regular response", async function () {
+        mockQuery.mockResolvedValue({ rows: [{ mvt: Buffer.from("data") }, { mvt: Buffer.from("something") }] })        
         let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}simple.toml`, "utf8"));
         let server = new Tileserver(config, "testBucket");
         let pgconfig: ClientConfig = server.getClientConfig("local");
 
-        // mockedClient.query.mockResolvedValue({ rows: [{ data: 'data' }] });
         let res = await server.fetchTileFromDatabase("SELECT true", pgconfig);
+        expect(mockQuery.mock.calls.length).to.be.equal(1);
         expect(res.toString()).to.equal("data");
     });
+
+    it("row not found", async function () {
+        mockQuery.mockResolvedValue({ rows: [{ wrong: Buffer.from("data") }, { mvt: Buffer.from("something") }] })
+        let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}simple.toml`, "utf8"));
+        let server = new Tileserver(config, "testBucket");
+        let pgconfig: ClientConfig = server.getClientConfig("local");
+
+        try {
+            await server.fetchTileFromDatabase("SELECT true", pgconfig)    
+        } catch (e) {
+            expect(e).to.be.an("Error");
+            expect(e).to.have.property("message", "Property \'mvt\' does not exist in res.rows[0]");
+        }        
+        expect(mockQuery.mock.calls.length).to.be.equal(1);
+    });    
 });

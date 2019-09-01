@@ -35,7 +35,11 @@ describe("Parsing functions", function () {
         let tile: Tile | null = tileserver.extractTile("foo");
         expect(tile).to.be.null;
     });
-
+    it("extractTile negative #3 - invalid extension", function () {
+        let tile: Tile | null = tileserver.extractTile("/local/14/8691/5677.mvtinvalid");
+        expect(tile).to.be.null;
+    });
+        
 
     it("extractSource regular #1 - simple path", function () {
         let source: string | null = tileserver.extractSource("/local/0/0/0.mvt");
@@ -53,6 +57,10 @@ describe("Parsing functions", function () {
     it("extractSource negative #2 - totally useless request", function () {
         let source: string | null = tileserver.extractSource("foo");
         expect(source).to.be.null;
+    });
+    it("extractSource SQL-Injection #1 - `select now()`", function () {
+        let source: string | null = tileserver.extractSource("/select+now%28%29/0/0/0.mvt");
+        expect(source).to.be.equal('29');
     });
 
 })
