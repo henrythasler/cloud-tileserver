@@ -36,3 +36,7 @@ variable "route_id" {
 
 variable "certificate_arn" {  
 }
+
+variable "log_level" {
+  default = "3"
+}

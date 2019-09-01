@@ -57,6 +57,8 @@ resource "aws_lambda_function" "tileserver" {
       PGHOST = "${var.postgres_host}"
       PGPASSWORD = "${var.postgres_password}"
       PGUSER = "${var.postgres_user}"
+      CACHE_BUCKET = "${aws_s3_bucket.tilecache.id}"
+      LOG_LEVEL = "${var.log_level}"
     }
   }
 }

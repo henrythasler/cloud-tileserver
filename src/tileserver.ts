@@ -361,6 +361,9 @@ export class Tileserver {
                             this.log.show(error, LogLevels.DEBUG);
                         }
                     }
+                    else {
+                        this.log.show("[INFO] - env.CACHE_BUCKET not defined. Caching to S3 disabled.", LogLevels.INFO);
+                    }
                 }
             }
             else {
