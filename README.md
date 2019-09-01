@@ -1,6 +1,6 @@
 # Cloud-Tileserver
 
-[![Coverage Status](https://coveralls.io/repos/github/henrythasler/cloud-tileserver/badge.svg?branch=master)](https://coveralls.io/github/henrythasler/cloud-tileserver?branch=master)
+![](https://codebuild.eu-central-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoicVdSdXNqM3Fma3poeCs2YUV2V1pLaWNIZ2wwelpXQ2hibldGSFk2UE9rY2tQU1B2NERjcnl5bEtXdUgzUHJNVVlMQTBubkRkYXBma1ZJWlZXRk40R3VNPSIsIml2UGFyYW1ldGVyU3BlYyI6IlN0UWZ6ZXRZZlhNd0MrZ1oiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master) [![Coverage Status](https://coveralls.io/repos/github/henrythasler/cloud-tileserver/badge.svg?branch=master)](https://coveralls.io/github/henrythasler/cloud-tileserver?branch=master)
 
 Serve mapbox vectortiles via AWS stack.
 
