@@ -9,7 +9,7 @@ class Projection {
         let lon = (pos.x / this.originShift) * 180.0;
         let lat = (pos.y / this.originShift) * 180.0;
         lat = 180 / Math.PI * (2 * Math.atan(Math.exp(lat * Math.PI / 180.0)) - Math.PI / 2.0);
-        return { lng: lon, lat: lat };
+        return { lng: lon % 360, lat: lat % 180 };
     }
     /** Converts pixel coordinates (Origin is top-left) in given zoom level of pyramid to EPSG:900913 */
     getMercatorFromPixels(pos, zoom, tileSize = 256) {

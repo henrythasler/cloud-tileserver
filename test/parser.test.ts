@@ -35,7 +35,11 @@ describe("Parsing functions", function () {
         let tile: Tile | null = tileserver.extractTile("foo");
         expect(tile).to.be.null;
     });
-
+    it("extractTile negative #3 - invalid extension", function () {
+        let tile: Tile | null = tileserver.extractTile("/local/14/8691/5677.mvtinvalid");
+        expect(tile).to.be.null;
+    });
+        
 
     it("extractSource regular #1 - simple path", function () {
         let source: string | null = tileserver.extractSource("/local/0/0/0.mvt");

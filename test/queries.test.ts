@@ -259,9 +259,7 @@ describe("buildQuery", function () {
         let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}simple.toml`, "utf8"));
         let server = new Tileserver(config, "testBucket");
         let query: string | null = server.buildQuery("local", bbox, 7);
-        let expected = readFileSync(`${testAssetsPath}empty.sql`, "utf8")
-            .replace(/\s+/g, ' ');
-        expect(query).to.be.equal(expected);
+        expect(query).to.be.equal("");
     });
 
 });

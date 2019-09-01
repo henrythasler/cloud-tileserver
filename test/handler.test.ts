@@ -8,23 +8,20 @@ const asyncgzip = promisify(gzip);
 
 import "jest";
 
-/** Setup mocks for pg */
+/** Setup mocks for postgres */
 jest.mock('pg', () => ({
     Client: class {
-        public connect = jest.fn().mockResolvedValue(this)
-        public query = jest.fn()
-            .mockResolvedValue({ rows: [{ data: Buffer.from("data") }, { data: Buffer.from("something") }] })
-        public end = jest.fn().mockResolvedValue(this)
-    },
+        connect = jest.fn().mockResolvedValue(this)
+        query = jest.fn().mockResolvedValue({ rows: [{ mvt: Buffer.from("data") }, { mvt: Buffer.from("something") }] })
+        end = jest.fn().mockResolvedValue(this)
+    }
 }));
 
 /** Setup mocks for aws */
-const mockS3putObject = jest.fn();
-// const mockS3putObject = jest.fn().mockReturnValue({ promise: () => { return Promise.resolve({}) } })
 jest.mock('aws-sdk', () => {
     return {
         S3: jest.fn(() => ({
-            putObject: mockS3putObject
+            putObject: jest.fn().mockReturnValue({ promise: () => { return Promise.resolve({}) } })
         }))
     };
 });
@@ -48,39 +45,8 @@ const ctx: Context = {
 }
 
 describe("handler", function () {
-
-    beforeEach(() => {
-        mockS3putObject.mockReset();
-    });
-
-    it("invalid request", async function () {
-        let response = await handler({ path: "invalid" }, ctx, () => { });
-        expect(mockS3putObject.mock.calls.length).to.be.equal(0);
-        expect(response).to.deep.equal({
-            statusCode: 500,
-            headers: {
-                'Content-Type': 'text/html',
-                'access-control-allow-origin': '*',
-                'Content-Encoding': 'identity'
-            },
-            body: "Error",
-            isBase64Encoded: false
-        });
-    });
-
     it("regular request", async function () {
-        mockS3putObject.mockReturnValue({ promise: () => { return Promise.resolve({}) } })
-        // mockS3putObject.mockImplementation((params) => {
-        //     return {
-        //         promise() {
-        //             return Promise.resolve({ ETag: "0000" })
-        //         }
-        //     };
-        // });
-
         let response = await handler({ path: "/local/14/8691/5677.mvt" }, ctx, () => { });
-        expect(mockS3putObject.mock.calls.length).to.be.equal(1);
-
         let gzipped = await <Buffer><unknown>asyncgzip("data");
         expect(response).to.deep.equal({
             statusCode: 200,
@@ -95,10 +61,7 @@ describe("handler", function () {
     });
 
     it("simulate error", async function () {
-        mockS3putObject.mockReturnValue({ promise: () => { return Promise.reject({Error: "unknown"}) } })
-
-        let response = await handler({ path: "/local/14/8691/5677.mvt" }, ctx, () => { });
-        expect(mockS3putObject.mock.calls.length).to.be.equal(1);
+        let response = await handler({ path: "invalid" }, ctx, () => { });
         expect(response).to.deep.equal({
             statusCode: 500,
             headers: {
@@ -106,7 +69,7 @@ describe("handler", function () {
                 'access-control-allow-origin': '*',
                 'Content-Encoding': 'identity'
             },
-            body: `{"Error":"unknown"}`,
+            body: '{"res":-2,"status":"[ERROR] - Tile not correctly specified in \'invalid\'"}',
             isBase64Encoded: false
         });
     });    
