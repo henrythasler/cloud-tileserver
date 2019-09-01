@@ -246,7 +246,7 @@ describe("buildQuery", function () {
     it("prevent duplication of name fields in layers as per spec", function () {
         let bbox: WGS84BoundingBox = proj.getWGS84TileBounds({ x: 4383, y: 2854, z: 13 });
         let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}duplicate_layername.toml`, "utf8"));
-        let server = new Tileserver(config, "testBucket");
+        let server = new Tileserver(config, "testBucket", 1);
         let query: string | null = server.buildQuery("local", bbox, 13);
         let expected = readFileSync(`${testAssetsPath}simple_z13.sql`, "utf8")
             .replace(/!BBOX!/g, `${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}`)

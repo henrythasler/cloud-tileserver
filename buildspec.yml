@@ -10,7 +10,9 @@ phases:
   build:
     commands:
       - echo Build started on `date`
+      - git status
       - npm test
+      - coveralls -v < coverage/lcov.info
   post_build:
     commands:
       - echo Build completed on `date`
