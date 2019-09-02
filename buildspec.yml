@@ -6,13 +6,14 @@ phases:
       nodejs: 8
   pre_build:
     commands:
+      - printenv
       - npm i
-      - echo $CODEBUILD_WEBHOOK_HEAD_REF
-      - git checkout $CODEBUILD_WEBHOOK_HEAD_REF
   build:
     commands:
       - echo Build started on `date`
-      - npm run test:coveralls
+      - npm run predeploy
+      - npm test
   post_build:
     commands:
       - echo Build completed on `date`
+      - COVERALLS_GIT_COMMIT=$CODEBUILD_SOURCE_VERSION node ./node_modules/coveralls/bin/coveralls.js < coverage/lcov.info
