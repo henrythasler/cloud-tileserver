@@ -6,8 +6,8 @@
   "scripts": {
     "tools": "tsc tools/toml2json.ts",
     "gen:sources": "node tools/toml2json.js < src/sources.toml > src/sources.json",
-    "test": "LOG_LEVEL=1 jest --coverage",
-    "test:coveralls": "jest --coverage && coveralls < coverage/lcov.info",
+    "test": "LOG_LEVEL=1 jest --coverage && coveralls < coverage/lcov.info",
+    "test:solo": "jest --coverage",
     "layer": "cd tileserver_layer && npm i",
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
     "docs": "node node_modules/typedoc/bin/typedoc",
