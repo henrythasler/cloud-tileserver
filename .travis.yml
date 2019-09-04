@@ -6,4 +6,4 @@ addons:
   sonarcloud:
     organization: "henrythasler"
 script:
-  - sonar-scanner
+  - npm run test && sonar-scanner
