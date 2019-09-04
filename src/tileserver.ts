@@ -7,7 +7,7 @@ import { Projection, WGS84BoundingBox, Tile } from "./projection";
 
 const asyncgzip = promisify(gzip);
 
-export enum LogLevels { SILENT = 1, ERROR, INFO, DEBUG, TRACE };
+export enum LogLevels { SILENT = 1, ERROR, INFO, DEBUG, TRACE }
 
 /**
  * Wrapper for Debug-Outputs to console
