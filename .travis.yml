@@ -1,3 +1,9 @@
 language: node_js
 node_js:
   - 8
+
+addons:
+  sonarcloud:
+    organization: "henrythasler"
+script:
+  - npm run test && sonar-scanner
