@@ -13,7 +13,7 @@ interface Event {
 
 export const handler: Handler = async (event: Event, context: Context): Promise<any> => {
     let response;
-    let vectortile: Vectortile = await tileserver.getVectortile(event.path);
+    const vectortile: Vectortile = await tileserver.getVectortile(event.path);
     if ((vectortile.res >= 0) && (vectortile.data)) {
         response = {
             statusCode: 200,

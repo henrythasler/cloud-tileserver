@@ -337,7 +337,7 @@ export class Tileserver {
                 this.log.show(data, LogLevels.TRACE);
                 if (data) {
                     let uncompressedBytes = data.byteLength;
-                    if (this.gzip) mvt.data = <Buffer> await asyncgzip(data);
+                    if (this.gzip) mvt.data = await asyncgzip(data) as Buffer;
                     else mvt.data = data;
                     let compressedBytes = mvt.data.byteLength;
                     this.log.show(`${path} ${source}/${tile.z}/${tile.x}/${tile.y}  ${uncompressedBytes} -> ${compressedBytes}`, LogLevels.INFO);
