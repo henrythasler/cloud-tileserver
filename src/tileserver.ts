@@ -176,7 +176,7 @@ export class Tileserver {
      * @param zoom Zoom level 
      */
     buildLayerQuery(source: Source | SourceBasics, layer: Layer, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string | null {
-        let resolved: Layer | null = this.resolveLayerProperties(layer, zoom);
+        const resolved: Layer | null = this.resolveLayerProperties(layer, zoom);
 
         // Layer is empty due to zoom constrains. No further processing needed.
         if (resolved === null) return null;

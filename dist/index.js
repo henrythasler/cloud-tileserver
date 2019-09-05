@@ -10,7 +10,7 @@ const logLevel = (process.env.LOG_LEVEL) ? parseInt(process.env.LOG_LEVEL) : und
 const tileserver = new tileserver_1.Tileserver(sources_json_1.default, cacheBucketName, logLevel);
 exports.handler = async (event, context) => {
     let response;
-    let vectortile = await tileserver.getVectortile(event.path);
+    const vectortile = await tileserver.getVectortile(event.path);
     if ((vectortile.res >= 0) && (vectortile.data)) {
         response = {
             statusCode: 200,

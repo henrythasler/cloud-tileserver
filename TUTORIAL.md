@@ -7,6 +7,7 @@ This tutorial will explain step-by-step, how to set-up the tileserver and all de
 To set up the whole environment you will need:
 
 - AWS-Account (root-privileges or equivalent to complete tutorial)
+- aws command-line tool
 
 ## Initial Setup
 
