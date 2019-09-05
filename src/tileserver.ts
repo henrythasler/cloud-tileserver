@@ -88,7 +88,7 @@ export class Tileserver {
      * @param config 
      * @param cacheBucketName 
      */
-    constructor(config: Config, cacheBucketName?: string, logLevel: number = LogLevels.ERROR, gzip: boolean = true) {
+    constructor(config: Config, cacheBucketName?: string, logLevel: number = LogLevels.ERROR, gzip = true) {
         if (cacheBucketName) this.cacheBucketName = cacheBucketName;
         this.config = config;
         this.gzip = gzip;
@@ -102,11 +102,11 @@ export class Tileserver {
      * @return a tile for subsequent use or null if no valid Tile could be extracted. 
      */
     extractTile(path: string): Tile | null {
-        let tile: Tile = { x: 0, y: 0, z: 0 };
-        let re = new RegExp(/\d+\/\d+\/\d+(?=\.mvt\b)/g);
-        let tilepath = path.match(re);
+        const tile: Tile = { x: 0, y: 0, z: 0 };
+        const re = new RegExp(/\d+\/\d+\/\d+(?=\.mvt\b)/g);
+        const tilepath = path.match(re);
         if (tilepath) {
-            let numbers = tilepath[0].split("/");
+            const numbers = tilepath[0].split("/");
             tile.y = parseInt(numbers[numbers.length - 1]);
             tile.x = parseInt(numbers[numbers.length - 2]);
             tile.z = parseInt(numbers[numbers.length - 3]);
@@ -123,7 +123,7 @@ export class Tileserver {
      */
     extractSource(path: string): string | null {
         // match the last word between slashes before the actual tile (3-numbers + extension)
-        let sourceCandidates: RegExpMatchArray | null = path.match(/(?!\/)\w+(?=\/\d+\/\d+\/\d+\.mvt\b)/g)
+        const sourceCandidates: RegExpMatchArray | null = path.match(/(?!\/)\w+(?=\/\d+\/\d+\/\d+\.mvt\b)/g)
         if (sourceCandidates != null && sourceCandidates.length > 0) {
             return sourceCandidates[sourceCandidates.length - 1];
         }
@@ -143,17 +143,17 @@ export class Tileserver {
 
         /** check layer zoom if present */
         if (
-            ((layer.minzoom != undefined) && (zoom < layer.minzoom)) ||
-            ((layer.maxzoom != undefined) && (zoom >= layer.maxzoom))
+            ((layer.minzoom !== undefined) && (zoom < layer.minzoom)) ||
+            ((layer.maxzoom !== undefined) && (zoom >= layer.maxzoom))
         ) {
             return null;
         }
 
         if (layer.variants && layer.variants.length) {
-            for (let variant of layer.variants) {
+            for (const variant of layer.variants) {
                 /** the default zoom-values should cover all use-cases on earth */
-                let variantMinzoom = (variant.minzoom != undefined) ? variant.minzoom : /* istanbul ignore next: This can't happen due to interface definition */0
-                let variantMaxzoom = (variant.maxzoom != undefined) ? variant.maxzoom : 32
+                const variantMinzoom = (variant.minzoom !== undefined) ? variant.minzoom : /* istanbul ignore next: This can't happen due to interface definition */0
+                const variantMaxzoom = (variant.maxzoom !== undefined) ? variant.maxzoom : 32
                 if (zoom >= variantMinzoom && zoom < variantMaxzoom) {
                     /** We have a match: merge the variant with the original layer. */
                     resolved = { ...layer, ...variant }
@@ -182,15 +182,15 @@ export class Tileserver {
         if (resolved === null) return null;
         // FIXME: minzoom and maxzoom must be propagated from source into layer
 
-        let layerExtend: number = (resolved.extend != undefined) ? resolved.extend : ((source.extend != undefined) ? source.extend : 4096);
-        let sql: string = (resolved.sql != undefined) ? resolved.sql : ((source.sql != undefined) ? source.sql : "");
-        let geom: string = (resolved.geom != undefined) ? resolved.geom : ((source.geom != undefined) ? source.geom : "geometry");
-        let srid: number = (resolved.srid != undefined) ? resolved.srid : ((source.srid != undefined) ? source.srid : 3857);
-        let bbox: string = `ST_Transform(ST_MakeEnvelope(${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}, 4326), ${srid})`;
-        let buffer: number = (resolved.buffer != undefined) ? resolved.buffer : ((source.buffer != undefined) ? source.buffer : 256);
-        let clip_geom: boolean = (resolved.clip_geom != undefined) ? resolved.clip_geom : ((source.clip_geom != undefined) ? source.clip_geom : true);
-        let prefix: string = (resolved.prefix != undefined) ? resolved.prefix : ((source.prefix != undefined) ? source.prefix : "");
-        let postfix: string = (resolved.postfix != undefined) ? resolved.postfix : ((source.postfix != undefined) ? source.postfix : "");
+        const layerExtend: number = (resolved.extend !== undefined) ? resolved.extend : ((source.extend !== undefined) ? source.extend : 4096);
+        const sql: string = (resolved.sql !== undefined) ? resolved.sql : ((source.sql !== undefined) ? source.sql : "");
+        const geom: string = (resolved.geom !== undefined) ? resolved.geom : ((source.geom !== undefined) ? source.geom : "geometry");
+        const srid: number = (resolved.srid !== undefined) ? resolved.srid : ((source.srid !== undefined) ? source.srid : 3857);
+        const bbox: string = `ST_Transform(ST_MakeEnvelope(${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}, 4326), ${srid})`;
+        const buffer: number = (resolved.buffer !== undefined) ? resolved.buffer : ((source.buffer !== undefined) ? source.buffer : 256);
+        const clip_geom: boolean = (resolved.clip_geom !== undefined) ? resolved.clip_geom : ((source.clip_geom !== undefined) ? source.clip_geom : true);
+        const prefix: string = (resolved.prefix !== undefined) ? resolved.prefix : ((source.prefix !== undefined) ? source.prefix : "");
+        const postfix: string = (resolved.postfix !== undefined) ? resolved.postfix : ((source.postfix !== undefined) ? source.postfix : "");
 
         let keys: string = "";
         if (source.keys && source.keys.length) {
@@ -234,18 +234,18 @@ export class Tileserver {
      */
     buildQuery(source: string, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string | null {
         let query: string | null = null;
-        let layerQueries: string[] = [];
-        let layerNames: string[] = [];
+        const layerQueries: string[] = [];
+        const layerNames: string[] = [];
 
-        for (let sourceItem of this.config.sources) {
+        for (const sourceItem of this.config.sources) {
             if (sourceItem.name === source) {
-                for (let layer of sourceItem.layers) {
+                for (const layer of sourceItem.layers) {
                     /** Accoring to https://github.com/mapbox/vector-tile-spec/tree/master/2.1#41-layers: 
                      *    Prior to appending a layer to an existing Vector Tile, an encoder MUST check the existing name fields in order to prevent duplication.
                      *  implementation solution: ignore subsequent duplicates and log an error*/
                     if (!layerNames.includes(layer.name)) {
                         layerNames.push(layer.name);
-                        let layerQuery: string | null = this.buildLayerQuery(sourceItem, layer, wgs84BoundingBox, zoom);
+                        const layerQuery: string | null = this.buildLayerQuery(sourceItem, layer, wgs84BoundingBox, zoom);
                         if (layerQuery) layerQueries.push(layerQuery);
                     }
                     else {
@@ -257,7 +257,7 @@ export class Tileserver {
 
         /** merge all queries with the string concatenation operator */
         if (layerQueries.length) {
-            let layers = layerQueries.join(" || ");
+            const layers = layerQueries.join(" || ");
             query = `SELECT ( ${layers} ) AS mvt`;
         }
         else {
@@ -276,20 +276,23 @@ export class Tileserver {
     }
 
     async fetchTileFromDatabase(query: string, clientConfig: ClientConfig): Promise<Buffer> {
-        let client: Client = new Client(clientConfig);
+        const client: Client = new Client(clientConfig);
         await client.connect();
-        let res: QueryResult = await client.query(query);
+        const res: QueryResult = await client.query(query);
         this.log.show(res.rows[0], LogLevels.TRACE);
         await client.end();
-        if(res.rows[0].mvt)
+        if(res.rows[0].mvt) {
             return res.rows[0].mvt;   // the .d property is taken from the outer AS-alias of the query
-        else throw new Error("Property 'mvt' does not exist in res.rows[0]")
+        }
+        else {
+            throw new Error("Property 'mvt' does not exist in res.rows[0]")
+        }
     }
 
     getClientConfig(source: string): ClientConfig {
-        let clientConfig: ClientConfig = {};
+        const clientConfig: ClientConfig = {};
 
-        for (let sourceItem of this.config.sources) {
+        for (const sourceItem of this.config.sources) {
             if (sourceItem.name === source) {
                 // pick only the connection info from the sourceItem
                 if ("host" in sourceItem) clientConfig.host = sourceItem.host;
@@ -307,19 +310,19 @@ export class Tileserver {
      * @param path a full path including arbitrary prefix-path, layer, tile and extension
      */
     async getVectortile(path: string): Promise<Vectortile> {
-        let mvt: Vectortile = { res: 0};
+        const mvt: Vectortile = { res: 0};
         const s3 = new S3({ apiVersion: '2006-03-01' });
 
-        let tile = this.extractTile(path);
+        const tile = this.extractTile(path);
         if (tile) {
-            let source = this.extractSource(path);
+            const source = this.extractSource(path);
             if (source) {
-                let wgs84BoundingBox = this.proj.getWGS84TileBounds(tile);
-                let query = this.buildQuery(source, wgs84BoundingBox, tile.z)
+                const wgs84BoundingBox = this.proj.getWGS84TileBounds(tile);
+                const query = this.buildQuery(source, wgs84BoundingBox, tile.z)
                 this.log.show(query, LogLevels.DEBUG);
                 let data: Buffer | null = null;
                 if (query) {
-                    let pgConfig = this.getClientConfig(source);
+                    const pgConfig = this.getClientConfig(source);
                     this.log.show(pgConfig, LogLevels.TRACE);
                     try {
                         data = await this.fetchTileFromDatabase(query, pgConfig);
@@ -336,10 +339,10 @@ export class Tileserver {
                 }
                 this.log.show(data, LogLevels.TRACE);
                 if (data) {
-                    let uncompressedBytes = data.byteLength;
-                    if (this.gzip) mvt.data = <Buffer> await asyncgzip(data);
+                    const uncompressedBytes = data.byteLength;
+                    if (this.gzip) mvt.data = await asyncgzip(data) as Buffer;
                     else mvt.data = data;
-                    let compressedBytes = mvt.data.byteLength;
+                    const compressedBytes = mvt.data.byteLength;
                     this.log.show(`${path} ${source}/${tile.z}/${tile.x}/${tile.y}  ${uncompressedBytes} -> ${compressedBytes}`, LogLevels.INFO);
                     if (this.cacheBucketName) {
                         try {
