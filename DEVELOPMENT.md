@@ -67,6 +67,7 @@ SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 - Security-Review for Lambda-Code (e.g. SQL-Injection, ...)
 - Change all scripts to use Postgres environment variables (PGUSER, ...)
 - Omit Postgres credentials altogether and use IAM-role instead
+- move lambda-function out of VPC to reduce cold-start-time
 - Add raster endpoint with node-mapbox-gl-native to serve pre-rendered raster-images.
 
 ## References
