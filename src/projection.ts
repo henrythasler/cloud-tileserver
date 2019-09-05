@@ -47,21 +47,21 @@ export class Projection {
     }
 
     /** Converts pixel coordinates (Origin is top-left) in given zoom level of pyramid to EPSG:900913 */
-    getMercatorFromPixels(pos: Vector, zoom: number, tileSize: number = 256): Mercator {
+    getMercatorFromPixels(pos: Vector, zoom: number, tileSize = 256): Mercator {
         // zoom = Math.max(0, zoom + 1 - tileSize / 256)
         const res = 2 * Math.PI * 6378137 / tileSize / Math.pow(2, zoom);
         return ({ x: pos.x * res - this.originShift, y: this.originShift - pos.y * res } as Mercator)
     }
 
     /** Returns bounds of the given tile in Pseudo-Mercator (https://epsg.io/3857) coordinates */
-    getMercatorTileBounds(tile: Tile, tileSize: number = 256): MercatorBoundingBox {
+    getMercatorTileBounds(tile: Tile, tileSize = 256): MercatorBoundingBox {
         const leftbottom = this.getMercatorFromPixels({ x: tile.x * tileSize, y: (tile.y + 1) * tileSize } as Vector, tile.z, tileSize);
         const righttop = this.getMercatorFromPixels({ x: (tile.x + 1) * tileSize, y: tile.y * tileSize } as Vector, tile.z, tileSize);
         return ({ leftbottom, righttop } as MercatorBoundingBox)
     }
 
     /** Returns bounds of the given tile in WGS84 (https://epsg.io/4326) coordinates */
-    getWGS84TileBounds(tile: Tile, tileSize: number = 256): WGS84BoundingBox {
+    getWGS84TileBounds(tile: Tile, tileSize = 256): WGS84BoundingBox {
         const bounds: MercatorBoundingBox = this.getMercatorTileBounds(tile, tileSize);
         return ({
             leftbottom: this.getWGS84FromMercator(bounds.leftbottom),
@@ -70,7 +70,7 @@ export class Projection {
     }
 
     /** Returns center of the given tile in WGS84 (https://epsg.io/4326) coordinates */
-    getWGS84TileCenter(tile: Tile, tileSize: number = 256): Wgs84 {
+    getWGS84TileCenter(tile: Tile, tileSize = 256): Wgs84 {
         const bounds: WGS84BoundingBox = this.getWGS84TileBounds(tile, tileSize);
         return ({
             lng: (bounds.righttop.lng + bounds.leftbottom.lng) / 2,
@@ -83,7 +83,7 @@ export class Projection {
      * @param depth How many levels the resulting pyramid will have.
      * @return An array of tiles
     */
-    getTilePyramid(tile: Tile, depth: number = 1): TileList {
+    getTilePyramid(tile: Tile, depth = 1): TileList {
         const list: TileList = [];
         depth = Math.max(0, depth); // do not allow negative values
         for (let zoom = 0; zoom <= depth; zoom++) {
