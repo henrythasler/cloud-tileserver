@@ -61,6 +61,29 @@ All resulting layers are merged into one SQL query:
 SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 ```
 
+## Performance, Benchmarks & Timing
+
+### Setup
+
+1. 50 HTTP/2-Requests (IPv4) were made to `https://tileserver.cyclemap.link/local/14/8691/5677.mvt`
+2. Client timing was collected with curl (see `tools/benchmark.sh`)
+3. Lambda durations were collected from CloudWatch
+4. The raw results can be found in `docs/benchmark.ods`
+
+### Cold-start timing
+
+(coming soon)
+
+### Stationary response timing
+
+![Benchmark](docs/img/benchmark.png)
+
+Item | Average value
+---|---
+Client Waiting | `363 ms`
+Lambda execution | `308 ms`
+CloudFront, other | `55 ms`
+
 ## Next Steps
 
 - Move database to [Serverless Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.how-it-works.html) to reduce monthly costs.
