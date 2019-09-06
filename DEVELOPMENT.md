@@ -66,9 +66,10 @@ SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 ### Setup
 
 1. 50 HTTP/2-Requests (IPv4) were made to `https://tileserver.cyclemap.link/local/14/8691/5677.mvt`
-2. Client timing was collected with curl (see `tools/benchmark.sh`)
-3. Lambda durations were collected from CloudWatch
-4. The raw results can be found in `docs/benchmark.ods`
+2. Everything is deployed to `eu-central-1`
+3. Client timing was collected with curl (see `tools/benchmark.sh`)
+4. Lambda durations were collected from CloudWatch
+5. The raw results can be found in `docs/benchmark.ods`
 
 ### Cold-start timing
 
@@ -80,9 +81,9 @@ SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 
 Item | Average value
 ---|---
-Client Waiting | `363 ms`
-Lambda execution | `308 ms`
-CloudFront, other | `55 ms`
+Client waiting | `363 ms`
+Lambda duration | `308 ms`
+Other (API Gateway, CloudFront, etc.) | `55 ms`
 
 ## Next Steps
 
