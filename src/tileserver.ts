@@ -313,71 +313,86 @@ export class Tileserver {
         const mvt: Vectortile = { res: 0};
         const s3 = new S3({ apiVersion: '2006-03-01' });
 
+        // check for valid tile
         const tile = this.extractTile(path);
-        if (tile) {
-            const source = this.extractSource(path);
-            if (source) {
-                const wgs84BoundingBox = this.proj.getWGS84TileBounds(tile);
-                const query = this.buildQuery(source, wgs84BoundingBox, tile.z)
-                this.log.show(query, LogLevels.DEBUG);
-                let data: Buffer | null = null;
-                if (query) {
-                    const pgConfig = this.getClientConfig(source);
-                    this.log.show(pgConfig, LogLevels.TRACE);
-                    try {
-                        data = await this.fetchTileFromDatabase(query, pgConfig);
-                    } catch (error) {
-                        mvt.res = -4;
-                        mvt.status = `[ERROR] - Database error: ${error.message}`;
-                        this.log.show(error, LogLevels.DEBUG);
-                    }
-                }
-                else {
-                    mvt.res = 1;    // Empty query => empty tile
-                    mvt.status = `[INFO] - Empty query for '${path}'`;
-                    data = Buffer.from("");
-                }
-                this.log.show(data, LogLevels.TRACE);
-                if (data) {
-                    const uncompressedBytes = data.byteLength;
-                    if (this.gzip) mvt.data = await asyncgzip(data) as Buffer;
-                    else mvt.data = data;
-                    const compressedBytes = mvt.data.byteLength;
-                    this.log.show(`${path} ${source}/${tile.z}/${tile.x}/${tile.y}  ${uncompressedBytes} -> ${compressedBytes}`, LogLevels.INFO);
-                    if (this.cacheBucketName) {
-                        try {
-                            await s3.putObject({
-                                Body: mvt.data,
-                                Bucket: this.cacheBucketName,
-                                Key: `${source}/${tile.z}/${tile.x}/${tile.y}.mvt`,
-                                ContentType: "application/vnd.mapbox-vector-tile",
-                                ContentEncoding: (this.gzip)?"gzip":"identity",
-                                CacheControl: "604800", // 7 days
-                                // Metadata: {
-                                //     "rawBytes": `${stats.uncompressedBytes}`,
-                                //     "gzippedBytes": `${stats.compressedBytes}`
-                                // }
-                            }).promise();
-                        } catch (error) {
-                            mvt.res = 2;
-                            mvt.status = `[INFO] - Could not put to S3: ${error.message}`;
-                            this.log.show(error, LogLevels.DEBUG);
-                        }
-                    }
-                    else {
-                        this.log.show("[INFO] - env.CACHE_BUCKET not defined. Caching to S3 disabled.", LogLevels.INFO);
-                    }
-                }
-            }
-            else {
-                mvt.res = -3;
-                mvt.status = `[ERROR] - Source not correctly specified in '${path}'`;
+        if(!tile) {
+            const msg = `[ERROR] - Tile not correctly specified in '${path}'`;
+            this.log.show(msg, LogLevels.ERROR);
+            mvt.res = -2;
+            mvt.status = msg;
+            return mvt;
+        }
+
+        // check for valid source layer
+        const source = this.extractSource(path);
+        if(!source) {
+            const msg = `[ERROR] - Source not correctly specified in '${path}'`;
+            this.log.show(msg, LogLevels.ERROR);
+            mvt.res = -3;
+            mvt.status = msg;
+            return mvt;
+        }
+
+        const wgs84BoundingBox = this.proj.getWGS84TileBounds(tile);
+        const query = this.buildQuery(source, wgs84BoundingBox, tile.z)
+        this.log.show(query, LogLevels.DEBUG);
+        let data: Buffer | null = null;
+        
+        if (query) {
+            const pgConfig = this.getClientConfig(source);
+            this.log.show(pgConfig, LogLevels.TRACE);
+            try {
+                data = await this.fetchTileFromDatabase(query, pgConfig);
+            } catch (error) {
+                mvt.res = -4;
+                mvt.status = `[ERROR] - Database error: ${error.message}`;
+                this.log.show(error, LogLevels.ERROR);
+                return mvt;
             }
         }
         else {
-            mvt.res = -2;
-            mvt.status = `[ERROR] - Tile not correctly specified in '${path}'`;
+            // Empty query => empty tile
+            const msg = `[INFO] - Empty query for '${path}'`;
+            this.log.show(msg, LogLevels.INFO);
+            mvt.res = 1;    
+            mvt.status = msg;
+            data = Buffer.from("");
+        }
+
+        this.log.show(data, LogLevels.TRACE);
+        
+        const uncompressedBytes = data.byteLength;
+        if (this.gzip) mvt.data = await asyncgzip(data) as Buffer;
+        else mvt.data = data;
+        const compressedBytes = mvt.data.byteLength;
+
+        // log some stats about the generated tile
+        this.log.show(`${path} ${source}/${tile.z}/${tile.x}/${tile.y}  ${uncompressedBytes} -> ${compressedBytes}`, LogLevels.INFO);
+
+        if (this.cacheBucketName) {
+            try {
+                await s3.putObject({
+                    Body: mvt.data,
+                    Bucket: this.cacheBucketName,
+                    Key: `${source}/${tile.z}/${tile.x}/${tile.y}.mvt`,
+                    ContentType: "application/vnd.mapbox-vector-tile",
+                    ContentEncoding: (this.gzip)?"gzip":"identity",
+                    CacheControl: "604800", // 7 days
+                    // Metadata: {
+                    //     "rawBytes": `${stats.uncompressedBytes}`,
+                    //     "gzippedBytes": `${stats.compressedBytes}`
+                    // }
+                }).promise();
+            } catch (error) {
+                const msg = `[ERROR] - Could not putObject() to S3: ${error.message}`;
+                mvt.res = 2;
+                mvt.status = msg;
+                this.log.show(msg, LogLevels.ERROR);
+            }
+        }
+        else {
+            this.log.show("[INFO] - env.CACHE_BUCKET not defined. Caching to S3 disabled.", LogLevels.INFO);
         }
         return mvt;
-    }
+    } 
 }

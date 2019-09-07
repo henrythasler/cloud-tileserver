@@ -173,7 +173,7 @@ describe("getVectortile", function () {
         let path = "/local/14/8691/5677.mvt"
         let expected: Vectortile = {
             res: 2,
-            status: `[INFO] - Could not put to S3: simulated message`,
+            status: `[ERROR] - Could not putObject() to S3: simulated message`,
             data: await <Buffer><unknown>asyncgzip("data"),
         }
         let server = new Tileserver(config, "testBucket");
