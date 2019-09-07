@@ -110,16 +110,13 @@ Other (API Gateway, CloudFront, etc.) | `55 ms`
 - [CloudFront cache settings](https://aws.amazon.com/premiumsupport/knowledge-center/cloudfront-custom-object-caching)
 - [Mocking aws-sdk with jest](https://github.com/aws/aws-sdk-js/issues/1963)
 
-### JavaScript
-
-- https://lucybain.com/blog/2018/js-es6-spread-operator/
-
-### Typescript
+### Typescript, JavaScript
 
 - https://blog.atomist.com/typescript-imports/
 - https://github.com/gotwarlost/istanbul/blob/master/ignoring-code-for-coverage.md
+- https://lucybain.com/blog/2018/js-es6-spread-operator/
 
-### Terraform
+### Terraform, Infrastructure-as-Code
 
 - https://learn.hashicorp.com/terraform/aws/lambda-api-gateway
 - [How to manage Terraform state - A guide to file layout, isolation, and locking for Terraform projects](https://blog.gruntwork.io/how-to-manage-terraform-state-28f5697e68fa)
@@ -127,6 +124,16 @@ Other (API Gateway, CloudFront, etc.) | `55 ms`
 ### Postgres
 
 - https://node-postgres.com/
+
+### Benchmark, Optimization
+
+- [Keeping Node.js Fast: Tools, Techniques, And Tips For Making High-Performance Node.js Servers](https://webdesigntips.blog/web-design/web-design-tips/keeping-node-js-fast-tools-techniques-and-tips-for-making-high-performance-node-js-servers/)
+- [autocannon - fast HTTP/1.1 benchmarking tool written in Node.js](https://github.com/mcollina/autocannon)
+
+### UI, Design
+
+- [URL-encoder for SVG](https://yoksel.github.io/url-encoder/)
+- [Registry of Open Data on AWS](https://registry.opendata.aws/)
 
 ### Vectortiles
 
