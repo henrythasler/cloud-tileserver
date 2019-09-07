@@ -336,7 +336,9 @@ export class Tileserver {
         }
 
         const wgs84BoundingBox = this.proj.getWGS84TileBounds(tile);
+        console.time('buildQuery');
         const query = this.buildQuery(source, wgs84BoundingBox, tile.z)
+        console.timeEnd('buildQuery');
         this.log.show(query, LogLevels.DEBUG);
         let data: Buffer | null = null;
 
