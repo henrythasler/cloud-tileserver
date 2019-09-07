@@ -344,7 +344,9 @@ export class Tileserver {
             const pgConfig = this.getClientConfig(source);
             this.log.show(pgConfig, LogLevels.TRACE);
             try {
+                console.time('fetchTileFromDatabase');
                 data = await this.fetchTileFromDatabase(query, pgConfig);
+                console.timeEnd('fetchTileFromDatabase');
             } catch (error) {
                 mvt.res = -4;
                 mvt.status = `[ERROR] - Database error: ${error.message}`;
@@ -364,8 +366,10 @@ export class Tileserver {
         this.log.show(data, LogLevels.TRACE);
 
         const uncompressedBytes = data.byteLength;
+        console.time('asyncgzip');
         if (this.gzip) mvt.data = await asyncgzip(data) as Buffer;
         else mvt.data = data;
+        console.timeEnd('asyncgzip');
         const compressedBytes = mvt.data.byteLength;
 
         // log some stats about the generated tile
@@ -373,6 +377,7 @@ export class Tileserver {
 
         if (this.cacheBucketName) {
             try {
+                console.time('putObject');
                 await s3.putObject({
                     Body: mvt.data,
                     Bucket: this.cacheBucketName,
@@ -385,6 +390,7 @@ export class Tileserver {
                     //     "gzippedBytes": `${stats.compressedBytes}`
                     // }
                 }).promise();
+                console.timeEnd('putObject');
             } catch (error) {
                 const msg = `[ERROR] - Could not putObject() to S3: ${error.message}`;
                 mvt.res = 2;
