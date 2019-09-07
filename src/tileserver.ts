@@ -95,7 +95,6 @@ export class Tileserver {
         this.log = new Log(logLevel);
     }
 
-
     /**
      * Extract zxy-tile information from a given path. Also checks for a valid file-extension.
      * @param path a full path including arbitrary prefix-path, layer, tile and extension
@@ -103,8 +102,7 @@ export class Tileserver {
      */
     extractTile(path: string): Tile | null {
         const tile: Tile = { x: 0, y: 0, z: 0 };
-        const re = new RegExp(/\d+\/\d+\/\d+(?=\.mvt\b)/g);
-        const tilepath = path.match(re);
+        const tilepath: RegExpMatchArray | null = path.match(/\d+\/\d+\/\d+(?=\.mvt\b)/g);
         if (tilepath) {
             const numbers = tilepath[0].split("/");
             tile.y = parseInt(numbers[numbers.length - 1]);
@@ -114,7 +112,6 @@ export class Tileserver {
         }
         return null;
     }
-
 
     /**
      * Extracts the layer-name from a given path.
@@ -129,7 +126,6 @@ export class Tileserver {
         }
         return null;
     }
-
 
     /**
      * Check a given layer and variants against the zoom-level. Merge the **last** matching item in the variant-array into the layer and return it.
@@ -174,6 +170,7 @@ export class Tileserver {
      * @param layer The layer that we need the SQL-Query for. Can include variants.
      * @param wgs84BoundingBox The boundingbox for the tile
      * @param zoom Zoom level 
+     * @return the resulting query for this layer if applicable
      */
     buildLayerQuery(source: Source | SourceBasics, layer: Layer, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string | null {
         const resolved: Layer | null = this.resolveLayerProperties(layer, zoom);
@@ -186,7 +183,8 @@ export class Tileserver {
         const sql: string = (resolved.sql !== undefined) ? resolved.sql : ((source.sql !== undefined) ? source.sql : "");
         const geom: string = (resolved.geom !== undefined) ? resolved.geom : ((source.geom !== undefined) ? source.geom : "geometry");
         const srid: number = (resolved.srid !== undefined) ? resolved.srid : ((source.srid !== undefined) ? source.srid : 3857);
-        const bbox: string = `ST_Transform(ST_MakeEnvelope(${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}, 4326), ${srid})`;
+        const bbox: string = `ST_Transform(ST_MakeEnvelope(${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, 
+            ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}, 4326), ${srid})`;
         const buffer: number = (resolved.buffer !== undefined) ? resolved.buffer : ((source.buffer !== undefined) ? source.buffer : 256);
         const clip_geom: boolean = (resolved.clip_geom !== undefined) ? resolved.clip_geom : ((source.clip_geom !== undefined) ? source.clip_geom : true);
         const prefix: string = (resolved.prefix !== undefined) ? resolved.prefix : ((source.prefix !== undefined) ? source.prefix : "");
@@ -202,10 +200,10 @@ export class Tileserver {
 
         let where: string = "";
         if (source.where && source.where.length) {
-            where += " AND (" + source.where.join(") AND (") + ")"
+            where += ` AND (${source.where.join(") AND (")})`;
         }
         if (resolved.where && resolved.where.length) {
-            where += " AND (" + resolved.where.join(") AND (") + ")"
+            where += ` AND (${resolved.where.join(") AND (")})`;
         }
 
         if (sql) {
@@ -231,9 +229,10 @@ export class Tileserver {
      * @param source This is the source object as per ClientConfig
      * @param wgs84BoundingBox The boundingbox for the tile
      * @param zoom Zoom level
+     * @return the resulting query for the source if applicable
      */
-    buildQuery(source: string, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string | null {
-        let query: string | null = null;
+    buildQuery(source: string, wgs84BoundingBox: WGS84BoundingBox, zoom: number): string {
+        let query: string = "";
         const layerQueries: string[] = [];
         const layerNames: string[] = [];
 
@@ -255,40 +254,42 @@ export class Tileserver {
             }
         }
 
-        /** merge all queries with the string concatenation operator */
+        /** merge all layer-queries with the postgres string concatenation operator (https://www.postgresql.org/docs/9.1/functions-string.html)*/
         if (layerQueries.length) {
             const layers = layerQueries.join(" || ");
             query = `SELECT ( ${layers} ) AS mvt`;
         }
-        else {
-            query = "";
-            // FIXME: Do we really have to create an empty tile?
-        //     query = `SELECT ( (SELECT ST_AsMVT(q, 'empty', 4096, 'geom') AS l FROM
-        // (SELECT ST_AsMvtGeom(
-        //     ST_GeomFromText('POLYGON EMPTY'),
-        //     ST_MakeEnvelope(0, 1, 1, 0, 4326),
-        //     4096,
-        //     256,
-        //     true
-        //     ) AS geom ) AS q) ) AS d;`;
-        }
+
+        // remove whitespaces and newlines from resulting query
         return query.replace(/\s+/g, ' ');
     }
 
+    /**
+     * All database interaction is encapsulated in this function. The design-goal is to keep the time where a database-
+     * connection is open to a minimum. This reduces the risk for the database-instance to run out of connections.
+     * @param query the actual query to be sent to the database engine
+     * @param clientConfig a pg-config-Object. see https://node-postgres.com/api/client#constructor
+     * @return the vectortile-data as Buffer wrapped in a promise.
+     */
     async fetchTileFromDatabase(query: string, clientConfig: ClientConfig): Promise<Buffer> {
         const client: Client = new Client(clientConfig);
         await client.connect();
         const res: QueryResult = await client.query(query);
         this.log.show(res.rows[0], LogLevels.TRACE);
         await client.end();
-        if(res.rows[0].mvt) {
-            return res.rows[0].mvt;   // the .d property is taken from the outer AS-alias of the query
+        if (res.rows[0].mvt) {
+            return res.rows[0].mvt;   // the .mvt property is taken from the outer AS-alias of the query (see buildQuery())
         }
         else {
             throw new Error("Property 'mvt' does not exist in res.rows[0]")
         }
     }
 
+    /**
+     * Checks the source-config in `./sources.json` and builds a pg-config-object from properties defined for each source-item
+     * @param source the source to create a config for
+     * @return a pg-config-Object. see https://node-postgres.com/api/client#constructor
+     */
     getClientConfig(source: string): ClientConfig {
         const clientConfig: ClientConfig = {};
 
@@ -307,15 +308,16 @@ export class Tileserver {
 
     /**
      * The main function that returns a vectortile in mvt-format.
-     * @param path a full path including arbitrary prefix-path, layer, tile and extension
+     * @param path a full path including arbitrary prefix, source, tile and extension `/{SOURCE}/{Z}/{X}/{Y}.mvt`
+     * @return contains the vectortile-data and some meta-information
      */
     async getVectortile(path: string): Promise<Vectortile> {
-        const mvt: Vectortile = { res: 0};
+        const mvt: Vectortile = { res: 0 };
         const s3 = new S3({ apiVersion: '2006-03-01' });
 
         // check for valid tile
         const tile = this.extractTile(path);
-        if(!tile) {
+        if (!tile) {
             const msg = `[ERROR] - Tile not correctly specified in '${path}'`;
             this.log.show(msg, LogLevels.ERROR);
             mvt.res = -2;
@@ -325,7 +327,7 @@ export class Tileserver {
 
         // check for valid source layer
         const source = this.extractSource(path);
-        if(!source) {
+        if (!source) {
             const msg = `[ERROR] - Source not correctly specified in '${path}'`;
             this.log.show(msg, LogLevels.ERROR);
             mvt.res = -3;
@@ -337,7 +339,7 @@ export class Tileserver {
         const query = this.buildQuery(source, wgs84BoundingBox, tile.z)
         this.log.show(query, LogLevels.DEBUG);
         let data: Buffer | null = null;
-        
+
         if (query) {
             const pgConfig = this.getClientConfig(source);
             this.log.show(pgConfig, LogLevels.TRACE);
@@ -354,13 +356,13 @@ export class Tileserver {
             // Empty query => empty tile
             const msg = `[INFO] - Empty query for '${path}'`;
             this.log.show(msg, LogLevels.INFO);
-            mvt.res = 1;    
+            mvt.res = 1;
             mvt.status = msg;
             data = Buffer.from("");
         }
 
         this.log.show(data, LogLevels.TRACE);
-        
+
         const uncompressedBytes = data.byteLength;
         if (this.gzip) mvt.data = await asyncgzip(data) as Buffer;
         else mvt.data = data;
@@ -376,7 +378,7 @@ export class Tileserver {
                     Bucket: this.cacheBucketName,
                     Key: `${source}/${tile.z}/${tile.x}/${tile.y}.mvt`,
                     ContentType: "application/vnd.mapbox-vector-tile",
-                    ContentEncoding: (this.gzip)?"gzip":"identity",
+                    ContentEncoding: (this.gzip) ? "gzip" : "identity",
                     CacheControl: "604800", // 7 days
                     // Metadata: {
                     //     "rawBytes": `${stats.uncompressedBytes}`,
@@ -394,5 +396,5 @@ export class Tileserver {
             this.log.show("[INFO] - env.CACHE_BUCKET not defined. Caching to S3 disabled.", LogLevels.INFO);
         }
         return mvt;
-    } 
+    }
 }
