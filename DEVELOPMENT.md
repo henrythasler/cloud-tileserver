@@ -88,6 +88,7 @@ Other (API Gateway, CloudFront, etc.) | `55 ms`
 ## Next Steps
 
 - Move database to [Serverless Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.how-it-works.html) to reduce monthly costs.
+- Evaluate [Data API for Aurora Serverless](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/data-api.html). Check performance.
 - Security-Review for Lambda-Code (e.g. SQL-Injection, ...)
 - Change all scripts to use Postgres environment variables (PGUSER, ...)
 - Omit Postgres credentials altogether and use IAM-role instead
