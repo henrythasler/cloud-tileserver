@@ -72,7 +72,7 @@ describe("getVectortile", function () {
         let expected: Vectortile = {
             res: 1,
             status: `[INFO] - Empty query for '${path}'`,
-            data: await <Buffer><unknown>asyncgzip("")
+            data: await asyncgzip("") as Buffer
         }
         let response = await dummyServer.getVectortile(path);
         expect(mockConnect.mock.calls.length).to.be.equal(0);
@@ -88,7 +88,7 @@ describe("getVectortile", function () {
         let path = "/local/14/8691/5677.mvt"
         let expected: Vectortile = {
             res: 0,
-            data: await <Buffer><unknown>asyncgzip("data")
+            data: await asyncgzip("data") as Buffer
         }
         let server = new Tileserver(config, "testBucket");
         let response = await server.getVectortile(path);
@@ -122,7 +122,7 @@ describe("getVectortile", function () {
         let path = "/local/14/8691/5677.mvt"
         let expected: Vectortile = {
             res: 0,
-            data: await <Buffer><unknown>asyncgzip("data")
+            data: await asyncgzip("data") as Buffer
         }
         let server = new Tileserver(config, undefined);
         let response = await server.getVectortile(path);
@@ -174,7 +174,7 @@ describe("getVectortile", function () {
         let expected: Vectortile = {
             res: 2,
             status: `[ERROR] - Could not putObject() to S3: simulated message`,
-            data: await <Buffer><unknown>asyncgzip("data"),
+            data: await asyncgzip("data") as Buffer
         }
         let server = new Tileserver(config, "testBucket");
         let response = await server.getVectortile(path);

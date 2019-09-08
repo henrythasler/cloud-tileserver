@@ -63,32 +63,20 @@ SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 
 ## Performance, Benchmarks & Timing
 
+![stack](docs/img/stack-with-timing.png)
+
 ### Setup
 
-1. 50 HTTP/2-Requests (IPv4) were made to `https://tileserver.cyclemap.link/local/14/8691/5677.mvt`
+1. 990 (+5 for warm-up) HTTP/2-Requests (IPv4) were made to `https://tileserver.cyclemap.link/local/14/8691/5677.mvt`
 2. Everything is deployed to `eu-central-1`
 3. Client timing was collected with curl (see `tools/benchmark.sh`)
 4. Lambda durations were collected from CloudWatch
 5. The raw results can be found in `docs/benchmark.ods`
 
-### Cold-start timing
-
-(coming soon)
-
-### Stationary response timing
-
-![Benchmark](docs/img/benchmark.png)
-
-Item | Average value
----|---
-Client waiting | `363 ms`
-Lambda duration | `308 ms`
-Other (API Gateway, CloudFront, etc.) | `55 ms`
-
 ## Next Steps
 
-- Move database to [Serverless Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.how-it-works.html) to reduce monthly costs.
-- Evaluate [Data API for Aurora Serverless](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/data-api.html). Check performance.
+- ~~Move database to [Serverless Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.how-it-works.html) to reduce monthly costs.~~ Won't do. Resume after pause is 30s+ and keeping 2 ACUs hot at all times is too expensive.
+- ~~Evaluate [Data API for Aurora Serverless](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/data-api.html).~~ Won't do. See above. According to [this review](https://www.jeremydaly.com/aurora-serverless-data-api-a-first-look/), performance also seems bad compared to API-calls.
 - Security-Review for Lambda-Code (e.g. SQL-Injection, ...)
 - Change all scripts to use Postgres environment variables (PGUSER, ...)
 - Omit Postgres credentials altogether and use IAM-role instead
