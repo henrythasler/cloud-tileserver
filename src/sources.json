@@ -5,10 +5,26 @@
       "database": "shapes",
       "layers": [
         {
-          "minzoom": 7,
+          "minzoom": 3,
           "name": "water",
-          "table": "public.simplified_water_polygons",
+          "table": "public.water_gen3",
           "variants": [
+            {
+              "minzoom": 4,
+              "table": "public.water_gen4"
+            },
+            {
+              "minzoom": 5,
+              "table": "public.water_gen5"
+            },
+            {
+              "minzoom": 6,
+              "table": "public.water_gen6"
+            },
+            {
+              "minzoom": 7,
+              "table": "public.simplified_water_polygons"
+            },
             {
               "minzoom": 8,
               "table": "public.water_polygons"
@@ -26,7 +42,7 @@
           "variants": [
             {
               "minzoom": 4,
-              "table": "public.bathymetry_gen3"
+              "table": "public.bathymetry_gen4"
             },
             {
               "minzoom": 5,

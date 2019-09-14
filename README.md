@@ -4,8 +4,6 @@
 
 Serve mapbox vectortiles via AWS stack.
 
-**THIS README IS WORK-IN-PROGRESS**
-
 ## Goals
 
 These are the main project goals:
@@ -32,6 +30,8 @@ Checked items are already fulfilled.
 2. Missing tiles are created via API Gateway and Lambda.
 
 ![](docs/img/CloudFront-tiles-simple.png)
+
+A more detailled description can be found in [DEVELOPMENT.md](DEVELOPMENT.md)
 
 ## Screenshots, Live Demo
 
@@ -73,7 +73,3 @@ extend | `number` | tile extent in pixels (see [ST_AsMVTGeom](https://postgis.ne
 buffer | `number` | buffer in pixels around each tile (see [ST_AsMVTGeom](https://postgis.net/docs/manual-dev/ST_AsMVTGeom.html)) | `256`
 clip_geom | `boolean` | clip geometries that lie outside the current tile incl. buffer (see [ST_AsMVTGeom](https://postgis.net/docs/manual-dev/ST_AsMVTGeom.html)) | `true`
 
-
-## Software Design, Implementation Details
-
-A more detailled description can be found in [DEVELOPMENT.md](DEVELOPMENT.md)

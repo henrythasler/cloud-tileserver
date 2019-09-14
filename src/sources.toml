@@ -3,9 +3,21 @@
   database = "shapes"
 
   [[sources.layers]]
-    minzoom   = 7
+    minzoom   = 3
     name      = "water"
-    table     = "public.simplified_water_polygons"
+    table     = "public.water_gen3"
+  [[sources.layers.variants]]
+      minzoom = 4
+      table   = "public.water_gen4"
+  [[sources.layers.variants]]
+      minzoom = 5
+      table   = "public.water_gen5"
+  [[sources.layers.variants]]
+      minzoom = 6
+      table   = "public.water_gen6"
+  [[sources.layers.variants]]
+      minzoom = 7
+      table   = "public.simplified_water_polygons"
   [[sources.layers.variants]]
       minzoom = 8
       table   = "public.water_polygons"
@@ -18,7 +30,7 @@
     postfix   = "ORDER BY depth"
   [[sources.layers.variants]]
       minzoom = 4
-      table   = "public.bathymetry_gen3"
+      table   = "public.bathymetry_gen4"
   [[sources.layers.variants]]
       minzoom = 5
       table   = "public.bathymetry"

@@ -77,11 +77,13 @@ SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 
 - ~~Move database to [Serverless Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.how-it-works.html) to reduce monthly costs.~~ Won't do. Resume after pause is 30s+ and keeping 2 ACUs hot at all times is too expensive.
 - ~~Evaluate [Data API for Aurora Serverless](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/data-api.html).~~ Won't do. See above. According to [this review](https://www.jeremydaly.com/aurora-serverless-data-api-a-first-look/), performance also seems bad compared to API-calls.
+- move terraform-state to s3-bucket.
 - Security-Review for Lambda-Code (e.g. SQL-Injection, ...)
 - Change all scripts to use Postgres environment variables (PGUSER, ...)
 - Omit Postgres credentials altogether and use IAM-role instead
 - move lambda-function out of VPC to reduce cold-start-time
 - Add raster endpoint with node-mapbox-gl-native to serve pre-rendered raster-images.
+- Check how blue-green deployments could be realized with API Gateway and Lambda.
 
 ## References
 
