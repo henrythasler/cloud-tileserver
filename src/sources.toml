@@ -62,15 +62,9 @@
 
   [[sources.layers]]
     name      = "landuse"
-    minzoom   = 8
-    table     = "import.landuse_gen8"
+    minzoom   = 10
+    table     = "import.landuse_gen10"
     keys      = ["osm_id as id", "subclass", "area", "name"]
-    [[sources.layers.variants]]
-      minzoom = 9
-      table   = "import.landuse_gen9"
-    [[sources.layers.variants]]
-      minzoom = 10
-      table   = "import.landuse_gen10"
     [[sources.layers.variants]]
       minzoom = 11
       table   = "import.landuse_gen11"
@@ -115,21 +109,24 @@
       table   = "import.landcover"
 
   [[sources.layers]]
-    name      = "waterway"
-    minzoom   = 8
-    table     = "import.waterway_gen8"
+    name    = "waterway"
+    minzoom = 8
+    table   = "import.waterway_gen8"
     keys    = ["osm_id as id", "subclass", "tunnel", "layer", "name"]
+    where   = ["subclass IN('river', 'canal')"]
     [[sources.layers.variants]]
       minzoom = 10
       table   = "import.waterway_gen10"
     [[sources.layers.variants]]
       minzoom = 12
       table   = "import.waterway_gen12"
+      where   = ["subclass IN('river', 'canal', 'stream')"]
     [[sources.layers.variants]]
       minzoom = 14
       table   = "import.waterway"
       keys    = ["osm_id as id", "subclass", "tunnel", "layer", "CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name"]      
-
+      where   = []
+      
   [[sources.layers]]
     name      = "waterarea"
     minzoom   = 8

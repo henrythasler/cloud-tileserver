@@ -90,8 +90,8 @@
       "layers": [
         {
           "name": "landuse",
-          "minzoom": 8,
-          "table": "import.landuse_gen8",
+          "minzoom": 10,
+          "table": "import.landuse_gen10",
           "keys": [
             "osm_id as id",
             "subclass",
@@ -99,14 +99,6 @@
             "name"
           ],
           "variants": [
-            {
-              "minzoom": 9,
-              "table": "import.landuse_gen9"
-            },
-            {
-              "minzoom": 10,
-              "table": "import.landuse_gen10"
-            },
             {
               "minzoom": 11,
               "table": "import.landuse_gen11"
@@ -183,6 +175,9 @@
             "layer",
             "name"
           ],
+          "where": [
+            "subclass IN('river', 'canal')"
+          ],
           "variants": [
             {
               "minzoom": 10,
@@ -190,7 +185,10 @@
             },
             {
               "minzoom": 12,
-              "table": "import.waterway_gen12"
+              "table": "import.waterway_gen12",
+              "where": [
+                "subclass IN('river', 'canal', 'stream')"
+              ]
             },
             {
               "minzoom": 14,
@@ -201,7 +199,8 @@
                 "tunnel",
                 "layer",
                 "CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name"
-              ]
+              ],
+              "where": []
             }
           ]
         },
