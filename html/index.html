@@ -124,7 +124,7 @@
             });
         }
 
-        Promise.all([loadJson("map.json"), loadJson("layers.json")]).then(function (responses) {
+        Promise.all([loadJson("map.json"), loadJson("x-ray.json")]).then(function (responses) {
             // responses contains the parsed JSON objects in the order of requests
             setupMap(responses[0], responses[1]);
         }).catch(function (error) {
@@ -440,6 +440,15 @@
             var layerButton = new anotherButton({ action: toggleLayer, type: "hillshading" });
             map.addControl(layerButton, "top-right");
 
+            function updateStyle() {
+                let features = map.getSource('local')
+                // let features = map.querySourceFeatures("local", {sourceLayer: "roads"});
+                console.log(features);
+                // for (let i = 0; i < features.length; i++) { 
+                //     console.log(features[i]);
+                // }
+            }
+            // map.on('moveend', updateStyle);
         }
     </script>
 </body>
