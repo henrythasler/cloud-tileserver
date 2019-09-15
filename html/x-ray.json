@@ -75,6 +75,17 @@
     }
   },  
   {
+    "id": "cycleroute",
+    "type": "line",
+    "source": "local",
+    "source-layer": "cycleroute",
+    "paint": {
+      "line-color": "rgba(0, 192, 192, 1)",
+      "line-dasharray": [1.2, 5],        
+      "line-width": 3
+    }
+  },  
+  {
     "id": "transportation",
     "type": "line",
     "source": "local",
@@ -145,6 +156,16 @@
     "paint": {
       "circle-radius": 3.5,
       "circle-color": "#0aa"
+    }
+  },
+  {
+    "id": "piste",
+    "type": "line",
+    "source": "local",
+    "source-layer": "piste",
+    "paint": {
+      "line-color": "#0aa",
+      "line-width": 1
     }
   },
   {
