@@ -227,7 +227,7 @@
     name      = "railway"
     table     = "import.railway"
     keys      = ["id", "class", "subclass", "zorder", "bridge", "tunnel", "service"]
-    where     = ["subclass NOT IN('subway', 'tram')", "(attraction <> '') IS NOT TRUE"]
+    where     = ["subclass NOT IN('subway', 'tram')", "(attraction <> '') IS NOT TRUE", "(service <> '') IS NOT TRUE"]
     [[sources.layers.variants]]
       minzoom   = 15
       where     = ["(attraction <> '') IS NOT TRUE"]

@@ -336,7 +336,8 @@
           ],
           "where": [
             "subclass NOT IN('subway', 'tram')",
-            "(attraction <> '') IS NOT TRUE"
+            "(attraction <> '') IS NOT TRUE",
+            "(service <> '') IS NOT TRUE"
           ],
           "variants": [
             {
