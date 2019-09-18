@@ -1,0 +1,227 @@
+[
+  {
+    "id": "background",
+    "type": "background",
+    "paint": {
+      "background-color": "#000"
+    }
+  },
+  {
+    "id": "water-ocean",
+    "type": "fill",
+    "source": "global",
+    "source-layer": "water",
+    "paint": {
+      "fill-color": "#012",
+      "fill-outline-color": "rgba(0,0,0,0)"
+    }
+  },
+  {
+    "id": "landcover",
+    "type": "fill",
+    "source": "local",
+    "source-layer": "landcover",
+    "paint": {
+      "fill-color": "#120"
+    }
+  },
+  {
+    "id": "landuse",
+    "type": "fill",
+    "source": "local",
+    "source-layer": "landuse",
+    "paint": {
+      "fill-color": "#222"
+    }
+  },  
+  {
+    "id": "roads",
+    "type": "line",
+    "source": "local",
+    "source-layer": "roads",
+    "paint": {
+      "line-color": "#0a0",
+      "line-width": 1
+    }
+  },  
+  {
+    "id": "waterway",
+    "type": "line",
+    "source": "local",
+    "source-layer": "waterway",
+    "paint": {
+      "line-color": "#00a",
+      "line-width": 1
+    }
+  },
+  {
+    "id": "waterarea",
+    "type": "fill",
+    "source": "local",
+    "source-layer": "waterarea",
+    "paint": {
+      "fill-color": "#239",
+      "fill-outline-color": "rgba(0,0,0,0)"
+    }
+  },  
+  {
+    "id": "railway",
+    "type": "line",
+    "source": "local",
+    "source-layer": "railway",
+    "paint": {
+      "line-color": "#aa0",
+      "line-width": 1
+    }
+  },  
+  {
+    "id": "cycleroute",
+    "type": "line",
+    "source": "local",
+    "source-layer": "cycleroute",
+    "paint": {
+      "line-color": "rgba(0, 192, 192, 1)",
+      "line-dasharray": [1.2, 5],        
+      "line-width": 3
+    }
+  },  
+  {
+    "id": "transportation",
+    "type": "line",
+    "source": "local",
+    "source-layer": "transportation",
+    "paint": {
+      "line-color": "#a0a",
+      "line-width": 1
+    }
+  },  
+  {
+    "id": "admin",
+    "type": "line",
+    "source": "local",
+    "source-layer": "admin",
+    "paint": {
+      "line-color": "#aaa",
+      "line-width": 1
+    }
+  },
+  {
+    "id": "buildings",
+    "type": "fill",
+    "source": "local",
+    "source-layer": "buildings",
+    "paint": {
+      "fill-color": "#666",
+      "fill-outline-color": "rgba(0,0,0,0)"
+    }
+  },
+  {
+    "id": "buildings-large",
+    "type": "fill",
+    "source": "local",
+    "source-layer": "buildings-large",
+    "paint": {
+      "fill-color": "#666",
+      "fill-outline-color": "rgba(0,0,0,0)"
+    }
+  },
+  {
+    "id": "manmade-fill",
+    "type": "fill",
+    "source": "local",
+    "source-layer": "manmade",
+    "filter": ["==", ["geometry-type"], "Polygon"],    
+    "paint": {
+      "fill-color": "#0aa",
+      "fill-outline-color": "rgba(0,0,0,0)"
+    }
+  },
+  {
+    "id": "manmade-line",
+    "type": "line",
+    "source": "local",
+    "source-layer": "manmade",
+    "filter": ["==", ["geometry-type"], "LineString"],    
+    "paint": {
+      "line-color": "#0aa",
+      "line-width": 1
+    }
+  },
+  {
+    "id": "manmade-point",
+    "type": "circle",
+    "source": "local",
+    "source-layer": "manmade",
+    "filter": ["==", ["geometry-type"], "Point"],    
+    "paint": {
+      "circle-radius": 3.5,
+      "circle-color": "#0aa"
+    }
+  },
+  {
+    "id": "piste",
+    "type": "line",
+    "source": "local",
+    "source-layer": "piste",
+    "paint": {
+      "line-color": "#0aa",
+      "line-width": 1
+    }
+  },
+  {
+    "id": "poi",
+    "type": "circle",
+    "source": "local",
+    "source-layer": "poi",
+    "paint": {
+      "circle-radius": [
+        "interpolate", ["exponential", 2], ["zoom"],
+        8, 1.5,
+        14, 4
+      ],
+      "circle-color": "#a0a"
+    }
+  },
+  {
+    "id": "label",
+    "type": "circle",
+    "source": "local",
+    "source-layer": "label",
+    "paint": {
+      "circle-radius": [
+        "interpolate", ["exponential", 2], ["zoom"],
+        8, 1.5,
+        14, 4
+      ],
+      "circle-color": "#a0a"
+    }
+  },
+  {
+    "id": "waterlabels",
+    "type": "circle",
+    "source": "local",
+    "source-layer": "waterlabels",
+    "paint": {
+      "circle-radius": [
+        "interpolate", ["exponential", 2], ["zoom"],
+        8, 1.5,
+        14, 4
+      ],
+      "circle-color": "#a0a"
+    }
+  },
+  {
+    "id": "housenumbers",
+    "type": "circle",
+    "source": "local",
+    "source-layer": "housenumbers",
+    "paint": {
+      "circle-radius": [
+        "interpolate", ["exponential", 2], ["zoom"],
+        8, 1.5,
+        14, 4
+      ],
+      "circle-color": "#aaa"
+    }
+  }
+]

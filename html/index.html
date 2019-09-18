@@ -63,6 +63,21 @@
         .anotherButton:hover {
             background-color: rgba(0, 0, 0, 0.05);
         }
+
+        .someList {
+            display: block;
+        }
+
+        .small {
+            font-family: "Open Sans", "Helvetica Neue", Arial, Helvetica, sans-serif;
+            font-size: 15px;
+            box-shadow: 0 0 10px 2px rgba(0, 0, 0, .1);
+            color: rgba(0, 0, 0, 0.75);
+            border-radius: 4px;
+            border: 0;
+            padding: 4px 2px;
+            background-color: transparent;
+        }
     </style>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.css' rel='stylesheet' />
@@ -105,6 +120,8 @@
 
     <script type="text/javascript">
 
+        var styles = ["cyclemap", "xray"];
+
         function loadJson(file) {
             return new Promise(function (resolve, reject) {
                 var request = new XMLHttpRequest();
@@ -124,7 +141,7 @@
             });
         }
 
-        Promise.all([loadJson("map.json"), loadJson("layers.json")]).then(function (responses) {
+        Promise.all([loadJson(`${styles[0]}-base.json`), loadJson(`${styles[0]}-layers.json`)]).then(function (responses) {
             // responses contains the parsed JSON objects in the order of requests
             setupMap(responses[0], responses[1]);
         }).catch(function (error) {
@@ -213,6 +230,55 @@
                 localGeocoder: coordinatesGeocoder,
                 collapsed: true
             }));
+
+            class someList {
+                constructor(options) {
+                    this.options = options;
+                }
+                onAdd(map) {
+                    this._map = map;
+                    this._container = document.createElement('div');
+                    this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+
+                    this._list = document.createElement('select');
+                    this._list.className = `someList ${this.options.type}`;
+                    this._list.action = this.options.action;
+                    this._list.title = this.options.title;
+                    this._list['aria-label'] = `Export ${this.options.type}`;
+                    this._list.onchange = function (e) {
+                        this.action({ element: e.target });
+                    }
+
+                    for (var item of this.options.items) {
+                        var listOption = document.createElement("option");
+                        listOption.value = item;
+                        listOption.text = item;
+                        this._list.appendChild(listOption);
+                    }
+                    this._container.appendChild(this._list);
+                    return this._container;
+                }
+
+                onRemove() {
+                    this._container.removeChild(this._container);
+                    this._map = undefined;
+                }
+            }
+
+            function loadStyle(e) {
+                let newStyle = e.element.options[e.element.selectedIndex].value
+                Promise.all([loadJson(`${newStyle}-base.json`), loadJson(`${newStyle}-layers.json`)]).then(function (responses) {
+                    // responses contains the parsed JSON objects in the order of requests
+                    let styleJson = responses[0]
+                    styleJson.layers = responses[1];
+                    map.setStyle(styleJson);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+
+            var styleButton = new someList({ action: loadStyle, items: styles, type: "small", title: "Choose Style" });
+            map.addControl(styleButton, "top-right");
 
             map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right');
             map.addControl(new mapboxgl.FullscreenControl());
@@ -411,6 +477,7 @@
                     this._btn = document.createElement('a');
                     this._btn.className = `anotherButton ${this.options.type}`;
                     this._btn.options = this.options;
+                    this._btn.title = this.options.title;
                     this._btn['aria-label'] = `Export ${this.options.type}`;
                     this._btn.onclick = function (e) {
                         this.options.action({ element: e.target, type: this.options.type });
@@ -431,14 +498,15 @@
                 map.setLayoutProperty(options.type, 'visibility', (visibility === 'none') ? 'visible' : 'none');
             }
 
-            var jsonButton = new anotherButton({ action: exportData, type: "json" });
+            var jsonButton = new anotherButton({ action: exportData, type: "json", title: "Download as GeoJSON" });
             map.addControl(jsonButton, "top-left");
 
-            var gpxButton = new anotherButton({ action: exportData, type: "gpx" });
+            var gpxButton = new anotherButton({ action: exportData, type: "gpx", title: "Download as GPX" });
             map.addControl(gpxButton, "top-left");
 
-            var layerButton = new anotherButton({ action: toggleLayer, type: "hillshading" });
-            map.addControl(layerButton, "top-right");
+            var hillshadingButton = new anotherButton({ action: toggleLayer, type: "hillshading", title: "Toggle Hillshading" });
+            map.addControl(hillshadingButton, "top-right");
+
 
         }
     </script>
