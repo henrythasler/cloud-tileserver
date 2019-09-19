@@ -3,9 +3,10 @@ import { Tileserver, Vectortile } from "./tileserver";
 import configJSON from "./sources.json";
 
 
-const cacheBucketName = process.env.CACHE_BUCKET || ""
+const cacheBucketName = process.env.CACHE_BUCKET || "";
+const gzip = process.env.GZIP?process.env.GZIP!=="false":true;
 const logLevel = (process.env.LOG_LEVEL)?parseInt(process.env.LOG_LEVEL):undefined;
-const tileserver: Tileserver = new Tileserver(configJSON, cacheBucketName, logLevel);
+const tileserver: Tileserver = new Tileserver(configJSON, cacheBucketName, logLevel, gzip);
 
 interface Event {
     path: string
@@ -19,7 +20,7 @@ export const handler: Handler = async (event: Event, context: Context): Promise<
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/vnd.mapbox-vector-tile',
-                'Content-Encoding': 'gzip',
+                'Content-Encoding': (gzip) ? "gzip" : "identity",
                 'access-control-allow-origin': '*'
             },
             body: vectortile.data.toString('base64'),

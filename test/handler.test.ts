@@ -1,3 +1,5 @@
+process.env.CACHE_BUCKET = "sampleBucket";
+
 import { handler } from "../src/index";
 import { Context } from 'aws-lambda';
 import { expect } from "chai";
@@ -18,10 +20,11 @@ jest.mock('pg', () => ({
 }));
 
 /** Setup mocks for aws */
+const mockPutObject = jest.fn().mockReturnValue({ promise: () => { return Promise.resolve({}) } })
 jest.mock('aws-sdk', () => {
     return {
         S3: jest.fn(() => ({
-            putObject: jest.fn().mockReturnValue({ promise: () => { return Promise.resolve({}) } })
+            putObject: mockPutObject
         }))
     };
 });
@@ -45,9 +48,14 @@ const ctx: Context = {
 }
 
 describe("handler", function () {
+
+    beforeEach(() => {
+        mockPutObject.mockClear();
+    });
+
     it("regular request", async function () {
         let response = await handler({ path: "/local/14/8691/5677.mvt" }, ctx, () => { });
-        let gzipped = await <Buffer><unknown>asyncgzip("data");
+        let gzipped = await asyncgzip("data") as Buffer;
         expect(response).to.deep.equal({
             statusCode: 200,
             headers: {
@@ -58,6 +66,7 @@ describe("handler", function () {
             body: gzipped.toString('base64'),
             isBase64Encoded: true
         });
+        expect(mockPutObject.mock.calls.length).to.be.equal(1);
     });
 
     it("simulate error", async function () {
@@ -72,5 +81,6 @@ describe("handler", function () {
             body: '{"res":-2,"status":"[ERROR] - Tile not correctly specified in \'invalid\'"}',
             isBase64Encoded: false
         });
+        expect(mockPutObject.mock.calls.length).to.be.equal(0);
     });    
 });
