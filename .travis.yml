@@ -16,6 +16,6 @@ deploy:
   region: "eu-central-1"
   role: "arn:aws:iam::324094553422:role/tileserver_role"  
   runtime: "nodejs10.x"
-  handler_name: "index.handler"
+  handler_name: "handler"
   on:
     branch: master

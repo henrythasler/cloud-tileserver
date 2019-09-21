@@ -114,10 +114,8 @@ describe('environmental variables', () => {
 
     it("GZIP=false", async function () {
         process.env.GZIP = "false";
-        console.log(process.env);
         const index = require('../src/index');
         const response = await index.handler({ path: "/local/14/8691/5677.mvt" }, ctx, () => { });
-        console.log(response);
         expect(response).to.deep.equal({
             statusCode: 200,
             headers: {
