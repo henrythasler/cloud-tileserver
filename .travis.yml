@@ -9,8 +9,8 @@ script:
   - npm run test && sonar-scanner
 
 before_deploy:
-  - rpm run predeploy
-  
+  - npm run predeploy
+
 # see `https://docs.travis-ci.com/user/deployment/lambda/` for instructions
 # see `terraform/tileserver-lambda.tf` for values
 deploy:
