@@ -8,6 +8,9 @@ addons:
 script:
   - npm run test && sonar-scanner
 
+before_deploy:
+  - rpm run predeploy
+  
 # see `https://docs.travis-ci.com/user/deployment/lambda/` for instructions
 # see `terraform/tileserver-lambda.tf` for values
 deploy:
@@ -17,5 +20,6 @@ deploy:
   role: "arn:aws:iam::324094553422:role/tileserver_role"  
   runtime: "nodejs10.x"
   handler_name: "handler"
+  zip: "dist/function.zip"
   on:
     branch: master
