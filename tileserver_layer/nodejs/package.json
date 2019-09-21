@@ -1,13 +1,17 @@
 {
   "name": "pg_layer",
   "version": "1.0.0",
-  "description": "",
+  "description": "Layer for tileserver lambda-function",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henrythasler/cloud-tileserver.git"
+  },  
+  "author": "Henry Thasler",
+  "license": "MIT",
   "dependencies": {
     "pg": "^7.11.0"
   }
