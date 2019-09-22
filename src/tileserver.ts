@@ -44,7 +44,8 @@ export interface Common {
     maxzoom?: number,
     prefix?: string,
     postfix?: string,
-    sql?: string
+    sql?: string,
+    namespace?: string
 }
 
 export interface Variants extends Common {
@@ -189,6 +190,7 @@ export class Tileserver {
         const clip_geom: boolean = (resolved.clip_geom !== undefined) ? resolved.clip_geom : ((source.clip_geom !== undefined) ? source.clip_geom : true);
         const prefix: string = (resolved.prefix !== undefined) ? resolved.prefix : ((source.prefix !== undefined) ? source.prefix : "");
         const postfix: string = (resolved.postfix !== undefined) ? resolved.postfix : ((source.postfix !== undefined) ? source.postfix : "");
+        const namespace: string = (resolved.namespace !== undefined) ? `${resolved.namespace}.` : ((source.namespace !== undefined) ? `${source.namespace}.` : "");
 
         let keys: string = "";
         if (source.keys && source.keys.length) {
@@ -219,7 +221,7 @@ export class Tileserver {
             ${buffer},
             ${clip_geom}
             ) AS geom${keys}
-        FROM ${resolved.table} WHERE (${geom} && ${bbox})${where}${postfix}) AS q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/\s+/g, ' ');
+        FROM ${namespace}${resolved.table} WHERE (${geom} && ${bbox})${where}${postfix}) AS q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/\s+/g, ' ');
         }
     }
 

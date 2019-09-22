@@ -267,6 +267,23 @@ describe("resolveLayerProperties", function () {
         });
     });
 
+    it("layer with namespace", function () {
+        let resolved: Layer | null = dummy.resolveLayerProperties({
+            name: "name",
+            namespace: "import.",
+            table: "table",
+            variants: [{
+                minzoom: 11,
+            }]
+        }, 11);
+        expect(resolved).to.deep.equal({
+            name: "name",
+            namespace: "import.",
+            table: "table",
+            minzoom: 11
+        });
+    });    
+
     it("layer w/o any variants gets rejected due to zoom", function () {
         let resolved: Layer | null = dummy.resolveLayerProperties({
             name: "name",

@@ -1,7 +1,8 @@
 [[sources]]
   name = "local"
+  namespace = "import"
 
   [[sources.layers]]
     name      = "landuse"
     minzoom   = 8
-    table     = "import.landuse_gen8"
+    table     = "landuse_gen8"

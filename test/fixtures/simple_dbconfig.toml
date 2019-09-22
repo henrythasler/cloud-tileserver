@@ -9,4 +9,5 @@
   [[sources.layers]]
     name      = "landuse"
     minzoom   = 8
-    table     = "import.landuse_gen8"
+    namespace = "import"
+    table     = "landuse_gen8"

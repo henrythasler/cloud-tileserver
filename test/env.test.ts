@@ -1,4 +1,3 @@
-import { handler } from "../src/index";
 import { Context } from 'aws-lambda';
 import { expect } from "chai";
 

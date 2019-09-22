@@ -18,19 +18,19 @@ jest.mock('pg', () => ({
     }
 }));
 
-const testAssetsPath = "test/assets/";
+const fixturesPath = "test/fixtures/";
 const testOutputPath = "test/out/";
 
 describe("getClientConfig", function () {
     it("empty config", function () {
-        let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}simple.toml`, "utf8"));
+        let config = parse(readFileSync(`${fixturesPath}simple.toml`, "utf8")) as unknown as Config;
         let server = new Tileserver(config, "testBucket");
         let pgconfig: ClientConfig = server.getClientConfig("local");
         expect(pgconfig).to.be.empty;
     });
 
     it("full database config", function () {
-        let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}simple_dbconfig.toml`, "utf8"));
+        let config = parse(readFileSync(`${fixturesPath}simple_dbconfig.toml`, "utf8")) as unknown as Config;
         let server = new Tileserver(config, "testBucket");
         let pgconfig: ClientConfig = server.getClientConfig("local");
         expect(pgconfig).to.deep.equal({
@@ -43,7 +43,7 @@ describe("getClientConfig", function () {
     });
 
     it("source not found", function () {
-        let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}simple_dbconfig.toml`, "utf8"));
+        let config = parse(readFileSync(`${fixturesPath}simple_dbconfig.toml`, "utf8")) as unknown as Config;
         let server = new Tileserver(config, "testBucket");
         let pgconfig: ClientConfig = server.getClientConfig("unknown");
         expect(pgconfig).to.be.empty;
@@ -59,7 +59,7 @@ describe("fetchTileFromDatabase", function () {
 
     it("regular response", async function () {
         mockQuery.mockResolvedValue({ rows: [{ mvt: Buffer.from("data") }, { mvt: Buffer.from("something") }] })        
-        let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}simple.toml`, "utf8"));
+        let config = parse(readFileSync(`${fixturesPath}simple.toml`, "utf8")) as unknown as Config;
         let server = new Tileserver(config, "testBucket");
         let pgconfig: ClientConfig = server.getClientConfig("local");
 
@@ -70,7 +70,7 @@ describe("fetchTileFromDatabase", function () {
 
     it("row not found", async function () {
         mockQuery.mockResolvedValue({ rows: [{ wrong: Buffer.from("data") }, { mvt: Buffer.from("something") }] })
-        let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}simple.toml`, "utf8"));
+        let config = parse(readFileSync(`${fixturesPath}simple.toml`, "utf8")) as unknown as Config;
         let server = new Tileserver(config, "testBucket");
         let pgconfig: ClientConfig = server.getClientConfig("local");
 

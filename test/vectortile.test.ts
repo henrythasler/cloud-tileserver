@@ -8,10 +8,10 @@ const asyncgzip = promisify(gzip);
 
 import "jest";
 
-const testAssetsPath = "test/assets/";
+const fixturesPath = "test/fixtures/";
 const testOutputPath = "test/out/";
 
-const config = <Config><unknown>parse(readFileSync(`${testAssetsPath}simple.toml`, "utf8"));
+const config = parse(readFileSync(`${fixturesPath}simple.toml`, "utf8")) as unknown as Config;
 const dummyServer = new Tileserver({ sources: [] }, "testBucket");
 
 /** Setup mocks for pg */

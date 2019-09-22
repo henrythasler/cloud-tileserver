@@ -1,4 +1,4 @@
-import { Projection, Tile, WGS84BoundingBox } from "../src/projection";
+import { Projection, WGS84BoundingBox } from "../src/projection";
 import { Tileserver, Config } from "../src/tileserver";
 import { expect } from "chai";
 import { readFileSync } from "fs";
@@ -8,7 +8,7 @@ import "jest";
 
 const proj = new Projection();
 const tileserver = new Tileserver({ sources: [] }, "testBucket")
-const testAssetsPath = "test/assets/";
+const fixturesPath = "test/fixtures/";
 const testOutputPath = "test/out/";
 
 describe("buildLayerQuery", function () {
@@ -234,10 +234,10 @@ describe("buildLayerQuery", function () {
 describe("buildQuery", function () {
     it("simple query", function () {
         let bbox: WGS84BoundingBox = proj.getWGS84TileBounds({ x: 4383, y: 2854, z: 13 });
-        let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}simple.toml`, "utf8"));
+        let config = parse(readFileSync(`${fixturesPath}simple.toml`, "utf8")) as unknown as Config;
         let server = new Tileserver(config, "testBucket");
         let query: string | null = server.buildQuery("local", bbox, 13);
-        let expected = readFileSync(`${testAssetsPath}simple_z13.sql`, "utf8")
+        let expected = readFileSync(`${fixturesPath}simple_z13.sql`, "utf8")
             .replace(/!BBOX!/g, `${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}`)
             .replace(/\s+/g, ' ');
         expect(query).to.be.equal(expected);
@@ -245,10 +245,10 @@ describe("buildQuery", function () {
 
     it("prevent duplication of name fields in layers as per spec", function () {
         let bbox: WGS84BoundingBox = proj.getWGS84TileBounds({ x: 4383, y: 2854, z: 13 });
-        let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}duplicate_layername.toml`, "utf8"));
+        let config = parse(readFileSync(`${fixturesPath}duplicate_layername.toml`, "utf8")) as unknown as Config;
         let server = new Tileserver(config, "testBucket", 1);
         let query: string | null = server.buildQuery("local", bbox, 13);
-        let expected = readFileSync(`${testAssetsPath}simple_z13.sql`, "utf8")
+        let expected = readFileSync(`${fixturesPath}simple_z13.sql`, "utf8")
             .replace(/!BBOX!/g, `${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}`)
             .replace(/\s+/g, ' ');
         expect(query).to.be.equal(expected);
@@ -256,10 +256,21 @@ describe("buildQuery", function () {
 
     it("empty query due to zoom", function () {
         let bbox: WGS84BoundingBox = proj.getWGS84TileBounds({ x: 4383, y: 2854, z: 13 });
-        let config = <Config><unknown>parse(readFileSync(`${testAssetsPath}simple.toml`, "utf8"));
+        let config = parse(readFileSync(`${fixturesPath}simple.toml`, "utf8")) as unknown as Config;
         let server = new Tileserver(config, "testBucket");
         let query: string | null = server.buildQuery("local", bbox, 7);
         expect(query).to.be.equal("");
     });
+
+    it("layer with namespace", function () {
+        let bbox: WGS84BoundingBox = proj.getWGS84TileBounds({ x: 4383, y: 2854, z: 13 });
+        let config = parse(readFileSync(`${fixturesPath}simple_dbconfig.toml`, "utf8")) as unknown as Config;
+        let server = new Tileserver(config, "testBucket");
+        let query: string | null = server.buildQuery("local", bbox, 13);
+        let expected = readFileSync(`${fixturesPath}simple_z13.sql`, "utf8")
+            .replace(/!BBOX!/g, `${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}`)
+            .replace(/\s+/g, ' ');
+        expect(query).to.be.equal(expected);
+    }); 
 
 });
