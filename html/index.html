@@ -151,7 +151,7 @@
         function setupMap(myStyle, layers) {
             myStyle.layers = layers;
             // TODO: Enter your mapbox gl access token on the line below
-            mapboxgl.accessToken = 'pk.eyJ1IjoibXljeWNsZW1hcCIsImEiOiJjaXJhYnoxcGEwMDRxaTlubnk3cGZpbTBmIn0.TEO9UhyyX1nFKDTwO4K1xg'
+            mapboxgl.accessToken = 'pk.eyJ1IjoibXljeWNsZW1hcCIsImEiOiJjaXJhYnoxcGEwMDRxaTlubnk3cGZpbTBmIn0.TEO9UhyyX1nFKDTwO4K1xg';
             var map = new mapboxgl.Map({
                 container: 'map',
                 style: myStyle,
@@ -247,7 +247,7 @@
                     this._list['aria-label'] = `Export ${this.options.type}`;
                     this._list.onchange = function (e) {
                         this.action({ element: e.target });
-                    }
+                    };
 
                     for (var item of this.options.items) {
                         var listOption = document.createElement("option");
@@ -366,8 +366,6 @@
                 var data = draw.getAll();
                 var distanceContainer = document.getElementById('distance');
                 if (data.features.length > 0) {
-                    var distance = turf.length(data);
-
                     distanceContainer.innerHTML = '';
                     var value = document.createElement('pre');
                     value.textContent = 'Distance: ' + (Math.round(turf.lineDistance(data, { units: 'kilometers' }) * 100) / 100).toLocaleString() + 'km';
@@ -396,7 +394,6 @@
                 let files = evt.dataTransfer.files; // FileList object.
 
                 // files is a FileList of File objects. List some properties.
-                let output = [];
                 for (let i = 0, f; f = files[i]; i++) {
                     console.log(escape(f.name) + ', ' + f.size + ' Bytes');
                     let reader = new FileReader();
@@ -411,7 +408,7 @@
 
                             }
                             else if (f.name.endsWith(".json")) {
-                                newFeatures = JSON.parse(e.target.result)
+                                newFeatures = JSON.parse(e.target.result);
                             }
                             else {
                                 return;
@@ -481,7 +478,7 @@
                     this._btn['aria-label'] = `Export ${this.options.type}`;
                     this._btn.onclick = function (e) {
                         this.options.action({ element: e.target, type: this.options.type });
-                    }
+                    };
 
                     this._container.appendChild(this._btn);
                     return this._container;
