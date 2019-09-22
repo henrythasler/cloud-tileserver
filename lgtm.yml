@@ -1,0 +1,19 @@
+##########################################################################################
+# Customize file classifications.                                                        #
+# Results from files under any classifier will be excluded from LGTM                     #
+# statistics.                                                                            #
+##########################################################################################
+
+##########################################################################################
+# Use the `path_classifiers` block to define changes to the default classification of    #
+# files.                                                                                 #
+##########################################################################################
+
+path_classifiers:
+  # The default behavior is to tag library code as `library`. Results are hidden 
+  # for library code. You can tag further files as being library code by adding them
+  # to the `library` section.
+  library:
+    - exclude: html/togpx.js
+    - exclude: html/togeojson.js
+
