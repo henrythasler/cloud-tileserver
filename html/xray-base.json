@@ -18,7 +18,5 @@
       ]
     }
   },
-  "sprite": "https://www.cyclemap.link/sprites/cyclemap",
-  "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
   "layers": []
 }
