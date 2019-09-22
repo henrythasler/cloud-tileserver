@@ -1,0 +1,28 @@
+[{
+        "id": "background",
+        "type": "background",
+        "paint": {
+            "background-color": "#eee"
+        }
+    },
+    {
+        "id": "water-ocean",
+        "type": "fill",
+        "source": "global",
+        "source-layer": "water",
+        "paint": {
+            "fill-color": "#444",
+            "fill-outline-color": "rgba(0,0,0,0)"
+        }
+    },
+    {
+        "id": "roads",
+        "type": "line",
+        "source": "local",
+        "source-layer": "roads",
+        "paint": {
+          "line-color": "#444",
+          "line-width": 1
+        }
+    }    
+]
