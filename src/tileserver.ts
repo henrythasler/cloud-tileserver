@@ -15,7 +15,7 @@ export enum LogLevels { SILENT = 1, ERROR, INFO, DEBUG, TRACE }
  * @param level log-level
  */
 export class Log {
-    loglevel: LogLevels = LogLevels.ERROR;
+    loglevel: LogLevels;
 
     constructor(level?: LogLevels) {
         this.loglevel = (level) ? level : LogLevels.DEBUG;
@@ -336,13 +336,12 @@ export class Tileserver {
         }
 
         const wgs84BoundingBox = this.proj.getWGS84TileBounds(tile);
-        const query = this.buildQuery(source, wgs84BoundingBox, tile.z)
+        const query = this.buildQuery(source, wgs84BoundingBox, tile.z);
         this.log.show(query, LogLevels.DEBUG);
         let data: Buffer | null = null;
 
         if (query) {
             const pgConfig = this.getClientConfig(source);
-            this.log.show(pgConfig, LogLevels.TRACE);
             try {
                 data = await this.fetchTileFromDatabase(query, pgConfig);
             } catch (error) {
