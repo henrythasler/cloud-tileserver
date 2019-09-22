@@ -1,8 +1,11 @@
 # Cloud-Tileserver
 
-[![Build Status](https://travis-ci.org/henrythasler/cloud-tileserver.svg?branch=master)](https://travis-ci.org/henrythasler/cloud-tileserver) [![Coverage Status](https://coveralls.io/repos/github/henrythasler/cloud-tileserver/badge.svg?branch=master)](https://coveralls.io/github/henrythasler/cloud-tileserver?branch=master) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=henrythasler_cloud-tileserver&metric=alert_status)](https://sonarcloud.io/dashboard?id=henrythasler_cloud-tileserver)
+[![Build Status](https://travis-ci.org/henrythasler/cloud-tileserver.svg?branch=master)](https://travis-ci.org/henrythasler/cloud-tileserver) [![Coverage Status](https://coveralls.io/repos/github/henrythasler/cloud-tileserver/badge.svg?branch=master)](https://coveralls.io/github/henrythasler/cloud-tileserver?branch=master) 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=henrythasler_cloud-tileserver&metric=alert_status)](https://sonarcloud.io/dashboard?id=henrythasler_cloud-tileserver) 
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/henrythasler/cloud-tileserver.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/henrythasler/cloud-tileserver/alerts/) 
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/henrythasler/cloud-tileserver.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/henrythasler/cloud-tileserver/context:javascript)
 
-Serve mapbox vectortiles via AWS stack.
+Serve mapbox vectortiles via AWS stack. Please visit the [Wiki](https://github.com/henrythasler/cloud-tileserver/wiki) for installation instructions.
 
 ## Goals
 
@@ -40,36 +43,3 @@ The Live-Demo is available at: [cyclemap.link](https://cyclemap.link)
 [![](docs/img/map_screenshot.png)](https://cyclemap.link/#15/48.17374/11.54676)
 
 [![](docs/img/map_screenshot2.png)](https://cyclemap.link/#14/47.01863/11.5046)
-
-### TOML Source-Definition file
-
-The Lambda-function is configured via a toml-file (`sources.toml`). during the build-process. The TOML-File **should** contain an array of `sources`. Each source **may** contain properties and **should** contain an array of `layers`. Each Layer **may** contain properties and **may** contain an array of `variants`.
-
-```
-[[sources]]
-    property = foo
-    (...)
-    [[sources.layers]]
-        property = bar
-        (...)
-        [[sources.layers.variants]]
-            property = something
-```
-
-#### Layer Properties
-
-property | type | description | default if not given
----|---|---|---
-name | `string` | A name for the item. Must be alphanumeric + underscore [A-Za-z0-9_]. No special characters allowed. | (must be provided)
-minzoom | `number` | minimum (greater-or-equal-than) zoom value where the layer must be provided | `0` 
-maxzoom | `number` | maximum (less-than) zoom value where the layer must be provided | `32` 
-geom | `string` | name of the geometry-column to be used in the vector tile | `"geometry"`
-keys | `string[]` | array of column names that will be encoded besides the geometry column. May contain SQL-expressions.| `""`
-where | `string[]` | array of conditions that will be used in the SQL-query as `WHERE`-Clause. Multiple conditions are concatenated with `AND` | `""`
-prefix | `string` | SQL-Statement that will be inserted **before** the `ST_AsMvtGeom`-Function. Useful for `DISTINCT ON()`-Statements | `""`
-postfix | `string` | SQL-Statement that will be inserted **after** the `WHERE`-Clause. Useful for `ORDER BY`-Statements | `""`
-srid | `number` | identifier of the [spatial reference system](https://postgis.net/docs/manual-1.4/ch04.html#spatial_ref_sys) | `3857`
-extend | `number` | tile extent in pixels (see [ST_AsMVTGeom](https://postgis.net/docs/manual-dev/ST_AsMVTGeom.html)) | `4096`
-buffer | `number` | buffer in pixels around each tile (see [ST_AsMVTGeom](https://postgis.net/docs/manual-dev/ST_AsMVTGeom.html)) | `256`
-clip_geom | `boolean` | clip geometries that lie outside the current tile incl. buffer (see [ST_AsMVTGeom](https://postgis.net/docs/manual-dev/ST_AsMVTGeom.html)) | `true`
-
