@@ -14,6 +14,4 @@ path_classifiers:
   # for library code. You can tag further files as being library code by adding them
   # to the `library` section.
   library:
-    - exclude: html/togpx.js
-    - exclude: html/togeojson.js
-
+    - exclude: html/to*.js

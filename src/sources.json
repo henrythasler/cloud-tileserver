@@ -401,7 +401,7 @@
           "name": "buildings-large",
           "table": "import.buildings_gen14",
           "keys": [
-            "id"
+            "osm_id as id"
           ],
           "where": [
             "ST_Area(geometry)>10000"
@@ -412,7 +412,7 @@
           "name": "buildings",
           "table": "import.buildings_gen14",
           "keys": [
-            "id"
+            "osm_id as id"
           ],
           "variants": [
             {

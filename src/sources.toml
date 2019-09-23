@@ -271,14 +271,14 @@
     maxzoom   = 15
     name      = "buildings-large"
     table     = "import.buildings_gen14"
-    keys      = ["id"]
+    keys      = ["osm_id as id"]
     where     = ["ST_Area(geometry)>10000"]
 
   [[sources.layers]]
     minzoom   = 14
     name      = "buildings"
     table     = "import.buildings_gen14"
-    keys      = ["id"]
+    keys      = ["osm_id as id"]
     [[sources.layers.variants]]
       minzoom = 15
       table   = "import.buildings"

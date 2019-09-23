@@ -194,10 +194,10 @@ export class Tileserver {
 
         let keys: string = "";
         if (source.keys && source.keys.length) {
-            keys += ", " + source.keys.join(", ")
+            keys += ", " + source.keys.join(", ");
         }
         if (resolved.keys && resolved.keys.length) {
-            keys += ", " + resolved.keys.join(", ")
+            keys += ", " + resolved.keys.join(", ");
         }
 
         let where: string = "";
