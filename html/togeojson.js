@@ -149,7 +149,7 @@ var toGeoJSON = (function() {
             }
             function gxCoord(v) { return numarray(v.split(' ')); }
             function gxCoords(root) {
-                var elems = get(root, 'coord', 'gx'), coords = [], times = [];
+                var elems = get(root, 'coord'), coords = [], times = [];
                 if (elems.length === 0) elems = get(root, 'gx:coord');
                 for (var i = 0; i < elems.length; i++) coords.push(gxCoord(nodeVal(elems[i])));
                 var timeElems = get(root, 'when');
@@ -365,20 +365,18 @@ var toGeoJSON = (function() {
                     line;
                 for (var i = 0; i < segments.length; i++) {
                     line = getPoints(segments[i], 'trkpt');
-                    if (line) {
-                        if (line.line) track.push(line.line);
-                        if (line.times && line.times.length) times.push(line.times);
-                        if (heartRates.length || (line.heartRates && line.heartRates.length)) {
-                            if (!heartRates.length) {
-                                for (var s = 0; s < i; s++) {
-                                    heartRates.push(initializeArray([], track[s].length));
-                                }
+                    if (line.line) track.push(line.line);
+                    if (line.times && line.times.length) times.push(line.times);
+                    if (heartRates.length || (line.heartRates && line.heartRates.length)) {
+                        if (!heartRates.length) {
+                            for (var s = 0; s < i; s++) {
+                                heartRates.push(initializeArray([], track[s].length));
                             }
-                            if (line.heartRates && line.heartRates.length) {
-                                heartRates.push(line.heartRates);
-                            } else {
-                                heartRates.push(initializeArray([], line.line.length || 0));
-                            }
+                        }
+                        if (line.heartRates && line.heartRates.length) {
+                            heartRates.push(line.heartRates);
+                        } else {
+                            heartRates.push(initializeArray([], line.line.length || 0));
                         }
                     }
                 }
