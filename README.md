@@ -4,6 +4,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=henrythasler_cloud-tileserver&metric=alert_status)](https://sonarcloud.io/dashboard?id=henrythasler_cloud-tileserver) 
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/henrythasler/cloud-tileserver.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/henrythasler/cloud-tileserver/alerts/) 
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/henrythasler/cloud-tileserver.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/henrythasler/cloud-tileserver/context:javascript)
+[![Known Vulnerabilities](https://snyk.io//test/github/henrythasler/cloud-tileserver/badge.svg?targetFile=package.json)](https://snyk.io//test/github/henrythasler/cloud-tileserver?targetFile=package.json)
 
 Serve mapbox vectortiles via AWS stack. Please visit the [Wiki](https://github.com/henrythasler/cloud-tileserver/wiki) for installation instructions.
 
