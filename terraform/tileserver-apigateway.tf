@@ -64,7 +64,7 @@ resource "aws_api_gateway_deployment" "testing" {
 
 
 resource "aws_api_gateway_domain_name" "tileserver_domain" {
-  certificate_arn = "${var.certificate_arn}"
+  certificate_arn = "${data.aws_acm_certificate.acm_certificate.arn}"
   domain_name     = "${aws_api_gateway_rest_api.tileserver.name}"
   # security_policy = "TLS_1_2"
   endpoint_configuration {

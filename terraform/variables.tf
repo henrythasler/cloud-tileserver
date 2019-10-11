@@ -28,13 +28,11 @@ variable "tilecache_prefix" {
   default = "tiles."
 }
 
-variable "vpc_id" {  
+variable "vpc" {
+  default = "default"
 }
 
 variable "route_id" {  
-}
-
-variable "certificate_arn" {  
 }
 
 variable "log_level" {
