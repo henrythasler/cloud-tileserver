@@ -16,6 +16,15 @@
       "tiles": [
         "https://tiles.cyclemap.link/global/{z}/{x}/{y}.mvt"
       ]
+    },
+    "mapbox-terrain-rgb": {
+      "type": "raster-dem",
+      "tileSize": 256,
+      "maxzoom": 14,
+      "encoding": "terrarium",
+      "tiles": [
+        "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"
+      ]
     }
   },
   "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
