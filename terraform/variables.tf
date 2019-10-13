@@ -2,7 +2,6 @@ variable "region" {
   default = "eu-central-1"
 }
 
-
 variable "postgres_password" {}
 variable "postgres_user" {
   default = "postgres"
@@ -10,10 +9,6 @@ variable "postgres_user" {
 
 variable "postgres_host" {
   default = "localhost"
-}
-
-variable "database_local" {
-  default = "local"
 }
 
 variable "domain" {
@@ -30,9 +25,6 @@ variable "tilecache_prefix" {
 
 variable "vpc" {
   default = "default"
-}
-
-variable "route_id" {  
 }
 
 variable "log_level" {

@@ -2201,7 +2201,10 @@
     "type": "symbol",
     "source": "local",
     "source-layer": "poi",
-    "filter": ["match", ["get", "subclass"], ["station", "halt", "bus_stop", "tram_stop", "restaurant", "biergarten", "hotel"], false, true],
+    "filter": ["all",
+      ["match", ["get", "subclass"], ["station", "halt", "bus_stop", "tram_stop", "restaurant", "biergarten", "hotel"], false, true],
+      ["!=",  ["get", "access"], 1]
+    ],
     "minzoom": 11,
     "maxzoom": 24,
     "paint": {

@@ -53,7 +53,6 @@ resource "aws_lambda_function" "tileserver" {
   }
   environment {
     variables = {
-      PGDATABASE = "${var.database_local}"
       PGHOST = "${var.postgres_host}"
       PGPASSWORD = "${var.postgres_password}"
       PGUSER = "${var.postgres_user}"
