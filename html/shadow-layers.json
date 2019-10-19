@@ -20,6 +20,7 @@
         "type": "fill",
         "source": "local",
         "source-layer": "landuse",
+        "filter": ["match", ["get", "subclass"], ["residential", "commercial", "retail", "industrial", "aerodrome", "military"], true, false], 
         "minzoom": 10,
         "maxzoom": 24,
         "paint": {
@@ -102,6 +103,24 @@
           "fill-color": "#aaa"
         }
       },
+      {
+        "id": "shiproute",
+        "type": "line",
+        "source": "local",
+        "source-layer": "transportation",
+        "minzoom": 10,
+        "maxzoom": 24,
+        "filter": ["==", ["get", "subclass"], "ferry"],
+        "paint": {
+          "line-dasharray": [4, 4],
+          "line-color": "#ccc",
+          "line-width": [
+            "interpolate", ["exponential", 2], ["zoom"],
+            10, 1,
+            18, 16
+          ]
+        }
+      },         
       {
         "id": "buildings",
         "type": "fill",

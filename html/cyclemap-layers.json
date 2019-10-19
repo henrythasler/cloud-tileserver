@@ -2174,8 +2174,16 @@
     "minzoom": 10,
     "maxzoom": 16,
     "filter": ["all",
-      ["match", ["get", "subclass"], ["motorway", "trunk", "primary", "secondary"], true, false],
-      ["match", ["get", "ref_prefix"], ["A", "B"], true, false],
+      ["any", 
+        ["all",
+          ["==", ["get", "subclass"], "motorway"],
+          ["==", ["get", "ref_prefix"], "A"]
+        ],
+        ["all",
+          ["match", ["get", "subclass"], ["trunk", "primary", "secondary"], true, false],
+          ["==", ["get", "ref_prefix"], "B"]
+        ]
+      ],
       ["!=",  ["get", "ref_num"], ""],
       ["<=", ["length", ["get", "ref_num"]], 3]
     ],
@@ -2201,10 +2209,7 @@
     "type": "symbol",
     "source": "local",
     "source-layer": "poi",
-    "filter": ["all",
-      ["match", ["get", "subclass"], ["station", "halt", "bus_stop", "tram_stop", "restaurant", "biergarten", "hotel"], false, true],
-      ["!=",  ["get", "access"], 1]
-    ],
+    "filter": ["!=",  ["get", "access"], 1],
     "minzoom": 11,
     "maxzoom": 24,
     "paint": {
@@ -2220,6 +2225,13 @@
       "text-halo-blur": 1
     },
     "layout": {
+      "symbol-sort-key": ["match", ["get", "subclass"],
+        ["station", "halt"], 10,
+        ["bus_stop", "tram_stop"], 20,
+        ["parking"], 30,
+        ["restaurant", "fast_food", "alpine_hut", "pub", "biergarten"], 40,
+        255
+      ],
       "icon-padding": 10,
       "icon-allow-overlap": false,
       "icon-ignore-placement": false,
@@ -2304,110 +2316,6 @@
       "text-max-width": 9
     }      
   },  
-  {
-    "id": "poi-prio",
-    "type": "symbol",
-    "source": "local",
-    "source-layer": "poi",
-    "filter": ["match", ["get", "subclass"], ["station", "halt", "bus_stop", "tram_stop", "restaurant", "biergarten", "hotel"], true, false],
-    "minzoom": 11,
-    "maxzoom": 24,
-    "paint": {
-      "text-color": ["match", ["get", "subclass"], 
-        ["station", "halt"], "#008", 
-        ["bus_stop", "tram_stop"], "#053", 
-        ["restaurant", "fast_food", "alpine_hut", "pub", "biergarten", "hotel", "bar", "information"], "#631",
-        ["supermarket", "bicycle"], "#505",
-        ["hospital"], "#a22",
-        "#222"],
-      "text-halo-color": "rgba(255, 255, 255, 0.8)",
-      "text-halo-width": 2.5,
-      "text-halo-blur": 1
-    },
-    "layout": {
-      "icon-padding": 10,
-      "icon-allow-overlap": false,
-      "icon-ignore-placement": false,
-      "icon-image": ["match", ["get", "subclass"], 
-        ["parking", "shelter", "supermarket", "bicycle", "hotel", "bar", "hospital", "caravan_site", "camp_site", "peak", "playground", "information", "viewpoint", "climbing"], ["get", "subclass"], 
-        ["pub", "biergarten"], "pub",
-        ["bus_stop", "tram_stop"], "bus_stop",
-        ["tower", "antenna", "mast", "communications_tower"], "tower",
-        ["restaurant", "fast_food", "alpine_hut"], "restaurant",
-        ["station", "halt"], ["match", ["get", "subway"], 1, "subway", "station.red"],
-        "place_of_worship", ["match", ["get", "religion"], 1, "church", ""],
-        "attraction", "ring-black",
-        "star.white"],
-      "icon-size": ["interpolate", ["exponential", 2], ["zoom"],
-        12, 0.5, 
-        14, 1
-      ],
-      "text-allow-overlap": false,
-      "text-ignore-placement": false,
-      "text-optional": true,
-      "text-anchor": "top",
-      "text-field": ["step", ["zoom"],
-        "",
-        12, ["match", ["get", "subclass"], ["station", "halt"], ["get", "name"], ""],
-        14, ["case", 
-              ["==", ["get", "count"], 1],
-                ["match", ["get", "subclass"], 
-                      ["station", "halt"], ["get", "name"], 
-                      ["peak", "restaurant", "fast_food", "alpine_hut", "pub", "biergarten", "hotel", "bar"], 
-                        ["case", 
-                          [">",["length", ["get", "name"]], 0], ["concat", ["get", "name"], "\n", ["get", "ele"]], 
-                          ["concat", ["get", "ele"]]
-                        ], 
-                ""
-              ],
-            ""],
-        16, ["match",
-              ["get", "count"], 
-              1, ["match", ["get", "subclass"], 
-                  ["bus_stop", "parking"], "", 
-                  ["peak", "restaurant", "fast_food", "alpine_hut", "biergarten", "information"], 
-                    ["case", 
-                      [">",["length", ["get", "name"]], 0], ["concat", ["get", "name"], "\n", ["get", "ele"]], 
-                      ["concat", ["get", "ele"]]
-                    ], 
-                  ["get", "name"]
-                ],
-              2, ["match", ["get", "subclass"], 
-                  ["station", "halt"], ["get", "name"], 
-                  ""
-                ],
-              ""
-              ],
-        17, ["match",
-              ["get", "count"], 
-              1, ["match", ["get", "subclass"], 
-                  ["peak", "restaurant", "fast_food", "alpine_hut", "biergarten", "information", "climbing"], 
-                    ["case", 
-                      [">",["length", ["get", "name"]], 0], ["concat", ["get", "name"], "\n", ["get", "ele"]], 
-                      ["concat", ["get", "ele"]]
-                    ], 
-                  ["get", "name"]
-                ],
-              2, ["match", ["get", "subclass"], 
-                  ["station", "halt", "bus_stop", "tram_stop"], ["get", "name"], 
-                  ""
-                ],
-              ""
-              ]
-
-      ],
-      "text-font": ["match", ["get", "subclass"], 
-        ["peak", "restaurant", "fast_food", "alpine_hut", "pub", "biergarten", "hotel", "bar", "hospital", "information"], ["literal", ["Open Sans Bold Italic"]], 
-        ["literal",["Open Sans Italic"]]
-        ],
-      "text-size": ["match", 
-        ["get", "subclass"], 
-          ["peak", "restaurant", "fast_food", "alpine_hut", "pub", "biergarten", "hotel", "bar", "hospital", "information"], 18, 
-        16],
-      "text-offset": [0, 0.7],
-      "text-max-width": 9
-    }      
-  },    
   {
     "id": "global-places",
     "type": "symbol",
@@ -2498,6 +2406,9 @@
       "text-padding": 20,
       "text-size": 24,
       "text-max-width": 5,
+      "text-allow-overlap": false,
+      "text-ignore-placement": false,
+
       "text-letter-spacing": 0
     },
     "paint": {
