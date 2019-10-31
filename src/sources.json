@@ -265,10 +265,6 @@
           ],
           "variants": [
             {
-              "minzoom": 9,
-              "table": "import.roads_gen9"
-            },
-            {
               "minzoom": 10,
               "table": "import.roads_gen10"
             },

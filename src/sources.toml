@@ -174,9 +174,9 @@
       "substring(ref from '\\w+') as ref_prefix", 
       "substring(ref from '\\d+') as ref_num", 
       "NULL as name"]
-    [[sources.layers.variants]]
-      minzoom = 9
-      table   = "import.roads_gen9"
+    # [[sources.layers.variants]]
+    #   minzoom = 9
+    #   table   = "import.roads_gen9"
     [[sources.layers.variants]]
       minzoom = 10
       table   = "import.roads_gen10"
