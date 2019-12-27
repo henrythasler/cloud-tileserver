@@ -28,7 +28,7 @@ describe("buildLayerQuery", function () {
         geometry,
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
         4096,
-        256,
+        64,
         true
         ) AS geom
     FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857))) AS q)`.replace(/\s+/g, ' '));
@@ -52,7 +52,7 @@ describe("buildLayerQuery", function () {
         geometry,
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
         4096,
-        256,
+        64,
         true
         ) AS geom
     FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857))) AS q)`.replace(/\s+/g, ' '));
@@ -67,7 +67,7 @@ describe("buildLayerQuery", function () {
                 name: "layer1",
                 table: "table1",
                 extend: 4096,
-                buffer: 64,
+                buffer: 256,
                 clip_geom: false,
                 geom: "geometry",
                 srid: 3857,
@@ -84,7 +84,7 @@ describe("buildLayerQuery", function () {
         geometry,
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
         4096,
-        64,
+        256,
         false
         ) AS geom, osm_id as id, name
     FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AND (TRUE)ORDER BY id) AS q)`.replace(/\s+/g, ' '));
@@ -99,7 +99,7 @@ describe("buildLayerQuery", function () {
                 name: "layer1",
                 table: "table1",
                 extend: 4096,
-                buffer: 64,
+                buffer: 256,
                 clip_geom: false,
                 geom: "geometry",
                 srid: 3857,
@@ -137,7 +137,7 @@ describe("buildLayerQuery", function () {
             name: "source",
             geom: "geometry",
             extend: 4096,
-            buffer: 64,
+            buffer: 256,
             clip_geom: false,
             srid: 3857,
             keys: ["osm_id as id", "name"],
@@ -158,7 +158,7 @@ describe("buildLayerQuery", function () {
         geometry,
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
         4096,
-        64,
+        256,
         false
         ) AS geom, osm_id as id, name
     FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AND (TRUE)ORDER BY id) AS q)`.replace(/\s+/g, ' '));
@@ -223,7 +223,7 @@ describe("buildLayerQuery", function () {
         geometry,
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
         4096,
-        256,
+        64,
         true
         ) AS geom, 13 as zoom, '13' as name
     FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) 
