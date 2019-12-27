@@ -54,5 +54,8 @@
     "aws-lambda": "^0.1.2",
     "aws-sdk": "^2.503.0",
     "pg": "^7.11.0"
-  }
+  },
+  "np": {
+    "publish": false
+  }  
 }
