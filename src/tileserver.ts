@@ -380,7 +380,7 @@ export class Tileserver {
                     Key: `${source}/${tile.z}/${tile.x}/${tile.y}.mvt`,
                     ContentType: "application/vnd.mapbox-vector-tile",
                     ContentEncoding: (this.gzip) ? "gzip" : "identity",
-                    CacheControl: "max-age=604800", // 7 days
+                    CacheControl: "max-age=220752000", // 365 days
                     // Metadata: {
                     //     "rawBytes": `${stats.uncompressedBytes}`,
                     //     "gzippedBytes": `${stats.compressedBytes}`
