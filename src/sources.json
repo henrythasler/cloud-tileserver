@@ -93,7 +93,6 @@
           "minzoom": 10,
           "table": "import.landuse_gen10",
           "keys": [
-            "osm_id as id",
             "subclass",
             "area",
             "name"
@@ -126,7 +125,6 @@
           "minzoom": 8,
           "table": "import.landcover_gen8",
           "keys": [
-            "osm_id as id",
             "class",
             "subclass",
             "area",
@@ -169,7 +167,6 @@
           "minzoom": 8,
           "table": "import.waterway_gen8",
           "keys": [
-            "osm_id as id",
             "subclass",
             "tunnel",
             "layer",
@@ -194,7 +191,6 @@
               "minzoom": 14,
               "table": "import.waterway",
               "keys": [
-                "osm_id as id",
                 "subclass",
                 "tunnel",
                 "layer",
@@ -208,9 +204,6 @@
           "name": "waterarea",
           "minzoom": 8,
           "table": "import.waterarea_gen8",
-          "keys": [
-            "osm_id as id"
-          ],
           "variants": [
             {
               "minzoom": 9,
@@ -247,7 +240,6 @@
           "minzoom": 8,
           "table": "import.roads_gen8",
           "keys": [
-            "osm_id as id",
             "class",
             "subclass",
             "oneway",
@@ -293,7 +285,6 @@
               "buffer": 256,
               "table": "import.roads",
               "keys": [
-                "osm_id as id",
                 "class",
                 "subclass",
                 "oneway",
@@ -316,14 +307,13 @@
         {
           "minzoom": 11,
           "name": "cycleroute",
-          "sql": "SELECT row_number() over () as gid, ref, name, ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!) AS geom from import.cycleroute where (geometry && !BBOX!) AND ST_GeometryType(geometry)='ST_LineString' group by ref, name order by ref desc NULLS last, name desc NULLS last"
+          "sql": "SELECT ref, name, ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!, 4096, 64) AS geom from import.cycleroute where (geometry && !BBOX!) AND ST_GeometryType(geometry)='ST_LineString' group by ref, name order by ref desc NULLS last, name desc NULLS last"
         },
         {
           "minzoom": 9,
           "name": "railway",
           "table": "import.railway",
           "keys": [
-            "id",
             "class",
             "subclass",
             "zorder",
@@ -350,7 +340,6 @@
           "name": "transportation",
           "table": "import.transportation",
           "keys": [
-            "id",
             "class",
             "subclass",
             "CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name"
@@ -362,12 +351,11 @@
         {
           "minzoom": 10,
           "name": "manmade",
-          "sql": "select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines_gen13 WHERE (geometry && !BBOX!)",
+          "sql": "select ST_AsMvtGeom(geometry, !BBOX!, 4096, 64) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines_gen13 WHERE (geometry && !BBOX!)",
           "variants": [
             {
               "minzoom": 14,
-              "buffer": 256,
-              "sql": "select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines WHERE (geometry && !BBOX!) \n                  UNION ALL\n                  select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Perimeter(geometry)::integer as length, TRUE as polygon from import.manmade_polygons WHERE (geometry && !BBOX!) \n                  UNION ALL\n                  select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, 0 as length, FALSE as polygon from import.manmade_points WHERE (geometry && !BBOX!)\n                  "
+              "sql": "select ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines WHERE (geometry && !BBOX!) \n                  UNION ALL\n                  select ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Perimeter(geometry)::integer as length, TRUE as polygon from import.manmade_polygons WHERE (geometry && !BBOX!) \n                  UNION ALL\n                  select ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, 0 as length, FALSE as polygon from import.manmade_points WHERE (geometry && !BBOX!)\n                  "
             }
           ]
         },
@@ -376,7 +364,6 @@
           "name": "piste",
           "table": "import.piste",
           "keys": [
-            "id",
             "difficulty"
           ],
           "where": [
@@ -388,7 +375,6 @@
           "name": "admin",
           "table": "import.admin",
           "keys": [
-            "id",
             "ref",
             "level"
           ]
@@ -398,9 +384,6 @@
           "maxzoom": 15,
           "name": "buildings-large",
           "table": "import.buildings_gen14",
-          "keys": [
-            "osm_id as id"
-          ],
           "where": [
             "ST_Area(geometry)>10000"
           ]
@@ -409,9 +392,6 @@
           "minzoom": 14,
           "name": "buildings",
           "table": "import.buildings_gen14",
-          "keys": [
-            "osm_id as id"
-          ],
           "variants": [
             {
               "minzoom": 15,
@@ -424,7 +404,6 @@
           "name": "housenumbers",
           "table": "import.housenumbers",
           "keys": [
-            "osm_id as id",
             "number",
             "name"
           ]
@@ -434,7 +413,6 @@
           "minzoom": 8,
           "table": "import.label_waterarea_gen8",
           "keys": [
-            "osm_id as id",
             "subclass",
             "area",
             "ele",
@@ -465,7 +443,6 @@
           "table": "import.label",
           "prefix": "DISTINCT ON(pop, name)",
           "keys": [
-            "row_number() over (ORDER by pop desc NULLS LAST) as id",
             "class",
             "subclass",
             "name",
@@ -479,7 +456,6 @@
           "name": "poi",
           "table": "import.poi_cluster_gen11",
           "keys": [
-            "id",
             "count",
             "class",
             "subclass",
@@ -519,7 +495,6 @@
               "minzoom": 18,
               "table": "import.poi",
               "keys": [
-                "osm_id as id",
                 "1 as count",
                 "class",
                 "subclass",

@@ -64,7 +64,7 @@
     name      = "landuse"
     minzoom   = 10
     table     = "import.landuse_gen10"
-    keys      = ["osm_id as id", "subclass", "area", "name"]
+    keys      = ["subclass", "area", "name"]
     [[sources.layers.variants]]
       minzoom = 11
       table   = "import.landuse_gen11"
@@ -85,7 +85,7 @@
     name      = "landcover"
     minzoom   = 8
     table     = "import.landcover_gen8"
-    keys      = ["osm_id as id", "class", "subclass", "area", "surface", "name"]
+    keys      = ["class", "subclass", "area", "surface", "name"]
     [[sources.layers.variants]]
       minzoom = 9
       table   = "import.landcover_gen9"
@@ -112,7 +112,7 @@
     name    = "waterway"
     minzoom = 8
     table   = "import.waterway_gen8"
-    keys    = ["osm_id as id", "subclass", "tunnel", "layer", "name"]
+    keys    = ["subclass", "tunnel", "layer", "name"]
     where   = ["subclass IN('river', 'canal')"]
     [[sources.layers.variants]]
       minzoom = 10
@@ -124,14 +124,13 @@
     [[sources.layers.variants]]
       minzoom = 14
       table   = "import.waterway"
-      keys    = ["osm_id as id", "subclass", "tunnel", "layer", "CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name"]      
+      keys    = ["subclass", "tunnel", "layer", "CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name"]      
       where   = []
       
   [[sources.layers]]
     name      = "waterarea"
     minzoom   = 8
     table     = "import.waterarea_gen8"
-    keys      = ["osm_id as id"]
     [[sources.layers.variants]]
       minzoom = 9
       table   = "import.waterarea_gen9"
@@ -159,7 +158,6 @@
     minzoom   = 8
     table     = "import.roads_gen8"
     keys      = [
-      "osm_id as id", 
       "class", 
       "subclass", 
       "oneway", 
@@ -200,7 +198,6 @@
       buffer  = 256
       table   = "import.roads"
       keys      = [
-        "osm_id as id", 
         "class", 
         "subclass", 
         "oneway", 
@@ -221,13 +218,13 @@
   [[sources.layers]]
     minzoom   = 11
     name      = "cycleroute"
-    sql       = "SELECT row_number() over () as gid, ref, name, ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!) AS geom from import.cycleroute where (geometry && !BBOX!) AND ST_GeometryType(geometry)='ST_LineString' group by ref, name order by ref desc NULLS last, name desc NULLS last"
+    sql       = "SELECT ref, name, ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!, 4096, 64) AS geom from import.cycleroute where (geometry && !BBOX!) AND ST_GeometryType(geometry)='ST_LineString' group by ref, name order by ref desc NULLS last, name desc NULLS last"
 
   [[sources.layers]]
     minzoom   = 9
     name      = "railway"
     table     = "import.railway"
-    keys      = ["id", "class", "subclass", "zorder", "bridge", "tunnel", "service"]
+    keys      = ["class", "subclass", "zorder", "bridge", "tunnel", "service"]
     where     = ["subclass NOT IN('subway', 'tram')", "(attraction <> '') IS NOT TRUE", "(service <> '') IS NOT TRUE"]
     [[sources.layers.variants]]
       minzoom   = 15
@@ -237,50 +234,46 @@
     minzoom   = 10
     name      = "transportation"
     table     = "import.transportation"
-    keys      = ["id", "class", "subclass", "CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name"]
+    keys      = ["class", "subclass", "CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name"]
     where     = ["NOT ST_IsClosed(geometry)"]
-
 
   [[sources.layers]]
     minzoom   = 10
     name      = "manmade"
-    sql       = "select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines_gen13 WHERE (geometry && !BBOX!)"
+    sql       = "select ST_AsMvtGeom(geometry, !BBOX!, 4096, 64) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines_gen13 WHERE (geometry && !BBOX!)"
     [[sources.layers.variants]]
       minzoom = 14
-      buffer  = 256
-      sql       = """select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines WHERE (geometry && !BBOX!) 
+      sql       = """select ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines WHERE (geometry && !BBOX!) 
                   UNION ALL
-                  select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Perimeter(geometry)::integer as length, TRUE as polygon from import.manmade_polygons WHERE (geometry && !BBOX!) 
+                  select ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Perimeter(geometry)::integer as length, TRUE as polygon from import.manmade_polygons WHERE (geometry && !BBOX!) 
                   UNION ALL
-                  select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, 0 as length, FALSE as polygon from import.manmade_points WHERE (geometry && !BBOX!)
+                  select ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, 0 as length, FALSE as polygon from import.manmade_points WHERE (geometry && !BBOX!)
                   """
 
   [[sources.layers]]
     minzoom   = 14
     name      = "piste"
     table     = "import.piste"
-    keys      = ["id", "difficulty"]
+    keys      = ["difficulty"]
     where     = ["NOT ST_IsClosed(geometry)"]
 
   [[sources.layers]]
     minzoom   = 14
     name      = "admin"
     table     = "import.admin"
-    keys      = ["id", "ref", "level"]
+    keys      = ["ref", "level"]
 
   [[sources.layers]]
     minzoom   = 13
     maxzoom   = 15
     name      = "buildings-large"
     table     = "import.buildings_gen14"
-    keys      = ["osm_id as id"]
     where     = ["ST_Area(geometry)>10000"]
 
   [[sources.layers]]
     minzoom   = 14
     name      = "buildings"
     table     = "import.buildings_gen14"
-    keys      = ["osm_id as id"]
     [[sources.layers.variants]]
       minzoom = 15
       table   = "import.buildings"
@@ -289,13 +282,13 @@
     minzoom   = 18
     name      = "housenumbers"
     table     = "import.housenumbers"
-    keys      = ["osm_id as id", "number", "name"]
+    keys      = ["number", "name"]
 
   [[sources.layers]]
     name      = "waterlabels"
     minzoom   = 8
     table     = "import.label_waterarea_gen8"
-    keys      = ["osm_id as id", "subclass", "area", "ele", "name"]
+    keys      = ["subclass", "area", "ele", "name"]
     [[sources.layers.variants]]
       minzoom = 10
       table   = "import.label_waterarea_gen10"
@@ -314,14 +307,14 @@
     name      = "label"
     table     = "import.label"
     prefix    = "DISTINCT ON(pop, name)"
-    keys      = ["row_number() over (ORDER by pop desc NULLS LAST) as id", "class", "subclass", "name", "ele", "pop"]
+    keys      = ["class", "subclass", "name", "ele", "pop"]
     postfix   = "ORDER BY pop DESC NULLS LAST, name"
 
   [[sources.layers]]
     minzoom   = 11
     name      = "poi"
     table     = "import.poi_cluster_gen11"
-    keys      = ["id", "count", "class", "subclass", "name", "ele", "access", "subway", "religion", "parking"]
+    keys      = ["count", "class", "subclass", "name", "ele", "access", "subway", "religion", "parking"]
     [[sources.layers.variants]]
       minzoom = 12
       table   = "import.poi_cluster_gen12"
@@ -343,5 +336,5 @@
     [[sources.layers.variants]]
       minzoom = 18
       table   = "import.poi"
-      keys    = ["osm_id as id", "1 as count", "class", "subclass", "name", "ele", "access", "subway", "religion", "parking"]
+      keys    = ["1 as count", "class", "subclass", "name", "ele", "access", "subway", "religion", "parking"]
 
