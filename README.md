@@ -13,18 +13,18 @@ Serve mapbox vectortiles via AWS stack. Please visit the [Wiki](https://github.c
 These are the main project goals:
 
 ```
-[✓] Setup the AWS infrastructure with terraform
-[✓] Create an AWS lambda function to handle vectortile queries via REST
-[✓] Create mapbox vectortiles directly with postgis using ST_AsMvtGeom() and ST_AsMVT()
-[✓] Write a parser to read config-files that define the vectortiles layout
+[x] Setup the AWS infrastructure with terraform
+[x] Create an AWS lambda function to handle vectortile queries via REST
+[x] Create mapbox vectortiles directly with postgis using ST_AsMvtGeom() and ST_AsMVT()
+[x] Write a parser to read config-files that define the vectortiles layout
 [ ] Create fully automated deployment pipeline.
-[✓] Use some caching mechanism for vectortiles
-[✓] Use Typescript and typed interfaces where possible
-[✓] Have module tests with tsjest/chai
+[x] Use some caching mechanism for vectortiles
+[x] Use Typescript and typed interfaces where possible
+[x] Have module tests with tsjest/chai
 [ ] Generate useful documentation with typedocs
 [ ] Learn more about AWS, terraform and typescript
 [ ] Use free-tier if possible.
-[✓] Have fun
+[x] Have fun
 ```
 Checked items are already fulfilled.
 
