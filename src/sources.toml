@@ -197,6 +197,7 @@
       table   = "import.roads_gen15"
     [[sources.layers.variants]]
       minzoom = 16
+      buffer  = 256
       table   = "import.roads"
       keys      = [
         "osm_id as id", 
@@ -246,6 +247,7 @@
     sql       = "select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines_gen13 WHERE (geometry && !BBOX!)"
     [[sources.layers.variants]]
       minzoom = 14
+      buffer  = 256
       sql       = """select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines WHERE (geometry && !BBOX!) 
                   UNION ALL
                   select osm_id as id, ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Perimeter(geometry)::integer as length, TRUE as polygon from import.manmade_polygons WHERE (geometry && !BBOX!) 

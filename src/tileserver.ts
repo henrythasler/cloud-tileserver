@@ -186,7 +186,7 @@ export class Tileserver {
         const srid: number = (resolved.srid !== undefined) ? resolved.srid : ((source.srid !== undefined) ? source.srid : 3857);
         const bbox: string = `ST_Transform(ST_MakeEnvelope(${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, 
             ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}, 4326), ${srid})`;
-        const buffer: number = (resolved.buffer !== undefined) ? resolved.buffer : ((source.buffer !== undefined) ? source.buffer : 256);
+        const buffer: number = (resolved.buffer !== undefined) ? resolved.buffer : ((source.buffer !== undefined) ? source.buffer : 64);
         const clip_geom: boolean = (resolved.clip_geom !== undefined) ? resolved.clip_geom : ((source.clip_geom !== undefined) ? source.clip_geom : true);
         const prefix: string = (resolved.prefix !== undefined) ? resolved.prefix : ((source.prefix !== undefined) ? source.prefix : "");
         const postfix: string = (resolved.postfix !== undefined) ? resolved.postfix : ((source.postfix !== undefined) ? source.postfix : "");
