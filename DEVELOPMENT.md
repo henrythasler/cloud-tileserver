@@ -3,6 +3,10 @@ This page gives a detailled overview of all techiques used for this project.
 
 ## AWS-Architecture
 
+### Overall architecture
+
+![architecture](docs/img/architecture.png)
+
 ### Creating the `postgis-client` Docker-image
 
 ![](docs/img/CodeBuild-Docker.png)
