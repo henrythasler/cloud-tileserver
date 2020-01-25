@@ -40,9 +40,9 @@ var http = require("http");
 var fs_1 = require("fs");
 var toml_1 = require("@iarna/toml");
 var fixturesPath = "local/";
-var config = toml_1.parse(fs_1.readFileSync(fixturesPath + "cyclemap.toml", "utf8"));
+var config = toml_1.parse(fs_1.readFileSync(fixturesPath + "local.toml", "utf8"));
 var gzip = false;
-var tileserver = new tileserver_1.Tileserver(config, "", 3, gzip);
+var tileserver = new tileserver_1.Tileserver(config, "", 2, gzip);
 // docker run --rm -ti -p 5432:5432 -v /media/mapdata/pgdata_mvt:/pgdata -v $(pwd)/postgis.conf:/etc/postgresql/postgresql.conf -e PGDATA=/pgdata img-postgis:0.9 -c 'config_file=/etc/postgresql/postgresql.conf'
 process.env.PGPASSWORD = "";
 process.env.PGUSER = "postgres";

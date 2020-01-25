@@ -116,7 +116,7 @@
 [[sources]]
   name = "local"
   database = "local"
-  buffer  = 0
+  buffer  = 64
 
   [[sources.layers]]
     name      = "landuse"
@@ -167,6 +167,42 @@
       table   = "import.landcover"
 
   [[sources.layers]]
+    minzoom   = 8
+    name      = "label"
+    table     = "import.label_gen12"
+    prefix    = "DISTINCT ON(pop, name)"
+    keys      = ["class", "subclass", "name", "ele", "pop"]
+    postfix   = "ORDER BY pop DESC NULLS LAST, name"
+
+  [[sources.layers]]
+    minzoom   = 11
+    name      = "poi"
+    table     = "import.poi_cluster_gen11"
+    keys      = ["count", "class", "subclass", "name", "ele", "access", "subway", "religion", "parking"]
+    [[sources.layers.variants]]
+      minzoom = 12
+      table   = "import.poi_cluster_gen12"
+    [[sources.layers.variants]]
+      minzoom = 13
+      table   = "import.poi_cluster_gen13"
+    [[sources.layers.variants]]
+      minzoom = 14
+      table   = "import.poi_cluster_gen14"
+    [[sources.layers.variants]]
+      minzoom = 15
+      table   = "import.poi_cluster_gen15"
+    [[sources.layers.variants]]
+      minzoom = 16
+      table   = "import.poi_cluster_gen16"
+    [[sources.layers.variants]]
+      minzoom = 17
+      table   = "import.poi_cluster_gen17"
+    [[sources.layers.variants]]
+      minzoom = 18
+      table   = "import.poi"
+      keys    = ["1 as count", "class", "subclass", "name", "ele", "access", "subway", "religion", "parking"]
+
+  [[sources.layers]]
     name      = "roads"
     minzoom   = 8
     table     = "import.roads_gen8"
@@ -185,6 +221,9 @@
       "substring(ref from '\\w+') as ref_prefix", 
       "substring(ref from '\\d+') as ref_num", 
       "NULL as name"]
+    # [[sources.layers.variants]]
+    #   minzoom = 9
+    #   table   = "import.roads_gen9"
     [[sources.layers.variants]]
       minzoom = 10
       table   = "import.roads_gen10"
@@ -224,27 +263,7 @@
       postfix = "ORDER BY rank DESC"
 
   [[sources.layers]]
-    name      = "waterlabels"
-    minzoom   = 8
-    table     = "import.label_waterarea_gen8"
-    keys      = ["subclass", "area", "ele", "name"]
-    [[sources.layers.variants]]
-      minzoom = 10
-      table   = "import.label_waterarea_gen10"
-    [[sources.layers.variants]]
-      minzoom = 12
-      table   = "import.label_waterarea_gen12"
-    [[sources.layers.variants]]
-      minzoom = 14
-      table   = "import.label_waterarea_gen14"
-    [[sources.layers.variants]]
-      minzoom = 16
-      table   = "import.label_waterarea"
-
-  [[sources.layers]]
-    minzoom   = 8
-    name      = "label"
-    table     = "import.label"
-    prefix    = "DISTINCT ON(pop, name)"
-    keys      = ["class", "subclass", "name", "ele", "pop"]
-    postfix   = "ORDER BY pop DESC NULLS LAST, name"
+    minzoom   = 18
+    name      = "housenumbers"
+    table     = "import.housenumbers"
+    keys      = ["osm_id", "number", "name"]

@@ -5,10 +5,10 @@ import { parse } from "@iarna/toml";
 
 const fixturesPath = "local/";
 
-const config = parse(readFileSync(`${fixturesPath}cyclemap.toml`, "utf8")) as unknown as Config;
+const config = parse(readFileSync(`${fixturesPath}local.toml`, "utf8")) as unknown as Config;
 
 const gzip = false;
-const tileserver = new Tileserver(config, "", 3, gzip);
+const tileserver = new Tileserver(config, "", 2, gzip);
 
 // docker run --rm -ti -p 5432:5432 -v /media/mapdata/pgdata_mvt:/pgdata -v $(pwd)/postgis.conf:/etc/postgresql/postgresql.conf -e PGDATA=/pgdata img-postgis:0.9 -c 'config_file=/etc/postgresql/postgresql.conf'
 process.env.PGPASSWORD = "";
