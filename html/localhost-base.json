@@ -1,0 +1,17 @@
+{
+  "version": 8,
+  "name": "Mapbox Local",
+  "metadata": {},
+  "sources": {
+    "local": {
+      "type": "vector",
+      "minzoom": 8,
+      "tiles": [
+        "http://localhost:8000/mod/{z}/{x}/{y}.mvt"
+      ]
+    }
+  },
+  "sprite": "https://www.cyclemap.link/sprites/cyclemap",
+  "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
+  "layers": []
+}

@@ -1,0 +1,250 @@
+[[sources]]
+  name = "mod"
+  database = "local"
+  namespace = "import"
+  buffer  = 128
+
+  [[sources.layers]]
+    name      = "landuse"
+    minzoom   = 10
+    table     = "landuse_gen10"
+    keys      = ["subclass", "area", "name"]
+    [[sources.layers.variants]]
+      minzoom = 11
+      table   = "landuse_gen11"
+    [[sources.layers.variants]]
+      minzoom = 12
+      table   = "landuse_gen12"
+    [[sources.layers.variants]]
+      minzoom = 13
+      table   = "landuse_gen13"
+    [[sources.layers.variants]]
+      minzoom = 14
+      table   = "landuse_gen14"
+    [[sources.layers.variants]]
+      minzoom = 15
+      table   = "landuse"
+
+  [[sources.layers]]
+    name      = "landcover"
+    minzoom   = 8
+    table     = "landcover_gen8"
+    keys      = ["class", "subclass", "area", "surface", "name"]
+    [[sources.layers.variants]]
+      minzoom = 9
+      table   = "landcover_gen9"
+    [[sources.layers.variants]]
+      minzoom = 10
+      table   = "landcover_gen10"
+    [[sources.layers.variants]]
+      minzoom = 11
+      table   = "landcover_gen11"
+    [[sources.layers.variants]]
+      minzoom = 12
+      table   = "landcover_gen12"
+    [[sources.layers.variants]]
+      minzoom = 13
+      table   = "landcover_gen13"
+    [[sources.layers.variants]]
+      minzoom = 14
+      table   = "landcover_gen14"
+    [[sources.layers.variants]]
+      minzoom = 15
+      table   = "landcover"
+
+  [[sources.layers]]
+    name      = "roads"
+    minzoom   = 8
+    table     = "roads_gen8"
+    keys      = [
+      "class", 
+      "subclass", 
+      "oneway", 
+      "tracktype", 
+      "bridge", 
+      "tunnel", 
+      "service", 
+      "CASE WHEN layer IS NULL THEN 0 ELSE layer END as layer", 
+      "rank", 
+      "bicycle", 
+      "scale", 
+      "substring(ref from '\\w+') as ref_prefix", 
+      "substring(ref from '\\d+') as ref_num", 
+      "NULL as name"]
+    # [[sources.layers.variants]]
+    #   minzoom = 9
+    #   table   = "import.roads_gen9"
+    [[sources.layers.variants]]
+      minzoom = 10
+      sql     = "select ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!, 4096, 128) as geom, class, subclass, oneway, tracktype, bridge, tunnel, service, case	when layer is null then 0	else layer end as layer, rank, bicycle,	scale, substring(ref from '\\w+') as ref_prefix, substring(ref from '\\d+') as ref_num, null as name from import.roads_gen10 WHERE (geometry && !BBOX!) GROUP BY ref, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank,	bicycle, scale, ref_prefix, ref_num, name"
+    [[sources.layers.variants]]
+      minzoom = 11
+      sql     = "select ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!, 4096, 128) as geom, class, subclass, oneway, tracktype, bridge, tunnel, service, case	when layer is null then 0	else layer end as layer, rank, bicycle,	scale, substring(ref from '\\w+') as ref_prefix, substring(ref from '\\d+') as ref_num, null as name from import.roads_gen11 WHERE (geometry && !BBOX!) GROUP BY ref, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank,	bicycle, scale, ref_prefix, ref_num, name"
+    [[sources.layers.variants]]
+      minzoom = 12
+      sql     = "select ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!, 4096, 128) as geom, class, subclass, oneway, tracktype, bridge, tunnel, service, case	when layer is null then 0	else layer end as layer, rank, bicycle,	scale, substring(ref from '\\w+') as ref_prefix, substring(ref from '\\d+') as ref_num, null as name from import.roads_gen12 WHERE (geometry && !BBOX!) GROUP BY ref, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank,	bicycle, scale, ref_prefix, ref_num, name"
+    [[sources.layers.variants]]
+      minzoom = 13
+      sql     = "select ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!, 4096, 128) as geom, class, subclass, oneway, tracktype, bridge, tunnel, service, case	when layer is null then 0	else layer end as layer, rank, bicycle,	scale, substring(ref from '\\w+') as ref_prefix, substring(ref from '\\d+') as ref_num, null as name from import.roads_gen13 WHERE (geometry && !BBOX!) GROUP BY ref, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank,	bicycle, scale, ref_prefix, ref_num, name"
+    [[sources.layers.variants]]
+      minzoom = 14
+      sql     = "select ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!, 4096, 128) as geom, class, subclass, oneway, tracktype, bridge, tunnel, service, case	when layer is null then 0	else layer end as layer, rank, bicycle,	scale, substring(ref from '\\w+') as ref_prefix, substring(ref from '\\d+') as ref_num, null as name from import.roads_gen14 WHERE (geometry && !BBOX!) GROUP BY ref, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank,	bicycle, scale, ref_prefix, ref_num, name"
+    [[sources.layers.variants]]
+      minzoom = 15
+      sql     = "select ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!, 4096, 128) as geom, class, subclass, oneway, tracktype, bridge, tunnel, service, case	when layer is null then 0	else layer end as layer, rank, bicycle,	scale, substring(ref from '\\w+') as ref_prefix, substring(ref from '\\d+') as ref_num, null as name from import.roads_gen15 WHERE (geometry && !BBOX!) GROUP BY ref, class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank,	bicycle, scale, ref_prefix, ref_num, name"
+    [[sources.layers.variants]]
+      minzoom = 16
+      table   = "roads"
+      keys      = [
+        "class", 
+        "subclass", 
+        "oneway", 
+        "tracktype", 
+        "bridge", 
+        "tunnel", 
+        "service", 
+        "CASE WHEN layer IS NULL THEN 0 ELSE layer END as layer", 
+        "rank", 
+        "bicycle", 
+        "scale", 
+        "substring(ref from '\\w+') as ref_prefix", 
+        "substring(ref from '\\d+') as ref_num", 
+        "name"]
+      postfix = "ORDER BY rank DESC"
+
+
+[[sources]]
+  name = "local"
+  database = "local"
+  buffer  = 0
+
+  [[sources.layers]]
+    name      = "landuse"
+    minzoom   = 10
+    table     = "import.landuse_gen10"
+    keys      = ["subclass", "area", "name"]
+    [[sources.layers.variants]]
+      minzoom = 11
+      table   = "import.landuse_gen11"
+    [[sources.layers.variants]]
+      minzoom = 12
+      table   = "import.landuse_gen12"
+    [[sources.layers.variants]]
+      minzoom = 13
+      table   = "import.landuse_gen13"
+    [[sources.layers.variants]]
+      minzoom = 14
+      table   = "import.landuse_gen14"
+    [[sources.layers.variants]]
+      minzoom = 15
+      table   = "import.landuse"
+
+  [[sources.layers]]
+    name      = "landcover"
+    minzoom   = 8
+    table     = "import.landcover_gen8"
+    keys      = ["class", "subclass", "area", "surface", "name"]
+    [[sources.layers.variants]]
+      minzoom = 9
+      table   = "import.landcover_gen9"
+    [[sources.layers.variants]]
+      minzoom = 10
+      table   = "import.landcover_gen10"
+    [[sources.layers.variants]]
+      minzoom = 11
+      table   = "import.landcover_gen11"
+    [[sources.layers.variants]]
+      minzoom = 12
+      table   = "import.landcover_gen12"
+    [[sources.layers.variants]]
+      minzoom = 13
+      table   = "import.landcover_gen13"
+    [[sources.layers.variants]]
+      minzoom = 14
+      table   = "import.landcover_gen14"
+    [[sources.layers.variants]]
+      minzoom = 15
+      table   = "import.landcover"
+
+  [[sources.layers]]
+    name      = "roads"
+    minzoom   = 8
+    table     = "import.roads_gen8"
+    keys      = [
+      "class", 
+      "subclass", 
+      "oneway", 
+      "tracktype", 
+      "bridge", 
+      "tunnel", 
+      "service", 
+      "CASE WHEN layer IS NULL THEN 0 ELSE layer END as layer", 
+      "rank", 
+      "bicycle", 
+      "scale", 
+      "substring(ref from '\\w+') as ref_prefix", 
+      "substring(ref from '\\d+') as ref_num", 
+      "NULL as name"]
+    [[sources.layers.variants]]
+      minzoom = 10
+      table   = "import.roads_gen10"
+    [[sources.layers.variants]]
+      minzoom = 11
+      table   = "import.roads_gen11"
+    [[sources.layers.variants]]
+      minzoom = 12
+      table   = "import.roads_gen12"
+    [[sources.layers.variants]]
+      minzoom = 13
+      table   = "import.roads_gen13"
+    [[sources.layers.variants]]
+      minzoom = 14
+      table   = "import.roads_gen14"
+    [[sources.layers.variants]]
+      minzoom = 15
+      table   = "import.roads_gen15"
+    [[sources.layers.variants]]
+      minzoom = 16
+      table   = "import.roads"
+      keys      = [
+        "class", 
+        "subclass", 
+        "oneway", 
+        "tracktype", 
+        "bridge", 
+        "tunnel", 
+        "service", 
+        "CASE WHEN layer IS NULL THEN 0 ELSE layer END as layer", 
+        "rank", 
+        "bicycle", 
+        "scale", 
+        "substring(ref from '\\w+') as ref_prefix", 
+        "substring(ref from '\\d+') as ref_num", 
+        "name"]
+      postfix = "ORDER BY rank DESC"
+
+  [[sources.layers]]
+    name      = "waterlabels"
+    minzoom   = 8
+    table     = "import.label_waterarea_gen8"
+    keys      = ["subclass", "area", "ele", "name"]
+    [[sources.layers.variants]]
+      minzoom = 10
+      table   = "import.label_waterarea_gen10"
+    [[sources.layers.variants]]
+      minzoom = 12
+      table   = "import.label_waterarea_gen12"
+    [[sources.layers.variants]]
+      minzoom = 14
+      table   = "import.label_waterarea_gen14"
+    [[sources.layers.variants]]
+      minzoom = 16
+      table   = "import.label_waterarea"
+
+  [[sources.layers]]
+    minzoom   = 8
+    name      = "label"
+    table     = "import.label"
+    prefix    = "DISTINCT ON(pop, name)"
+    keys      = ["class", "subclass", "name", "ele", "pop"]
+    postfix   = "ORDER BY pop DESC NULLS LAST, name"

@@ -120,7 +120,7 @@
 
     <script type="text/javascript">
 
-        var styles = ["cyclemap", "shadow", "xray"];
+        var styles = ["cyclemap", "shadow", "xray", "localhost"];
 
         function loadJson(file) {
             return new Promise(function (resolve, reject) {
@@ -173,7 +173,7 @@
             map.touchZoomRotate.disableRotation();
 
             // Debug output
-            // map.showTileBoundaries = true;
+            map.showTileBoundaries = true;
             // map.showCollisionBoxes = true;
 
             class someList {

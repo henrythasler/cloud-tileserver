@@ -12,6 +12,7 @@
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
     "docs": "node node_modules/typedoc/bin/typedoc",
     "sim": "npm run predeploy && LOG_LEVEL=5 PGUSER=postgres PGHOST=127.0.0.1 PGPORT=5432 node_modules/lambda-local/bin/lambda-local -l dist/index.js -h handler -e test/fixtures/local_14_8691_5677.js",
+    "local": "tsc local/local.ts && node local/local.js",
     "predeploy": "rm -rf ./dist/* && npm run gen:sources && tsc && cp ./src/sources.json ./dist && zip -j ./dist/function.zip ./dist/*.js* && cd tileserver_layer/nodejs && npm i && cd .. && zip -qr ../dist/tileserver_layer.zip nodejs",
     "deploy": "aws lambda update-function-code --function-name tileserver --zip-file fileb://dist/function.zip"
   },
