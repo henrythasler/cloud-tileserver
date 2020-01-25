@@ -116,7 +116,7 @@
 [[sources]]
   name = "local"
   database = "local"
-  buffer  = 64
+  buffer  = 0
 
   [[sources.layers]]
     name      = "landuse"
@@ -165,42 +165,6 @@
     [[sources.layers.variants]]
       minzoom = 15
       table   = "import.landcover"
-
-  [[sources.layers]]
-    minzoom   = 8
-    name      = "label"
-    table     = "import.label_gen12"
-    prefix    = "DISTINCT ON(pop, name)"
-    keys      = ["class", "subclass", "name", "ele", "pop"]
-    postfix   = "ORDER BY pop DESC NULLS LAST, name"
-
-  [[sources.layers]]
-    minzoom   = 11
-    name      = "poi"
-    table     = "import.poi_cluster_gen11"
-    keys      = ["count", "class", "subclass", "name", "ele", "access", "subway", "religion", "parking"]
-    [[sources.layers.variants]]
-      minzoom = 12
-      table   = "import.poi_cluster_gen12"
-    [[sources.layers.variants]]
-      minzoom = 13
-      table   = "import.poi_cluster_gen13"
-    [[sources.layers.variants]]
-      minzoom = 14
-      table   = "import.poi_cluster_gen14"
-    [[sources.layers.variants]]
-      minzoom = 15
-      table   = "import.poi_cluster_gen15"
-    [[sources.layers.variants]]
-      minzoom = 16
-      table   = "import.poi_cluster_gen16"
-    [[sources.layers.variants]]
-      minzoom = 17
-      table   = "import.poi_cluster_gen17"
-    [[sources.layers.variants]]
-      minzoom = 18
-      table   = "import.poi"
-      keys    = ["1 as count", "class", "subclass", "name", "ele", "access", "subway", "religion", "parking"]
 
   [[sources.layers]]
     name      = "roads"
@@ -261,9 +225,3 @@
         "substring(ref from '\\d+') as ref_num", 
         "name"]
       postfix = "ORDER BY rank DESC"
-
-  [[sources.layers]]
-    minzoom   = 18
-    name      = "housenumbers"
-    table     = "import.housenumbers"
-    keys      = ["osm_id", "number", "name"]

@@ -7,7 +7,7 @@
       "type": "vector",
       "minzoom": 8,
       "tiles": [
-        "http://localhost:8000/mod/{z}/{x}/{y}.mvt"
+        "http://localhost:8000/local/{z}/{x}/{y}.mvt"
       ]
     }
   },
