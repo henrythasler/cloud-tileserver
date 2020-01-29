@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .distance-container {
+            position: absolute;
+            top: 10px;
+            left: 50px;
+            z-index: 1;
+        }
+
+        .distance-container>* {
+            background-color: #fff;
+            color: #000;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 18px;
+            display: block;
+            margin: 0;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+
+        .anotherButton {
+            display: block;
+            background-size: 70%;
+            background-position: center center;
+            width: 30px;
+            height: 30px;
+            border: 0px;
+            padding: 0px;
+            margin: 0px;
+            background-repeat: no-repeat;
+        }
+
+        .json {
+            background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8' standalone='no'%3F%3E%3Csvg xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:cc='http://creativecommons.org/ns%23' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns%23' xmlns:svg='http://www.w3.org/2000/svg' xmlns='http://www.w3.org/2000/svg' width='7.2713866mm' height='8.2295132mm' viewBox='0 0 7.2713865 8.2295132' version='1.1' id='svg8'%3E%3Cdefs id='defs2' /%3E%3Cmetadata id='metadata5'%3E%3Crdf:RDF%3E%3Ccc:Work rdf:about=''%3E%3Cdc:format%3Eimage/svg+xml%3C/dc:format%3E%3Cdc:type rdf:resource='http://purl.org/dc/dcmitype/StillImage' /%3E%3Cdc:title%3E%3C/dc:title%3E%3C/cc:Work%3E%3C/rdf:RDF%3E%3C/metadata%3E%3Cpath id='path858' transform='scale(0.26458333)' d='M 11.03125 0 C 7.2642548 -0.0008475591 3.4847986 0.02278494 3.3261719 0.0703125 C 3.0425108 0.15529896 2.7336181 0.41523503 2.5957031 0.68554688 C 2.4874461 0.89777869 2.484375 1.0392612 2.484375 6.0058594 L 2.484375 11.109375 L 1.8769531 11.134766 C 0.95342183 11.173922 0.50674115 11.425593 0.171875 12.095703 L 0 12.441406 L 0 17.359375 C 1.4802974e-16 22.8952 -0.023708423 22.581643 0.4296875 23.085938 C 0.80882703 23.507616 1.0885519 23.620281 1.8339844 23.654297 L 2.4550781 23.683594 L 2.484375 26.984375 C 2.5094711 29.921854 2.5220921 30.304426 2.6054688 30.455078 C 2.7333151 30.686003 2.9794047 30.912822 3.2167969 31.015625 C 3.3908744 31.090913 4.6413836 31.099616 13.732422 31.101562 C 25.046854 31.103984 24.259117 31.128613 24.628906 30.777344 C 24.990872 30.433365 24.972914 30.606043 25.003906 26.984375 L 25.033203 23.681641 L 25.654297 23.652344 C 26.40092 23.615388 26.592208 23.540608 27 23.132812 C 27.522214 22.610588 27.491995 22.986963 27.474609 17.300781 L 27.458984 12.337891 L 27.291016 12.035156 C 27.103559 11.696715 26.852155 11.466422 26.472656 11.285156 C 26.276242 11.191311 26.077359 11.157128 25.611328 11.136719 L 25.003906 11.109375 L 25.003906 9.1738281 L 25.003906 7.2382812 L 24.849609 7.0507812 C 23.952531 5.9642313 18.768993 0.12362941 18.65625 0.072265625 C 18.551812 0.024673813 14.798245 0.0008475591 11.03125 0 z M 3.6972656 1.21875 L 10.751953 1.21875 L 17.808594 1.21875 L 17.822266 4.4355469 C 17.832357 6.8430001 17.852555 7.6865106 17.904297 7.7851562 C 18.056419 8.0750917 18.073496 8.0761719 21.050781 8.0761719 L 23.818359 8.0761719 L 23.818359 9.5996094 L 23.818359 11.125 L 13.744141 11.125 L 3.6679688 11.125 L 3.6835938 6.171875 L 3.6972656 1.21875 z M 8.7929688 12.982422 C 9.1236605 12.982422 9.4649416 13.014108 9.8144531 13.080078 C 10.163965 13.142579 10.524727 13.238712 10.898438 13.367188 L 10.898438 15.013672 C 10.567744 14.8227 10.246201 14.677301 9.9316406 14.580078 C 9.6170804 14.482856 9.318672 14.435547 9.0390625 14.435547 C 8.6680427 14.435547 8.3942412 14.500867 8.2167969 14.632812 C 8.0393506 14.76476 7.9511719 14.97027 7.9511719 15.248047 C 7.9511719 15.456379 8.0106096 15.618272 8.1289062 15.736328 C 8.2498916 15.850913 8.4666897 15.949872 8.78125 16.033203 L 9.4433594 16.205078 C 10.112808 16.378689 10.588796 16.64388 10.871094 16.998047 C 11.153392 17.352214 11.292969 17.855035 11.292969 18.507812 C 11.292969 19.365453 11.096389 20.003689 10.701172 20.423828 C 10.308643 20.840495 9.7076913 21.048828 8.8984375 21.048828 C 8.5166634 21.048828 8.1325097 21.001953 7.7480469 20.908203 C 7.3635837 20.814452 6.980166 20.676216 6.5957031 20.492188 L 6.5957031 18.798828 C 6.980166 19.062716 7.3514073 19.263018 7.7089844 19.398438 C 8.0692505 19.530383 8.41662 19.595703 8.75 19.595703 C 9.0887575 19.595703 9.3472108 19.522787 9.5273438 19.376953 C 9.707476 19.231119 9.796875 19.022786 9.796875 18.751953 C 9.796875 18.508897 9.7349993 18.321397 9.6113281 18.189453 C 9.4903429 18.057507 9.2484551 17.940104 8.8828125 17.835938 L 8.28125 17.664062 C 7.6790148 17.497396 7.2385936 17.231771 6.9589844 16.867188 C 6.6820637 16.502602 6.5429685 16.010634 6.5429688 15.392578 C 6.5429688 14.618273 6.7358957 14.024089 7.1230469 13.607422 C 7.5101983 13.190755 8.0670599 12.982422 8.7929688 12.982422 z M 15.412109 12.982422 C 16.379987 12.982422 17.137082 13.339409 17.685547 14.054688 C 18.234011 14.769965 18.507814 15.757161 18.507812 17.017578 C 18.507812 18.274523 18.234011 19.261285 17.685547 19.976562 C 17.137082 20.691842 16.379987 21.048828 15.412109 21.048828 C 14.44692 21.048828 13.687872 20.691842 13.136719 19.976562 C 12.588254 19.261285 12.314453 18.274523 12.314453 17.017578 C 12.314453 15.757161 12.588254 14.769965 13.136719 14.054688 C 13.687872 13.339409 14.44692 12.982422 15.412109 12.982422 z M 3.6269531 13.123047 L 5.1796875 13.123047 L 5.1796875 20.142578 C 5.1796875 21.111328 4.9750662 21.835287 4.5664062 22.314453 C 4.1604351 22.79362 3.5460884 23.033203 2.7207031 23.033203 L 2.40625 23.033203 L 2.40625 21.517578 L 2.6464844 21.517578 C 2.9691105 21.517578 3.2129515 21.402559 3.3769531 21.169922 C 3.5436431 20.937284 3.6269531 20.593968 3.6269531 20.142578 L 3.6269531 13.123047 z M 19.677734 13.123047 L 21.412109 13.123047 L 23.601562 18.455078 L 23.601562 13.123047 L 25.074219 13.123047 L 25.074219 20.898438 L 23.339844 20.898438 L 21.150391 15.564453 L 21.150391 20.898438 L 19.677734 20.898438 L 19.677734 13.123047 z M 15.412109 14.435547 C 14.938924 14.435547 14.571336 14.659939 14.310547 15.111328 C 14.049757 15.562717 13.919922 16.198133 13.919922 17.017578 C 13.919922 17.83355 14.049757 18.468533 14.310547 18.919922 C 14.571336 19.371311 14.938924 19.595703 15.412109 19.595703 C 15.887983 19.595703 16.254836 19.371311 16.515625 18.919922 C 16.776415 18.468533 16.908203 17.83355 16.908203 17.017578 C 16.908203 16.198133 16.776415 15.562717 16.515625 15.111328 C 16.254836 14.659939 15.887983 14.435547 15.412109 14.435547 z M 3.6972656 23.683594 L 13.744141 23.683594 L 23.791016 23.683594 L 23.791016 26.617188 L 23.791016 29.552734 L 13.755859 29.566406 C 5.7581341 29.577783 3.7168558 29.566118 3.6953125 29.509766 C 3.6803418 29.470874 3.6737036 28.143753 3.6816406 26.560547 L 3.6972656 23.683594 z ' style='fill:%23000000;stroke-width:0.05644233' /%3E%3C/svg%3E%0A");
+        }
+
+        .gpx {
+            background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8' standalone='no'%3F%3E%3Csvg xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:cc='http://creativecommons.org/ns%23' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns%23' xmlns:svg='http://www.w3.org/2000/svg' xmlns='http://www.w3.org/2000/svg' id='svg8' version='1.1' viewBox='0 0 7.2713865 8.2295132' height='8.2295132mm' width='7.2713866mm'%3E%3Cdefs id='defs2' /%3E%3Cmetadata id='metadata5'%3E%3Crdf:RDF%3E%3Ccc:Work rdf:about=''%3E%3Cdc:format%3Eimage/svg+xml%3C/dc:format%3E%3Cdc:type rdf:resource='http://purl.org/dc/dcmitype/StillImage' /%3E%3Cdc:title%3E%3C/dc:title%3E%3C/cc:Work%3E%3C/rdf:RDF%3E%3C/metadata%3E%3Cg transform='translate(-42.536071,-33.636464)' id='layer1'%3E%3Cpath id='path858' d='m 43.387384,41.84251 c -0.06281,-0.0272 -0.128045,-0.08683 -0.161871,-0.147929 -0.02206,-0.03986 -0.02563,-0.141215 -0.03227,-0.918423 l -0.0075,-0.873621 -0.164271,-0.0075 c -0.197229,-0.009 -0.271325,-0.03901 -0.371639,-0.150579 -0.119961,-0.133427 -0.113706,-0.0501 -0.113706,-1.514787 v -1.301654 l 0.0455,-0.09105 c 0.0886,-0.1773 0.206694,-0.243862 0.451045,-0.254222 l 0.160537,-0.0068 v -1.350177 c 0,-1.314079 7.87e-4,-1.351719 0.02943,-1.407872 0.03649,-0.07152 0.118359,-0.140522 0.193411,-0.163008 0.08394,-0.02515 4.001074,-0.02427 4.056339,9.14e-4 0.02983,0.01359 1.400995,1.558682 1.638347,1.846165 l 0.04102,0.04968 v 0.512148 0.512149 l 0.160538,0.007 c 0.123304,0.0054 0.176229,0.01453 0.228197,0.03936 0.100409,0.04796 0.166984,0.108991 0.216582,0.198537 l 0.0443,0.07998 0.0041,1.313087 c 0.0046,1.504469 0.01273,1.404944 -0.125439,1.543116 -0.107895,0.107895 -0.158947,0.127563 -0.356491,0.137341 l -0.164271,0.0081 -0.0075,0.873621 c -0.0082,0.958233 -0.0037,0.912489 -0.09947,1.0035 -0.09784,0.09294 0.110552,0.08672 -2.883058,0.08608 -2.405337,-5.15e-4 -2.735824,-0.0033 -2.781882,-0.02322 z m 5.443335,-1.163421 v -0.776552 h -2.6582 -2.658199 l -0.0039,0.761619 c -0.0021,0.41889 -6.61e-4,0.770037 0.0033,0.780327 0.0057,0.01491 0.546019,0.01794 2.662084,0.01493 l 2.654919,-0.0038 z m -3.920098,-1.52427 c 0.07803,-0.01369 0.178832,-0.03613 0.224006,-0.04987 l 0.08214,-0.02498 0.0039,-0.555924 0.0039,-0.555924 -0.384725,0.004 -0.384725,0.004 -0.0042,0.182938 -0.0042,0.182938 h 0.164731 0.16473 v 0.215657 c 0,0.156282 -0.0051,0.218903 -0.01867,0.227447 -0.01027,0.0065 -0.09009,0.01432 -0.177382,0.01741 -0.241433,0.0085 -0.390504,-0.04465 -0.520548,-0.185726 -0.123087,-0.133534 -0.170743,-0.293203 -0.16218,-0.54338 0.0051,-0.148477 0.0092,-0.166768 0.06154,-0.272649 0.06894,-0.139483 0.164505,-0.230031 0.305485,-0.289437 0.09689,-0.04083 0.110963,-0.04259 0.340014,-0.04268 0.208383,-7.5e-5 0.252969,0.0043 0.34864,0.03448 0.06034,0.01901 0.111275,0.03242 0.113201,0.02978 0.0019,-0.0026 0.02236,-0.07871 0.04542,-0.169063 0.02305,-0.09035 0.0448,-0.171947 0.04832,-0.181328 0.0082,-0.02188 -0.09051,-0.05786 -0.240412,-0.08763 -0.160043,-0.03178 -0.488246,-0.03147 -0.643894,6.03e-4 -0.412803,0.08507 -0.710669,0.332084 -0.820787,0.680669 -0.05375,0.170152 -0.07203,0.346454 -0.05332,0.514243 0.05504,0.493586 0.387457,0.823931 0.893867,0.888288 0.139295,0.0177 0.446119,0.0058 0.615116,-0.02384 z m 1.149896,-0.349909 v -0.373343 h 0.15549 c 0.551577,0 0.874078,-0.260317 0.874758,-0.706089 4.66e-4,-0.305609 -0.162399,-0.515609 -0.477701,-0.615951 -0.108966,-0.03468 -0.657057,-0.04639 -0.866155,-0.01851 l -0.14187,0.01892 -0.0038,1.034159 -0.0038,1.034159 h 0.231575 0.231575 z m 0.04853,-0.742555 -0.04853,-0.006 v -0.304518 -0.304518 l 0.05192,-0.0097 c 0.02856,-0.0054 0.104159,-0.0072 0.168004,-0.0042 0.206064,0.0099 0.323065,0.09891 0.342123,0.260346 0.0306,0.259221 -0.179542,0.410076 -0.513514,0.36863 z m 1.710533,0.832157 c 0.06917,-0.151951 0.144145,-0.321666 0.166605,-0.377146 l 0.04084,-0.100873 0.192689,0.380879 0.192688,0.38088 h 0.265159 c 0.145837,0 0.265158,-0.005 0.265158,-0.0112 0,-0.0062 -0.137246,-0.24822 -0.304991,-0.537904 l -0.304992,-0.526699 0.290058,-0.50226 c 0.159532,-0.276243 0.290058,-0.504598 0.290058,-0.507456 0,-0.0029 -0.120059,-0.0052 -0.266798,-0.0052 h -0.266796 l -0.105306,0.22774 c -0.05792,0.125256 -0.126526,0.2815 -0.152461,0.347208 -0.02594,0.06571 -0.05211,0.124586 -0.05815,0.130839 -0.0061,0.0063 -0.02703,-0.02735 -0.04661,-0.07467 -0.01959,-0.04732 -0.09465,-0.20868 -0.166801,-0.358577 l -0.131189,-0.27254 h -0.269976 c -0.148486,0 -0.267171,0.005 -0.263743,0.0112 0.0034,0.0062 0.131507,0.23411 0.284622,0.506555 0.153114,0.272445 0.278389,0.501859 0.278389,0.509808 0,0.0079 -0.131043,0.243587 -0.291207,0.523641 -0.160164,0.280055 -0.291207,0.516168 -0.291207,0.524697 0,0.01029 0.08887,0.01413 0.264103,0.01143 l 0.264103,-0.0041 z m 1.018602,-2.717934 v -0.40321 h -0.73249 c -0.78774,0 -0.79225,-4.18e-4 -0.832499,-0.07713 -0.01369,-0.0261 -0.0192,-0.249124 -0.02187,-0.886096 l -0.0036,-0.851221 H 45.38101 43.514297 l -0.0038,1.310432 -0.0038,1.310433 h 2.665748 2.665748 z' style='fill:%23000000;stroke-width:0.0149337' /%3E%3C/g%3E%3C/svg%3E%0A");
+        }
+
+        .hillshading {
+            background-image: url("data:image/svg+xml,%3Csvg width='11.583mm' height='10.26mm' version='1.1' viewBox='0 0 11.583 10.26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg transform='translate(-25.958 -109.97)' stroke='%23000' stroke-linejoin='round'%3E%3Cpath d='m26.458 119.73 5.2917-9.2604 5.2917 9.2604z' fill='none'/%3E%3Cpath d='m26.458 119.73 1.9024-3.126 2.7494-2.0279 0.5256 3.1314 1.192-2.6598 2.3477 2.2348 1.8663 2.4474z' stroke-width='.265'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .anotherButton:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .someList {
+            display: block;
+        }
+
+        .small {
+            font-family: "Open Sans", "Helvetica Neue", Arial, Helvetica, sans-serif;
+            font-size: 15px;
+            box-shadow: 0 0 10px 2px rgba(0, 0, 0, .1);
+            color: rgba(0, 0, 0, 0.75);
+            border-radius: 4px;
+            border: 0;
+            padding: 4px 2px;
+            background-color: transparent;
+        }
+    </style>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.css' rel='stylesheet' />
+
+    <script src='https://mapbox-gl-inspect.lukasmartinelli.ch/dist/mapbox-gl-inspect.min.js'></script>
+    <link href='https://mapbox-gl-inspect.lukasmartinelli.ch/dist/mapbox-gl-inspect.css' rel='stylesheet' />
+
+    <script
+        src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.0.0/mapbox-gl-geocoder.min.js'></script>
+    <link rel='stylesheet'
+        href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.0.0/mapbox-gl-geocoder.css'
+        type='text/css' />
+
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css'
+        type='text/css' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.js'></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+
+    <script src='togpx.js'></script>
+    <script src='togeojson.js'></script>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+
+    <!-- fix icons for mapbox-inspect -->
+    <style>
+        .mapboxgl-ctrl-inspect {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23333333' preserveAspectRatio='xMidYMid meet' viewBox='-10 -10 60 60'%3E%3Cg%3E%3Cpath d='m15 21.6q0-2 1.5-3.5t3.5-1.5 3.5 1.5 1.5 3.5-1.5 3.6-3.5 1.4-3.5-1.4-1.5-3.6z m18.4 11.1l-6.4-6.5q1.4-2.1 1.4-4.6 0-3.4-2.5-5.8t-5.9-2.4-5.9 2.4-2.5 5.8 2.5 5.9 5.9 2.5q2.4 0 4.6-1.4l7.4 7.4q-0.9 0.6-2 0.6h-20q-1.3 0-2.3-0.9t-1.1-2.3l0.1-26.8q0-1.3 1-2.3t2.3-0.9h13.4l10 10v19.3z'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .mapboxgl-ctrl-map {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23333333' viewBox='-10 -10 60 60' preserveAspectRatio='xMidYMid meet'%3E%3Cg%3E%3Cpath d='m25 31.640000000000004v-19.766666666666673l-10-3.511666666666663v19.766666666666666z m9.140000000000008-26.640000000000004q0.8599999999999923 0 0.8599999999999923 0.8600000000000003v25.156666666666666q0 0.625-0.625 0.783333333333335l-9.375 3.1999999999999993-10-3.5133333333333354-8.906666666666668 3.4383333333333326-0.2333333333333334 0.07833333333333314q-0.8616666666666664 0-0.8616666666666664-0.8599999999999994v-25.156666666666663q0-0.625 0.6233333333333331-0.7833333333333332l9.378333333333334-3.198333333333334 10 3.5133333333333336 8.905000000000001-3.4383333333333344z'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+    <title>CycleMap</title>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id='distance' class='distance-container'></div>
+
+    <script type="text/javascript">
+
+        var styles = ["localhost"];
+
+        function loadJson(file) {
+            return new Promise(function (resolve, reject) {
+                var request = new XMLHttpRequest();
+                request.open('GET', file);
+                request.responseType = 'json';
+                request.onload = function () {
+                    if (request.status === 200) {
+                        resolve(request.response);
+                    } else {
+                        reject(Error('Didn\'t load successfully; error code:' + request.statusText));
+                    }
+                };
+                request.onerror = function () {
+                    reject(Error('There was a network error.'));
+                };
+                request.send();
+            });
+        }
+
+        Promise.all([loadJson(`${styles[0]}-base.json`), loadJson(`${styles[0]}-layers.json`)]).then(function (responses) {
+            // responses contains the parsed JSON objects in the order of requests
+            setupMap(responses[0], responses[1]);
+        }).catch(function (error) {
+            console.log(error);
+        });
+
+        function setupMap(myStyle, layers) {
+            myStyle.layers = layers;
+            // TODO: Enter your mapbox gl access token on the line below
+            mapboxgl.accessToken = 'pk.eyJ1IjoibXljeWNsZW1hcCIsImEiOiJjaXJhYnoxcGEwMDRxaTlubnk3cGZpbTBmIn0.TEO9UhyyX1nFKDTwO4K1xg';
+            var map = new mapboxgl.Map({
+                container: 'map',
+                style: myStyle,
+                hash: true,
+                dragRotate: false,
+                minZoom: 3,
+                maxZoom: 20,
+                center: [10.85, 48.05],
+                zoom: 12,
+                attributionControl: false,
+                antialias: true,
+            }).addControl(new mapboxgl.AttributionControl({
+                compact: true,
+                customAttribution: '© Henry Thasler <strong><a href="https://github.com/henrythasler/cloud-tileserver">about this map</a></strong> | © <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>'
+            })
+            );
+
+            // disable map rotation using touch rotation gesture
+            map.touchZoomRotate.disableRotation();
+
+            // Debug output
+            map.showTileBoundaries = true;
+            // map.showCollisionBoxes = true;
+
+            class someList {
+                constructor(options) {
+                    this.options = options;
+                }
+                onAdd(map) {
+                    this._map = map;
+                    this._container = document.createElement('div');
+                    this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+
+                    this._list = document.createElement('select');
+                    this._list.className = `someList ${this.options.type}`;
+                    this._list.action = this.options.action;
+                    this._list.title = this.options.title;
+                    this._list['aria-label'] = `Export ${this.options.type}`;
+                    this._list.onchange = function (e) {
+                        this.action({ element: e.target });
+                    };
+
+                    for (var item of this.options.items) {
+                        var listOption = document.createElement("option");
+                        listOption.value = item;
+                        listOption.text = item;
+                        this._list.appendChild(listOption);
+                    }
+                    this._container.appendChild(this._list);
+                    return this._container;
+                }
+
+                onRemove() {
+                    this._container.removeChild(this._container);
+                    this._map = undefined;
+                }
+            }
+
+            function loadStyle(e) {
+                let newStyle = e.element.options[e.element.selectedIndex].value
+                Promise.all([loadJson(`${newStyle}-base.json`), loadJson(`${newStyle}-layers.json`)]).then(function (responses) {
+                    // responses contains the parsed JSON objects in the order of requests
+                    let styleJson = responses[0]
+                    styleJson.layers = responses[1];
+                    map.setStyle(styleJson);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+
+            var styleButton = new someList({ action: loadStyle, items: styles, type: "small", title: "Choose Style" });
+            map.addControl(styleButton, "top-right");            
+
+            /* given a query in the form "lng, lat" or "lat, lng" returns the matching
+            * geographic coordinate(s) as search results in carmen geojson format,
+            * https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
+            */
+            var coordinatesGeocoder = function (query) {
+                // match anything which looks like a decimal degrees coordinate pair
+                var matches = query.match(/^[ ]*(?:Lat: )?(-?\d+\.?\d*)[, ]+(?:Lng: )?(-?\d+\.?\d*)[ ]*$/i);
+                if (!matches) {
+                    return null;
+                }
+
+                function coordinateFeature(lng, lat) {
+                    return {
+                        center: [lng, lat],
+                        geometry: {
+                            type: "Point",
+                            coordinates: [lng, lat]
+                        },
+                        place_name: 'Lat: ' + lat + ' Lng: ' + lng,
+                        place_type: ['coordinate'],
+                        properties: {},
+                        type: 'Feature'
+                    };
+                }
+
+                var coord1 = Number(matches[1]);
+                var coord2 = Number(matches[2]);
+                var geocodes = [];
+
+                if (coord1 < -90 || coord1 > 90) {
+                    // must be lng, lat
+                    geocodes.push(coordinateFeature(coord1, coord2));
+                }
+
+                if (coord2 < -90 || coord2 > 90) {
+                    // must be lat, lng
+                    geocodes.push(coordinateFeature(coord2, coord1));
+                }
+
+                if (geocodes.length === 0) {
+                    // else could be either lng, lat or lat, lng
+                    geocodes.push(coordinateFeature(coord1, coord2));
+                    geocodes.push(coordinateFeature(coord2, coord1));
+                }
+
+                return geocodes;
+            };
+
+            map.addControl(new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                mapboxgl: mapboxgl,
+                localGeocoder: coordinatesGeocoder,
+                collapsed: true
+            }));
+
+            map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right');
+            map.addControl(new mapboxgl.FullscreenControl());
+
+            map.addControl(new mapboxgl.ScaleControl());
+
+            var draw = new MapboxDraw({
+                displayControlsDefault: false,
+                controls: {
+                    line_string: true,
+                    trash: true
+                },
+                styles: [
+                    // ACTIVE (being drawn)
+                    // line stroke
+                    {
+                        "id": "gl-draw-line",
+                        "type": "line",
+                        "filter": ["all", ["==", "$type", "LineString"], ["!=", "mode", "static"]],
+                        "layout": {
+                            "line-cap": "round",
+                            "line-join": "round"
+                        },
+                        "paint": {
+                            "line-color": "rgba(255,32,32,0.75)",
+                            "line-width": 8
+                        }
+                    },
+                    // vertex point halos
+                    {
+                        "id": "gl-draw-polygon-and-line-vertex-halo-active",
+                        "type": "circle",
+                        "filter": ["all", ["==", "meta", "vertex"], ["==", "$type", "Point"], ["!=", "mode", "static"]],
+                        "paint": {
+                            "circle-radius": 12,
+                            "circle-color": "rgba(255,32,32,0.75)"
+                        }
+                    },
+                    // vertex points
+                    {
+                        "id": "gl-draw-polygon-and-line-vertex-active",
+                        "type": "circle",
+                        "filter": ["all", ["==", "meta", "vertex"], ["==", "$type", "Point"], ["!=", "mode", "static"]],
+                        "paint": {
+                            "circle-radius": 6,
+                            "circle-color": "#fc0",
+                        }
+                    },
+                    // line-midpoint-halo
+                    {
+                        "id": "gl-draw-polygon-and-line-midpoint-halo-active",
+                        "type": "circle",
+                        "filter": ["all", ["==", "meta", "midpoint"], ["==", "$type", "Point"], ["!=", "mode", "static"]],
+                        "paint": {
+                            "circle-radius": 8,
+                            "circle-color": "#000",
+                        }
+                    },
+                    // line-midpoint
+                    {
+                        "id": "gl-draw-polygon-and-line-midpoint-active",
+                        "type": "circle",
+                        "filter": ["all", ["==", "meta", "midpoint"], ["==", "$type", "Point"], ["!=", "mode", "static"]],
+                        "paint": {
+                            "circle-radius": 6,
+                            "circle-color": "#fc0",
+                        }
+                    }
+                ]
+
+            });
+            map.addControl(draw, 'top-left');
+
+            var inspect = new MapboxInspect({
+                // showMapPopup: true,
+                // showMapPopupOnHover: false,
+                // showInspectMapPopupOnHover: false,
+                selectThreshold: 5
+            });
+            map.addControl(inspect, 'top-left');
+
+
+
+            function updateDistance(e) {
+                var data = draw.getAll();
+                var distanceContainer = document.getElementById('distance');
+                if (data.features.length > 0) {
+                    distanceContainer.innerHTML = '';
+                    var value = document.createElement('pre');
+                    value.textContent = 'Distance: ' + (Math.round(turf.lineDistance(data, { units: 'kilometers' }) * 100) / 100).toLocaleString() + 'km';
+                    distanceContainer.appendChild(value);
+                } else {
+                    distanceContainer.innerHTML = '';
+                    if (e.type !== 'draw.delete') alert("Use the draw tools to draw a polygon!");
+                }
+            }
+
+            map.on('draw.create', updateDistance);
+            map.on('draw.delete', updateDistance);
+            map.on('draw.update', updateDistance);
+
+
+            function handleDragOver(evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+                evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+            }
+
+            function handleFileSelect(evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+
+                let files = evt.dataTransfer.files; // FileList object.
+
+                // files is a FileList of File objects. List some properties.
+                for (let i = 0, f; f = files[i]; i++) {
+                    console.log(escape(f.name) + ', ' + f.size + ' Bytes');
+                    let reader = new FileReader();
+
+                    // Closure to capture the file information.
+                    reader.onload = (function (theFile) {
+                        return function (e) {
+                            let newFeatures = {};
+                            if (f.name.endsWith(".gpx")) {
+                                let dom = new DOMParser().parseFromString(e.target.result, "text/xml");
+                                newFeatures = toGeoJSON.gpx(dom);
+
+                            }
+                            else if (f.name.endsWith(".json")) {
+                                newFeatures = JSON.parse(e.target.result);
+                            }
+                            else {
+                                return;
+                            }
+
+                            let featureIds = draw.add(newFeatures);
+
+                            // Zoom map to bounds of new features
+                            let coordinates = draw.get(featureIds).geometry.coordinates;;
+                            let bounds = coordinates.reduce(function (bounds, coord) {
+                                return bounds.extend(coord);
+                            }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+
+                            map.fitBounds(bounds, {
+                                padding: 20
+                            });
+
+                            updateDistance();
+                        };
+                    })(f);
+
+                    // Read in the image file as a data URL.
+                    reader.readAsText(f);
+                }
+            }
+            var dropZone = document.getElementById('map');
+            dropZone.addEventListener('dragover', handleDragOver, false);
+            dropZone.addEventListener('drop', handleFileSelect, false);
+
+
+            map.on('load', function () {
+            });
+
+            function exportData(options) {
+                console.log(options);
+                let data = draw.getAll();
+                if (data.features.length > 0) {
+                    console.log("Have data");
+                    if (options.type === "gpx") {
+                        let convertedData = 'application/gpx;charset=utf-8,' + encodeURIComponent(togpx(data));
+                        options.element.setAttribute('href', 'data:' + convertedData);
+                        options.element.setAttribute('download', 'data.gpx');
+                    }
+                    else {
+                        let convertedData = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data));
+                        options.element.setAttribute('href', 'data:' + convertedData);
+                        options.element.setAttribute('download', 'data.json');
+                    }
+                } else {
+                    alert("Wouldn't you like to draw some data?");
+                }
+            }
+
+            class anotherButton {
+                constructor(options) {
+                    this.options = options;
+                }
+                onAdd(map) {
+                    this._map = map;
+                    this._container = document.createElement('div');
+                    this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+
+                    this._btn = document.createElement('a');
+                    this._btn.className = `anotherButton ${this.options.type}`;
+                    this._btn.options = this.options;
+                    this._btn.title = this.options.title;
+                    this._btn['aria-label'] = `Export ${this.options.type}`;
+                    this._btn.onclick = function (e) {
+                        this.options.action({ element: e.target, type: this.options.type });
+                    };
+
+                    this._container.appendChild(this._btn);
+                    return this._container;
+                }
+
+                onRemove() {
+                    this._container.removeChild(this._container);
+                    this._map = undefined;
+                }
+            }
+
+            function toggleLayer(options) {
+                var visibility = map.getLayoutProperty(options.type, 'visibility');
+                map.setLayoutProperty(options.type, 'visibility', (visibility === 'none') ? 'visible' : 'none');
+            }
+
+            var jsonButton = new anotherButton({ action: exportData, type: "json", title: "Download as GeoJSON" });
+            map.addControl(jsonButton, "top-left");
+
+            var gpxButton = new anotherButton({ action: exportData, type: "gpx", title: "Download as GPX" });
+            map.addControl(gpxButton, "top-left");
+
+            var hillshadingButton = new anotherButton({ action: toggleLayer, type: "hillshading", title: "Toggle Hillshading" });
+            map.addControl(hillshadingButton, "top-right");
+
+
+        }
+    </script>
+</body>
+
+</html>
