@@ -70,6 +70,7 @@ describe("buildLayerQuery", function () {
                 buffer: 256,
                 clip_geom: false,
                 geom: "geometry",
+                geom_query: "ST_LineMerge(ST_Collect(!GEOM!))",
                 srid: 3857,
                 keys: ["osm_id as id", "name"],
                 where: ["TRUE"],
@@ -81,7 +82,7 @@ describe("buildLayerQuery", function () {
             13);
         expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
     (SELECT DISTINCT ON(name)ST_AsMvtGeom(
-        geometry,
+        ST_LineMerge(ST_Collect(geometry)),
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
         4096,
         256,
@@ -102,6 +103,7 @@ describe("buildLayerQuery", function () {
                 buffer: 256,
                 clip_geom: false,
                 geom: "geometry",
+                geom_query: "ST_LineMerge(ST_Collect(!GEOM!))",
                 srid: 3857,
                 keys: ["osm_id as id", "name"],
                 where: ["TRUE"],
@@ -136,6 +138,7 @@ describe("buildLayerQuery", function () {
         let layerQuery: string | null = tileserver.buildLayerQuery({
             name: "source",
             geom: "geometry",
+            geom_query: "ST_LineMerge(ST_Collect(!GEOM!))",
             extend: 4096,
             buffer: 256,
             clip_geom: false,
@@ -155,7 +158,7 @@ describe("buildLayerQuery", function () {
 
         expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
     (SELECT DISTINCT ON(name)ST_AsMvtGeom(
-        geometry,
+        ST_LineMerge(ST_Collect(geometry)),
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
         4096,
         256,
@@ -229,6 +232,30 @@ describe("buildLayerQuery", function () {
     FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) 
     AND (13 < 14) AND (13+1 < 14)13) AS q)`.replace(/\s+/g, ' '));
     });
+
+    it("replacing !GEOM! variable", function () {
+        let bbox: WGS84BoundingBox = proj.getWGS84TileBounds({ x: 4383, y: 2854, z: 13 });
+        let layerQuery: string | null = tileserver.buildLayerQuery({
+            name: "source"
+        },
+            {
+                name: "layer1",
+                table: "table1",
+                geom_query: "(!GEOM!)",
+                geom: "fancy_geometry"
+            },
+            bbox,
+            13);
+        expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
+    (SELECT ST_AsMvtGeom(
+        (fancy_geometry),
+        ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
+        4096,
+        64,
+        true
+        ) AS geom
+    FROM table1 WHERE (fancy_geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857))) AS q)`.replace(/\s+/g, ' '));
+    });    
 })
 
 describe("buildQuery", function () {
