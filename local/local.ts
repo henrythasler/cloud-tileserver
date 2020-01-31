@@ -7,7 +7,7 @@ const fixturesPath = "local/";
 
 const config = parse(readFileSync(`${fixturesPath}local.toml`, "utf8")) as unknown as Config;
 
-const gzip = false;
+const gzip = true;
 const tileserver = new Tileserver(config, "", 2, gzip);
 
 // docker run --rm -ti -p 5432:5432 -v /media/mapdata/pgdata_mvt:/pgdata -v $(pwd)/postgis.conf:/etc/postgresql/postgresql.conf -e PGDATA=/pgdata img-postgis:0.9 -c 'config_file=/etc/postgresql/postgresql.conf'
@@ -20,6 +20,8 @@ async function listener(req: http.IncomingMessage, res: http.ServerResponse): Pr
     if ((vectortile.res >= 0) && (vectortile.data)) {
         res.writeHead(200, {
             'Content-Type': 'application/vnd.mapbox-vector-tile',
+            'Content-Encoding': (gzip) ? "gzip" : "identity",
+            'Content-Length' : `${vectortile.data.byteLength}`,
             'access-control-allow-origin': '*'
         });
         res.end(vectortile.data);

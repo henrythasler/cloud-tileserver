@@ -586,11 +586,13 @@
       table   = "landcover"
 
   [[sources.layers]]
-    name    = "waterway"
-    minzoom = 8
-    table   = "waterway_gen8"
-    keys    = ["subclass", "tunnel", "layer", "name"]
-    where   = ["subclass IN('river', 'canal')"]
+    name       = "waterway"
+    minzoom    = 8
+    table      = "waterway_gen8"
+    geom_query = "ST_LineMerge(ST_Collect(!GEOM!))"
+    postfix    = "GROUP BY subclass, tunnel, layer, name"
+    keys       = ["subclass", "tunnel", "layer", "name"]
+    where      = ["subclass IN('river', 'canal')"]
     [[sources.layers.variants]]
       minzoom = 10
       table   = "waterway_gen10"
@@ -602,6 +604,7 @@
       minzoom = 14
       table   = "waterway"
       keys    = ["subclass", "tunnel", "layer", "CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name"]      
+      postfix = "GROUP BY subclass, tunnel, layer, name, name_de, name_en"
       where   = []
       
   [[sources.layers]]
@@ -720,7 +723,7 @@
   [[sources.layers]]
     minzoom   = 10
     name      = "manmade"
-    sql       = "select ST_AsMvtGeom(geometry, !BBOX!, 64) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines_gen13 WHERE (geometry && !BBOX!)"
+    sql       = "select ST_AsMvtGeom(geometry, !BBOX!, 4096, 64) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines_gen13 WHERE (geometry && !BBOX!)"
     [[sources.layers.variants]]
       minzoom = 14
       sql       = """select ST_AsMvtGeom(geometry, !BBOX!) as geom, class, subclass, ST_Length(geometry)::integer as length, ST_IsClosed(geometry) as polygon from import.manmade_lines WHERE (geometry && !BBOX!) 
@@ -755,6 +758,7 @@
     minzoom   = 14
     name      = "buildings"
     table     = "buildings_gen14"
+    geom_query = "ST_Union(!GEOM!)"
     keys      = []
     [[sources.layers.variants]]
       minzoom = 15
