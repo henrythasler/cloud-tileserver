@@ -37,6 +37,7 @@ export interface Common {
     buffer?: number,
     clip_geom?: boolean,
     geom?: string,
+    geom_query?: string,
     srid?: number,
     keys?: string[],
     where?: string[],
@@ -183,6 +184,7 @@ export class Tileserver {
         const layerExtend: number = (resolved.extend !== undefined) ? resolved.extend : ((source.extend !== undefined) ? source.extend : 4096);
         const sql: string = (resolved.sql !== undefined) ? resolved.sql : ((source.sql !== undefined) ? source.sql : "");
         const geom: string = (resolved.geom !== undefined) ? resolved.geom : ((source.geom !== undefined) ? source.geom : "geometry");
+        const geom_query: string = (resolved.geom_query !== undefined) ? resolved.geom_query : ((source.geom_query !== undefined) ? source.geom_query : "!GEOM!");
         const srid: number = (resolved.srid !== undefined) ? resolved.srid : ((source.srid !== undefined) ? source.srid : 3857);
         const bbox: string = `ST_Transform(ST_MakeEnvelope(${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, 
             ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}, 4326), ${srid})`;
@@ -215,13 +217,13 @@ export class Tileserver {
         else {
             return `(SELECT ST_AsMVT(q, '${resolved.name}', ${layerExtend}, 'geom') AS l FROM
         (SELECT ${prefix}ST_AsMvtGeom(
-            ${geom},
+            ${geom_query},
             ${bbox},
             ${layerExtend},
             ${buffer},
             ${clip_geom}
             ) AS geom${keys}
-        FROM ${namespace}${resolved.table} WHERE (${geom} && ${bbox})${where}${postfix}) AS q)`.replace(/!ZOOM!/g, `${zoom}`).replace(/\s+/g, ' ');
+        FROM ${namespace}${resolved.table} WHERE (${geom} && ${bbox})${where}${postfix}) AS q)`.replace(/!GEOM!/g, `${geom}`).replace(/!ZOOM!/g, `${zoom}`).replace(/\s+/g, ' ');
         }
     }
 

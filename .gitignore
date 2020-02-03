@@ -69,3 +69,6 @@ secret.auto.tfvars
 docs/out
 .coveralls.yml
 dist
+local/local.js
+src/projection.js
+src/tileserver.js
