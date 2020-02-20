@@ -35,4 +35,4 @@ async function listener(req: http.IncomingMessage, res: http.ServerResponse): Pr
 const webserver = http.createServer();
 webserver.on('request', listener);
 webserver.listen(8000);
-console.log("awaiting connections...")
+console.log("awaiting connections...");

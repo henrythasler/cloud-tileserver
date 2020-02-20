@@ -59,104 +59,111 @@
 [[sources]]
   name = "local"
   database = "local"
+  namespace = "import"
 
   [[sources.layers]]
     name      = "landuse"
     minzoom   = 10
-    table     = "import.landuse_gen10"
+    table     = "landuse_gen10"
     keys      = ["subclass", "area", "name"]
     [[sources.layers.variants]]
       minzoom = 11
-      table   = "import.landuse_gen11"
+      table   = "landuse_gen11"
     [[sources.layers.variants]]
       minzoom = 12
-      table   = "import.landuse_gen12"
+      table   = "landuse_gen12"
     [[sources.layers.variants]]
       minzoom = 13
-      table   = "import.landuse_gen13"
+      table   = "landuse_gen13"
     [[sources.layers.variants]]
       minzoom = 14
-      table   = "import.landuse_gen14"
+      table   = "landuse_gen14"
     [[sources.layers.variants]]
       minzoom = 15
-      table   = "import.landuse"
+      table   = "landuse"
 
   [[sources.layers]]
     name      = "landcover"
     minzoom   = 8
-    table     = "import.landcover_gen8"
+    table     = "landcover_gen8"
     keys      = ["class", "subclass", "area", "surface", "name"]
     [[sources.layers.variants]]
       minzoom = 9
-      table   = "import.landcover_gen9"
+      table   = "landcover_gen9"
     [[sources.layers.variants]]
       minzoom = 10
-      table   = "import.landcover_gen10"
+      table   = "landcover_gen10"
     [[sources.layers.variants]]
       minzoom = 11
-      table   = "import.landcover_gen11"
+      table   = "landcover_gen11"
     [[sources.layers.variants]]
       minzoom = 12
-      table   = "import.landcover_gen12"
+      table   = "landcover_gen12"
     [[sources.layers.variants]]
       minzoom = 13
-      table   = "import.landcover_gen13"
+      table   = "landcover_gen13"
     [[sources.layers.variants]]
       minzoom = 14
-      table   = "import.landcover_gen14"
+      table   = "landcover_gen14"
     [[sources.layers.variants]]
       minzoom = 15
-      table   = "import.landcover"
+      table   = "landcover"
 
   [[sources.layers]]
-    name    = "waterway"
-    minzoom = 8
-    table   = "import.waterway_gen8"
-    keys    = ["subclass", "tunnel", "layer", "name"]
-    where   = ["subclass IN('river', 'canal')"]
+    name       = "waterway"
+    minzoom    = 8
+    table      = "waterway_gen8"
+    geom_query = "ST_LineMerge(ST_Collect(!GEOM!))"
+    postfix    = "GROUP BY subclass, tunnel, layer, name"
+    keys       = ["subclass", "tunnel", "layer", "name"]
+    where      = ["subclass IN('river', 'canal')"]
     [[sources.layers.variants]]
       minzoom = 10
-      table   = "import.waterway_gen10"
+      table   = "waterway_gen10"
     [[sources.layers.variants]]
       minzoom = 12
-      table   = "import.waterway_gen12"
+      table   = "waterway_gen12"
       where   = ["subclass IN('river', 'canal', 'stream')"]
     [[sources.layers.variants]]
       minzoom = 14
-      table   = "import.waterway"
+      table   = "waterway"
       keys    = ["subclass", "tunnel", "layer", "CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name"]      
+      postfix = "GROUP BY subclass, tunnel, layer, name, name_de, name_en"
       where   = []
       
   [[sources.layers]]
     name      = "waterarea"
     minzoom   = 8
-    table     = "import.waterarea_gen8"
+    table     = "waterarea_gen8"
+    keys      = []
     [[sources.layers.variants]]
       minzoom = 9
-      table   = "import.waterarea_gen9"
+      table   = "waterarea_gen9"
     [[sources.layers.variants]]
       minzoom = 10
-      table   = "import.waterarea_gen10"
+      table   = "waterarea_gen10"
     [[sources.layers.variants]]
       minzoom = 11
-      table   = "import.waterarea_gen11"
+      table   = "waterarea_gen11"
     [[sources.layers.variants]]
       minzoom = 12
-      table   = "import.waterarea_gen12"
+      table   = "waterarea_gen12"
     [[sources.layers.variants]]
       minzoom = 13
-      table   = "import.waterarea_gen13"
+      table   = "waterarea_gen13"
     [[sources.layers.variants]]
       minzoom = 14
-      table   = "import.waterarea_gen14"
+      table   = "waterarea_gen14"
     [[sources.layers.variants]]
       minzoom = 15
-      table   = "import.waterarea"
+      table   = "waterarea"
 
   [[sources.layers]]
     name      = "roads"
     minzoom   = 8
-    table     = "import.roads_gen8"
+    table     = "roads_gen8"
+    geom_query = "ST_LineMerge(ST_Collect(!GEOM!))"
+    postfix = "GROUP BY class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref"
     keys      = [
       "class", 
       "subclass", 
@@ -172,31 +179,29 @@
       "substring(ref from '\\w+') as ref_prefix", 
       "substring(ref from '\\d+') as ref_num", 
       "NULL as name"]
-    # [[sources.layers.variants]]
-    #   minzoom = 9
-    #   table   = "import.roads_gen9"
     [[sources.layers.variants]]
       minzoom = 10
-      table   = "import.roads_gen10"
+      table   = "roads_gen10"
     [[sources.layers.variants]]
       minzoom = 11
-      table   = "import.roads_gen11"
+      table   = "roads_gen11"
     [[sources.layers.variants]]
       minzoom = 12
-      table   = "import.roads_gen12"
+      table   = "roads_gen12"
     [[sources.layers.variants]]
       minzoom = 13
-      table   = "import.roads_gen13"
+      table   = "roads_gen13"
     [[sources.layers.variants]]
       minzoom = 14
-      table   = "import.roads_gen14"
+      table   = "roads_gen14"
     [[sources.layers.variants]]
       minzoom = 15
-      table   = "import.roads_gen15"
+      buffer = 128
+      table   = "roads_gen15"
     [[sources.layers.variants]]
       minzoom = 16
-      buffer  = 256
-      table   = "import.roads"
+      table   = "roads"
+      buffer = 256
       keys      = [
         "class", 
         "subclass", 
@@ -212,20 +217,21 @@
         "substring(ref from '\\w+') as ref_prefix", 
         "substring(ref from '\\d+') as ref_num", 
         "name"]
-      postfix = "ORDER BY rank DESC"
-
+    postfix = "GROUP BY class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref, name ORDER BY rank DESC"
 
   [[sources.layers]]
     minzoom   = 11
     name      = "cycleroute"
-    sql       = "SELECT ref, name, ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!, 4096, 64) AS geom from import.cycleroute where (geometry && !BBOX!) AND ST_GeometryType(geometry)='ST_LineString' group by ref, name order by ref desc NULLS last, name desc NULLS last"
+    sql       = "SELECT ref, name, ST_AsMvtGeom(ST_LineMerge(ST_Collect(geometry)), !BBOX!) AS geom from import.cycleroute where (geometry && !BBOX!) AND ST_GeometryType(geometry)='ST_LineString' group by ref, name order by ref desc NULLS last, name desc NULLS last"
 
   [[sources.layers]]
-    minzoom   = 9
-    name      = "railway"
-    table     = "import.railway"
-    keys      = ["class", "subclass", "zorder", "bridge", "tunnel", "service"]
-    where     = ["subclass NOT IN('subway', 'tram')", "(attraction <> '') IS NOT TRUE", "(service <> '') IS NOT TRUE"]
+    minzoom    = 9
+    name       = "railway"
+    table      = "railway"
+    geom_query = "ST_LineMerge(ST_Collect(!GEOM!))"
+    keys       = ["class", "subclass", "zorder", "bridge", "tunnel", "service"]
+    where      = ["subclass NOT IN('subway', 'tram')", "(attraction <> '') IS NOT TRUE", "(service <> '') IS NOT TRUE"]
+    postfix    = "GROUP BY class, subclass, zorder, bridge, tunnel, service"
     [[sources.layers.variants]]
       minzoom   = 15
       where     = ["(attraction <> '') IS NOT TRUE"]
@@ -233,9 +239,10 @@
   [[sources.layers]]
     minzoom   = 10
     name      = "transportation"
-    table     = "import.transportation"
+    table     = "transportation"
     keys      = ["class", "subclass", "CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name"]
     where     = ["NOT ST_IsClosed(geometry)"]
+
 
   [[sources.layers]]
     minzoom   = 10
@@ -253,59 +260,61 @@
   [[sources.layers]]
     minzoom   = 14
     name      = "piste"
-    table     = "import.piste"
+    table     = "piste"
     keys      = ["difficulty"]
     where     = ["NOT ST_IsClosed(geometry)"]
 
   [[sources.layers]]
     minzoom   = 14
     name      = "admin"
-    table     = "import.admin"
+    table     = "admin"
     keys      = ["ref", "level"]
 
   [[sources.layers]]
     minzoom   = 13
     maxzoom   = 15
     name      = "buildings-large"
-    table     = "import.buildings_gen14"
+    table     = "buildings_gen14"
+    keys      = []
     where     = ["ST_Area(geometry)>10000"]
 
   [[sources.layers]]
     minzoom   = 14
     name      = "buildings"
-    table     = "import.buildings_gen14"
+    table     = "buildings_gen14"
+    keys      = []
     [[sources.layers.variants]]
       minzoom = 15
-      table   = "import.buildings"
+      table   = "buildings"
 
   [[sources.layers]]
     minzoom   = 18
     name      = "housenumbers"
-    table     = "import.housenumbers"
+    table     = "housenumbers"
     keys      = ["number", "name"]
 
   [[sources.layers]]
     name      = "waterlabels"
     minzoom   = 8
-    table     = "import.label_waterarea_gen8"
+    table     = "label_waterarea_gen8"
     keys      = ["subclass", "area", "ele", "name"]
     [[sources.layers.variants]]
       minzoom = 10
-      table   = "import.label_waterarea_gen10"
+      table   = "label_waterarea_gen10"
     [[sources.layers.variants]]
       minzoom = 12
-      table   = "import.label_waterarea_gen12"
+      table   = "label_waterarea_gen12"
     [[sources.layers.variants]]
       minzoom = 14
-      table   = "import.label_waterarea_gen14"
+      table   = "label_waterarea_gen14"
     [[sources.layers.variants]]
       minzoom = 16
-      table   = "import.label_waterarea"
+      table   = "label_waterarea"
 
   [[sources.layers]]
     minzoom   = 8
     name      = "label"
-    table     = "import.label"
+    table     = "label"
     prefix    = "DISTINCT ON(pop, name)"
     keys      = ["class", "subclass", "name", "ele", "pop"]
     postfix   = "ORDER BY pop DESC NULLS LAST, name"
@@ -313,28 +322,27 @@
   [[sources.layers]]
     minzoom   = 11
     name      = "poi"
-    table     = "import.poi_cluster_gen11"
+    table     = "poi_cluster_gen11"
     keys      = ["count", "class", "subclass", "name", "ele", "access", "subway", "religion", "parking"]
     [[sources.layers.variants]]
       minzoom = 12
-      table   = "import.poi_cluster_gen12"
+      table   = "poi_cluster_gen12"
     [[sources.layers.variants]]
       minzoom = 13
-      table   = "import.poi_cluster_gen13"
+      table   = "poi_cluster_gen13"
     [[sources.layers.variants]]
       minzoom = 14
-      table   = "import.poi_cluster_gen14"
+      table   = "poi_cluster_gen14"
     [[sources.layers.variants]]
       minzoom = 15
-      table   = "import.poi_cluster_gen15"
+      table   = "poi_cluster_gen15"
     [[sources.layers.variants]]
       minzoom = 16
-      table   = "import.poi_cluster_gen16"
+      table   = "poi_cluster_gen16"
     [[sources.layers.variants]]
       minzoom = 17
-      table   = "import.poi_cluster_gen17"
+      table   = "poi_cluster_gen17"
     [[sources.layers.variants]]
       minzoom = 18
-      table   = "import.poi"
+      table   = "poi"
       keys    = ["1 as count", "class", "subclass", "name", "ele", "access", "subway", "religion", "parking"]
-
