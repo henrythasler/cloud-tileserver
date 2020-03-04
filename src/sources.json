@@ -452,7 +452,7 @@
         {
           "minzoom": 8,
           "name": "label",
-          "table": "label",
+          "table": "label_gen8",
           "prefix": "DISTINCT ON(pop, name)",
           "keys": [
             "class",
@@ -461,7 +461,33 @@
             "ele",
             "pop"
           ],
-          "postfix": "ORDER BY pop DESC NULLS LAST, name"
+          "postfix": "ORDER BY pop DESC NULLS LAST, name",
+          "variants": [
+            {
+              "minzoom": 10,
+              "table": "label_gen10"
+            },
+            {
+              "minzoom": 11,
+              "table": "label_gen11"
+            },
+            {
+              "minzoom": 13,
+              "table": "label_gen13"
+            },
+            {
+              "minzoom": 14,
+              "table": "label_gen14"
+            },
+            {
+              "minzoom": 15,
+              "table": "label_gen15"
+            },
+            {
+              "minzoom": 16,
+              "table": "label"
+            }
+          ]
         },
         {
           "minzoom": 11,

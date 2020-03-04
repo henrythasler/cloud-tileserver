@@ -8,7 +8,7 @@ variable "postgres_user" {
 }
 
 variable "postgres_host" {
-  default = "localhost"
+  default = "db.cyclemap.link"
 }
 
 variable "domain" {

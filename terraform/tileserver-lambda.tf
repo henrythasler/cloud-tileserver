@@ -44,7 +44,7 @@ resource "aws_lambda_function" "tileserver" {
   filename = "./../dist/function.zip"
   role = "${aws_iam_role.tileserver_role.arn}"
   handler = "index.handler"
-  timeout = 180
+  timeout = 30
   source_code_hash = "${filebase64sha256("./../dist/function.zip")}"
   layers = ["${aws_lambda_layer_version.tileserver_layer.arn}"]
   vpc_config {

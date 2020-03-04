@@ -314,10 +314,28 @@
   [[sources.layers]]
     minzoom   = 8
     name      = "label"
-    table     = "label"
+    table     = "label_gen8"
     prefix    = "DISTINCT ON(pop, name)"
     keys      = ["class", "subclass", "name", "ele", "pop"]
     postfix   = "ORDER BY pop DESC NULLS LAST, name"
+    [[sources.layers.variants]]
+      minzoom = 10
+      table   = "label_gen10"
+    [[sources.layers.variants]]
+      minzoom = 11
+      table   = "label_gen11"
+    [[sources.layers.variants]]
+      minzoom = 13
+      table   = "label_gen13"
+    [[sources.layers.variants]]
+      minzoom = 14
+      table   = "label_gen14"
+    [[sources.layers.variants]]
+      minzoom = 15
+      table   = "label_gen15"
+    [[sources.layers.variants]]
+      minzoom = 16
+      table   = "label"
 
   [[sources.layers]]
     minzoom   = 11
