@@ -370,7 +370,41 @@
         ]
       ]
     }
-  },      
+  },
+  {
+    "id": "admin-local",
+    "type": "line",
+    "source": "local",
+    "source-layer": "admin",
+    "minzoom": 10,
+    "filter": ["==", ["get", "level"], 2],
+    "layout": {        
+      "line-join": "round",
+      "line-cap": "round"
+    },
+    "paint": {
+      "line-color": "rgba(0xaa, 4, 0xaa, 0.3)",
+      "line-width": [
+        "interpolate", ["exponential", 2], ["zoom"],
+        2, 1,
+        6, ["case",
+          ["==", ["get", "level"], 2], 2,
+          ["==", ["get", "level"], 4], 1,
+          1
+        ],
+        10, ["case",
+          ["==", ["get", "level"], 2], 3,
+          ["==", ["get", "level"], 4], 2,
+          1
+        ],
+        14, ["case",
+          ["==", ["get", "level"], 2], 7,
+          ["==", ["get", "level"], 4], 5,
+          3
+        ]
+      ]
+    }
+  },    
   {
     "id": "weir",
     "type": "line",
