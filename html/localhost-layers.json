@@ -7,6 +7,47 @@
     }
   },
   {
+    "id": "water-ocean",
+    "type": "fill",
+    "source": "global",
+    "source-layer": "water",
+    "paint": {
+      "fill-color": "#7babcd",
+      "fill-outline-color": "rgba(0,0,0,0)"
+    }
+  },
+  {
+    "id": "bathymetry",
+    "type": "fill",
+    "source": "global",
+    "source-layer": "bathymetry",
+    "paint": {
+      "fill-outline-color": "rgba(0, 0, 0, 0)",
+      "fill-color": [ "interpolate",
+        [ "cubic-bezier",
+          0, 0.5,
+          1, 0.5 ],
+        ["get", "depth"],
+          0,  "#7babcd",
+          9000, "#15659f"
+        ]
+      }
+  },   
+  {
+    "id": "global-urban_areas",
+    "type": "fill",
+    "source": "global",
+    "source-layer": "urban_areas",
+    "maxzoom": 8,
+    "paint": {
+      "fill-color": [ "interpolate", ["exponential", 2], ["zoom"],
+          7, "#ccc",
+          8, "rgba(0,0,0,0)"
+        ],
+      "fill-outline-color": "rgba(0, 0, 0, 0)"
+    }
+  },       
+  {
     "id": "landuse-residential",
     "type": "fill",
     "source": "local",
@@ -157,6 +198,69 @@
     }
   },
   {
+    "id": "hillshading",
+    "source": "mapbox-terrain-rgb",
+    "type": "hillshade",
+    "paint": {
+      "hillshade-illumination-direction": 315,
+      "hillshade-exaggeration": 0.38,
+      "hillshade-shadow-color": "#000",
+      "hillshade-highlight-color": "rgba(0, 0, 0, 0)",
+      "hillshade-accent-color": "rgba(0, 0, 0, .5)"
+    }  
+  },
+  {
+    "id": "contour-lines",
+    "type": "line",
+    "source": "contour-lines",
+    "source-layer": "contour",
+    "minzoom": 13,
+    "filter": ["step", ["zoom"],
+    ["match", ["get", "index"], [5, 10], true, false],
+    15, ["match", ["get", "index"], [2, 10], true, false],
+    17, true
+    ],
+    "paint": {
+      "line-color": ["match", ["get", "index"], 10, "rgba(127, 51, 0, 0.5)", "rgba(127, 51, 0, 0.25)"] ,
+      "line-width": 1
+    }      
+  },       
+  {
+    "id": "contour-label",
+    "type": "symbol",
+    "source": "contour-lines",
+    "source-layer": "contour",
+    "minzoom": 13,
+    "filter": ["step", ["zoom"],
+    ["match", ["get", "index"], [10], true, false],
+    17, ["match", ["get", "index"], [5, 10], true, false]
+    ],
+    "layout": {
+      "text-field": "{ele}",
+      "text-font": ["Open Sans Regular"],
+      "symbol-placement": "line",
+      "symbol-spacing" : 500,
+      "text-size": 16 
+    },
+    "paint": {
+      "text-color": "#530",
+      "text-halo-color": "rgba(255, 255, 255, 0.25)",
+      "text-halo-width": 2.5,
+      "text-halo-blur": 1
+    }
+  },       
+  {
+    "id": "global-lakes",
+    "type": "fill",
+    "source": "global",
+    "source-layer": "lakes",
+    "maxzoom": 8,
+    "paint": {
+      "fill-color": "rgba(123, 171, 205, 1)",
+      "fill-outline-color": "rgba(31, 131, 188, 1)"
+    }
+  },    
+  {
     "id": "water-area",
     "type": "fill",
     "source": "local",
@@ -233,6 +337,40 @@
       ]
     }
   }, 
+  {
+    "id": "admin",
+    "type": "line",
+    "source": "global",
+    "source-layer": "admin",
+    "minzoom": 2,
+    "filter": ["==", ["get", "maritime"], false],
+    "layout": {        
+      "line-join": "round",
+      "line-cap": "round"
+    },
+    "paint": {
+      "line-color": "rgba(0xaa, 4, 0xaa, 0.6)",
+      "line-width": [
+        "interpolate", ["exponential", 2], ["zoom"],
+        2, 1,
+        6, ["case",
+          ["==", ["get", "admin_level"], 2], 2,
+          ["==", ["get", "admin_level"], 4], 1,
+          1
+        ],
+        10, ["case",
+          ["==", ["get", "admin_level"], 2], 3,
+          ["==", ["get", "admin_level"], 4], 2,
+          1
+        ],
+        14, ["case",
+          ["==", ["get", "admin_level"], 2], 7,
+          ["==", ["get", "admin_level"], 4], 5,
+          3
+        ]
+      ]
+    }
+  },      
   {
     "id": "weir",
     "type": "line",
@@ -2179,6 +2317,36 @@
     }      
   },  
   {
+    "id": "global-places",
+    "type": "symbol",
+    "source": "global",
+    "source-layer": "places",
+    "maxzoom": 8,
+    "layout": {
+      "symbol-placement": "point",
+      "icon-image": ["match", ["get", "subclass"], 
+        ["Admin-0 capital"], "star.white", 
+        "ring-black"],
+      "text-optional": true,
+      "text-anchor": "top",
+      "text-field": ["step", ["zoom"],
+      ["get", "name"],
+      14, ["case", 
+        [">",["length", ["get", "name"]], 0], ["concat", ["get", "name"], "\n", ["get", "ele"]], 
+        ["get", "ele"]
+      ]],
+      "text-font": ["Open Sans Bold Italic"],
+      "text-size": 18,
+      "text-offset": [0, 0.25]
+    },
+    "paint": {
+      "text-color": "#222",
+      "text-halo-color": "rgba(255, 255, 255, 1)",
+      "text-halo-width": 2.5,
+      "text-halo-blur": 1
+    }
+  },      
+  {
     "id": "label-place",
     "type": "symbol",
     "source": "local",
@@ -2249,5 +2417,5 @@
       "text-halo-width": 2.5,
       "text-halo-blur": 1
     }
-  }
+  }      
 ]
