@@ -265,7 +265,7 @@
     where     = ["NOT ST_IsClosed(geometry)"]
 
   [[sources.layers]]
-    minzoom   = 14
+    minzoom   = 10
     name      = "admin"
     table     = "admin"
     keys      = ["ref", "level"]

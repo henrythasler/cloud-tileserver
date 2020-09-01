@@ -381,7 +381,7 @@
           ]
         },
         {
-          "minzoom": 14,
+          "minzoom": 10,
           "name": "admin",
           "table": "admin",
           "keys": [
