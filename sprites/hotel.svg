@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="24"
+   height="24"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="hotel.svg">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="15.839192"
+     inkscape:cx="-11.207659"
+     inkscape:cy="-0.9716855"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1869"
+     inkscape:window-height="1145"
+     inkscape:window-x="51"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:snap-global="true">
+    <inkscape:grid
+       snapvisiblegridlinesonly="true"
+       enabled="true"
+       visible="true"
+       empspacing="5"
+       id="grid2994"
+       type="xygrid"
+       originx="-1.1197363e-16"
+       originy="0" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4">
+    <filter
+       id="filter3028"
+       x="0"
+       y="0"
+       width="1"
+       height="1"
+       inkscape:label="Lightness-Contrast"
+       inkscape:menu="Color"
+       inkscape:menu-tooltip="Increase or decrease lightness and contrast"
+       style="color-interpolation-filters:sRGB">
+      <feFlood
+         id="feFlood3030"
+         result="result1"
+         flood-opacity="0"
+         flood-color="rgb(128,128,128)" />
+      <feBlend
+         id="feBlend3032"
+         in2="SourceGraphic"
+         mode="normal"
+         result="result2" />
+      <feComposite
+         id="feComposite3034"
+         in2="SourceGraphic"
+         k2="1"
+         operator="arithmetic"
+         result="result3"
+         k1="0"
+         k3="0"
+         k4="0" />
+      <feComposite
+         id="feComposite3036"
+         in2="SourceGraphic"
+         operator="in" />
+    </filter>
+    <filter
+       id="filter3055"
+       inkscape:label="Lightness-Contrast"
+       x="0"
+       y="0"
+       width="1"
+       height="1"
+       inkscape:menu="Color"
+       inkscape:menu-tooltip="Increase or decrease lightness and contrast"
+       style="color-interpolation-filters:sRGB">
+      <feColorMatrix
+         id="feColorMatrix3057"
+         type="saturate"
+         values="0"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix3079" />
+      <feFlood
+         id="feFlood3081"
+         result="result1"
+         flood-opacity="0"
+         flood-color="rgb(128,128,128)"
+         in="fbSourceGraphic" />
+      <feBlend
+         id="feBlend3083"
+         in2="fbSourceGraphic"
+         mode="normal"
+         result="result2" />
+      <feComposite
+         id="feComposite3085"
+         in2="fbSourceGraphic"
+         k2="1"
+         operator="arithmetic"
+         result="result3"
+         k1="0"
+         k3="0"
+         k4="0" />
+      <feComposite
+         id="feComposite3087"
+         in2="fbSourceGraphic"
+         operator="in" />
+    </filter>
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(4.8596183e-7,-1028.3622)"
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <path
+       id="rect4334"
+       d="M 5.9999995,1028.3622 H 18 c 3.324,0 6,2.676 6,6 v 12 c 0,3.324 -2.676,6 -6,6 H 5.9999995 c -3.324,0 -5.99999998596183,-2.676 -5.99999998596183,-6 v -12 c 0,-3.324 2.67599998596183,-6 5.99999998596183,-6 z"
+       style="fill:#734a08;fill-opacity:1;stroke:none;stroke-width:2"
+       inkscape:connector-curvature="0" />
+    <g
+       id="text3782"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3000"
+       d=""
+       style="fill:#000000" />
+    <path
+       style="fill:#ffffff;stroke-width:2"
+       d="m 1.8782733,1046.5686 c -0.07514,-0.076 -0.09891,-1.5592 -0.09891,-6.1754 0,-3.3418 0.022512,-6.1346 0.050034,-6.2064 0.040722,-0.106 0.194478,-0.13 0.826285,-0.13 0.7574172,0 0.778205,0 0.8566388,0.2114 0.046342,0.122 0.080384,1.3644 0.080384,2.9342 0,2.62 0.0064,2.7314 0.170462,2.9618 l 0.170462,0.2394 h 8.2780509 8.278052 v -1.4678 c 0,-1.1176 0.02712,-1.5052 0.11366,-1.6234 0.16162,-0.221 1.117856,-0.282 1.411012,-0.09 l 0.206232,0.134 v 4.5562 c 0,3.4336 -0.02438,4.5804 -0.0989,4.655 -0.06094,0.06 -0.359798,0.1 -0.778358,0.1 -0.929472,0 -0.936072,-0.02 -0.936072,-1.5432 v -1.177 H 12.000005 3.5927043 v 1.177 c 0,1.5324 -0.00662,1.5432 -0.9360704,1.5432 -0.418561,0 -0.7174276,-0.038 -0.7783608,-0.1 z m 3.9398922,-7.2434 c -0.7955748,-0.3604 -1.2363682,-1.0484 -1.2363682,-1.9304 0,-0.6472 0.12483,-0.9766 0.5483566,-1.4468 0.8450122,-0.9382 2.2971932,-0.9162 3.1453102,0.048 0.9447598,1.0734 0.5623408,2.741 -0.7675966,3.3472 -0.452481,0.2062 -1.2126384,0.198 -1.689702,-0.02 z m 3.1321318,-0.3498 c 0,-0.9594 0.4898666,-1.6898 1.3714427,-2.0452 0.475727,-0.192 0.525302,-0.194 3.24433,-0.188 3.121791,0 4.007389,0.088 4.697342,0.4294 0.61705,0.3048 0.765921,0.5834 0.810534,1.5164 l 0.03473,0.7266 H 14.029481 8.9502913 Z"
+       id="path3089"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cscscsccccscccscsscccssccsccccscscscccs" />
+  </g>
+</svg>

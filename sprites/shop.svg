@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="12"
+   height="12"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="shop2.svg">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="22.627417"
+     inkscape:cx="-9.0205088"
+     inkscape:cy="5.1562842"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1151"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:snap-global="true">
+    <inkscape:grid
+       snapvisiblegridlinesonly="true"
+       enabled="true"
+       visible="true"
+       empspacing="5"
+       id="grid2994"
+       type="xygrid" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4">
+    <filter
+       id="filter3028"
+       x="0"
+       y="0"
+       width="1"
+       height="1"
+       inkscape:label="Lightness-Contrast"
+       inkscape:menu="Color"
+       inkscape:menu-tooltip="Increase or decrease lightness and contrast"
+       color-interpolation-filters="sRGB">
+      <feFlood
+         id="feFlood3030"
+         result="result1"
+         flood-opacity="0"
+         flood-color="rgb(128,128,128)" />
+      <feBlend
+         id="feBlend3032"
+         in2="SourceGraphic"
+         mode="normal"
+         result="result2" />
+      <feComposite
+         id="feComposite3034"
+         in2="SourceGraphic"
+         k2="1"
+         operator="arithmetic"
+         result="result3" />
+      <feComposite
+         id="feComposite3036"
+         in2="SourceGraphic"
+         operator="in" />
+    </filter>
+    <filter
+       id="filter3055"
+       inkscape:label="Lightness-Contrast"
+       x="0"
+       y="0"
+       width="1"
+       height="1"
+       inkscape:menu="Color"
+       inkscape:menu-tooltip="Increase or decrease lightness and contrast"
+       color-interpolation-filters="sRGB">
+      <feColorMatrix
+         id="feColorMatrix3057"
+         type="saturate"
+         values="0"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix3079" />
+      <feFlood
+         id="feFlood3081"
+         result="result1"
+         flood-opacity="0"
+         flood-color="rgb(128,128,128)"
+         in="fbSourceGraphic" />
+      <feBlend
+         id="feBlend3083"
+         in2="fbSourceGraphic"
+         mode="normal"
+         result="result2" />
+      <feComposite
+         id="feComposite3085"
+         in2="fbSourceGraphic"
+         k2="1"
+         operator="arithmetic"
+         result="result3" />
+      <feComposite
+         id="feComposite3087"
+         in2="fbSourceGraphic"
+         operator="in" />
+    </filter>
+    <inkscape:perspective
+       id="perspective12"
+       inkscape:persp3d-origin="290 : 193.33333 : 1"
+       inkscape:vp_z="580 : 290 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 290 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective12-1"
+       inkscape:persp3d-origin="290 : 193.33333 : 1"
+       inkscape:vp_z="580 : 290 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 290 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective2466" />
+    <inkscape:perspective
+       id="perspective2441"
+       inkscape:persp3d-origin="290 : 193.33333 : 1"
+       inkscape:vp_z="580 : 290 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 290 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <filter
+       id="filter3871"
+       x="0"
+       y="0"
+       width="1"
+       height="1"
+       inkscape:label="Lightness-Contrast"
+       inkscape:menu="Color"
+       inkscape:menu-tooltip="Increase or decrease lightness and contrast"
+       color-interpolation-filters="sRGB">
+      <feFlood
+         id="feFlood3873"
+         result="result1"
+         flood-opacity="0"
+         flood-color="rgb(128,128,128)" />
+      <feBlend
+         id="feBlend3875"
+         in2="SourceGraphic"
+         mode="normal"
+         result="result2" />
+      <feComposite
+         id="feComposite3877"
+         in2="SourceGraphic"
+         k2="1"
+         operator="arithmetic"
+         result="result3" />
+      <feComposite
+         id="feComposite3879"
+         in2="SourceGraphic"
+         operator="in" />
+    </filter>
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(4.8596183e-7,-1040.3622)"
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <path
+       id="rect4334"
+       d="m 3,0 6,0 c 1.662,0 3,1.338 3,3 l 0,6 c 0,1.662 -1.338,3 -3,3 L 3,12 C 1.338,12 0,10.662 0,9 L 0,3 C 0,1.338 1.338,0 3,0 z"
+       style="fill:#bf40bf;fill-opacity:1;stroke:none"
+       transform="translate(-4.8596183e-7,1040.3622)" />
+    <g
+       id="text3782"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path3000"
+       d=""
+       style="fill:#000000" />
+    <path
+       style="fill:#ffffff"
+       d="m 3.5407212,1050.8926 c -0.083396,-0.046 -0.1105168,-0.099 -0.1105168,-0.2188 l 0,-0.1149 -0.1903349,-0.012 c -0.2908561,-0.018 -0.5344174,-0.1699 -0.6558795,-0.4109 -0.043487,-0.086 -0.7367976,-2.6332 -1.0199235,-3.7468 l -0.043708,-0.1719 -0.1725251,-0.014 c -0.2909608,-0.023 -0.44976322,-0.1766 -0.46728182,-0.4517 -0.014747,-0.2316 0.089761,-0.4051 0.29587882,-0.4912 0.07369,-0.031 0.2049876,-0.038 0.6910958,-0.038 l 0.6001221,0 0.00878,0.2272 c 0.00706,0.1826 0.021658,0.2548 0.074331,0.3676 0.091425,0.1959 0.2639207,0.3717 0.4588388,0.4677 0.149943,0.074 0.1795889,0.08 0.4078079,0.079 0.226762,-3e-4 0.2588312,-0.01 0.4079342,-0.079 0.2217533,-0.1081 0.340612,-0.2454 0.5956592,-0.688 l 0.2158137,-0.3746 1.3590336,0 1.3590331,0 0.2161496,0.3746 c 0.2541123,0.4403 0.3738471,0.5785 0.5960314,0.6879 0.1497994,0.074 0.1798466,0.08 0.4083247,0.08 0.2284781,0 0.2585249,-0.01 0.4083245,-0.08 0.1954734,-0.096 0.3680699,-0.2725 0.4579934,-0.4677 0.054688,-0.1186 0.064877,-0.1755 0.065821,-0.3674 l 0.00111,-0.227 0.6139836,4e-4 c 0.542717,3e-4 0.625505,0.01 0.713237,0.045 0.105623,0.048 0.22187,0.1688 0.260722,0.271 0.0409,0.1076 0.02881,0.2891 -0.02693,0.4043 -0.07904,0.1633 -0.213515,0.2452 -0.421934,0.2569 l -0.168575,0.01 -0.02339,0.089 c -0.4760593,1.8182 -1.0006501,3.7495 -1.0403575,3.8302 -0.1015442,0.2063 -0.3568802,0.3876 -0.5838137,0.4145 l -0.1211185,0.014 0,0.094 c 0,0.1224 -0.040152,0.2068 -0.1143806,0.2406 -0.039524,0.018 -0.3050646,0.027 -0.7820351,0.027 -0.4769706,0 -0.7425104,-0.01 -0.7820357,-0.027 -0.074843,-0.034 -0.1143807,-0.1184 -0.1143807,-0.244 l 0,-0.097 -0.8472973,0 -0.8472973,0 0,0.1124 c 0,0.091 -0.013359,0.1258 -0.071789,0.1842 l -0.071789,0.072 -0.7448096,0 c -0.4914865,-5e-4 -0.7615158,-0.01 -0.7939281,-0.028 z m 0.2805436,-1.1524 0.075567,-0.076 0,-1.1889 0,-1.1888 -0.071663,-0.08 c -0.062835,-0.07 -0.086796,-0.08 -0.1944966,-0.08 -0.1456566,0 -0.2353829,0.068 -0.2740461,0.2069 -0.026829,0.097 -0.034937,2.1301 -0.00901,2.2597 0.00861,0.043 0.048135,0.1107 0.087847,0.1504 0.060032,0.06 0.092264,0.072 0.1912207,0.072 0.100158,0 0.1309929,-0.012 0.1945856,-0.076 z m 1.5462576,0.036 c 0.1221099,-0.085 0.1256669,-0.1226 0.1256669,-1.3123 0,-1.2149 -7.544e-4,-1.2218 -0.1454021,-1.3073 -0.087695,-0.052 -0.1787218,-0.053 -0.2729105,0 -0.1473421,0.076 -0.1465524,0.069 -0.1465524,1.3393 l 0,1.158 0.083502,0.083 c 0.069529,0.07 0.1014914,0.083 0.1910099,0.083 0.059644,0 0.1329646,-0.018 0.1646862,-0.04 z m 1.6139632,-0.043 0.083502,-0.084 0,-1.1699 c 0,-1.0454 -0.00433,-1.1765 -0.040485,-1.2317 -0.082165,-0.1254 -0.2501613,-0.1672 -0.3752523,-0.093 -0.1396059,0.082 -0.1362354,0.053 -0.1442579,1.2497 -0.00407,0.6079 -4.567e-4,1.143 0.00804,1.1892 0.023756,0.1292 0.1392638,0.223 0.2745758,0.223 0.092779,0 0.1236877,-0.013 0.1938774,-0.083 z m 1.5782958,0.01 c 0.049543,-0.05 0.079153,-0.1086 0.089272,-0.178 0.00833,-0.057 0.011739,-0.5902 0.00757,-1.1846 -0.00819,-1.1695 -0.00503,-1.1427 -0.1444118,-1.2251 -0.083866,-0.049 -0.1761158,-0.051 -0.268111,0 -0.1527921,0.079 -0.1476275,0.033 -0.1476275,1.322 l 0,1.1758 0.083502,0.083 c 0.070348,0.07 0.1010012,0.084 0.1945858,0.084 0.090831,0 0.1245991,-0.014 0.1852137,-0.074 z m -5.3721907,-3.8827 c -0.1985757,-0.1008 -0.30496,-0.3512 -0.2400329,-0.565 0.027166,-0.09 1.7040953,-3.038 1.8642779,-3.278 0.113852,-0.1705 0.330483,-0.2492 0.5379498,-0.1954 0.2884418,0.075 0.4408152,0.3955 0.3172437,0.6676 -0.048069,0.1059 -1.6975305,2.9837 -1.8209773,3.1771 -0.1025919,0.1608 -0.217478,0.2296 -0.4003402,0.2398 -0.1186338,0.01 -0.1734008,0 -0.258121,-0.046 z m 5.1597344,-2e-4 c -0.060514,-0.03 -0.1346038,-0.095 -0.1742757,-0.1535 -0.08033,-0.118 -1.7512875,-3.0178 -1.8365317,-3.1871 -0.1035692,-0.2058 -0.066709,-0.4238 0.098568,-0.5829 0.1888758,-0.1819 0.5039507,-0.1757 0.6790344,0.013 0.1234241,0.1332 1.9081783,3.2425 1.9382487,3.3767 0.089312,0.3985 -0.3326861,0.7179 -0.7050438,0.5335 z"
+       id="path3961"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

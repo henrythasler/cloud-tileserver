@@ -6,6 +6,7 @@
   "scripts": {
     "tools": "tsc tools/toml2json.ts",
     "gen:sources": "node tools/toml2json.js < src/sources.toml > src/sources.json",
+    "gen:sprites": "node tools/gensprites.js && mv sprites/cyclemap* html/sprites",
     "test": "LOG_LEVEL=3 jest --coverage && coveralls < coverage/lcov.info",
     "test:solo": "LOG_LEVEL=1 jest --coverage",
     "layer": "cd tileserver_layer && npm i",
@@ -38,6 +39,7 @@
   "homepage": "https://github.com/henrythasler/cloud-tileserver#readme",
   "devDependencies": {
     "@iarna/toml": "^2.2.3",
+    "@mapbox/spritezero": "^7.0.1",
     "@types/aws-lambda": "^8.10.27",
     "@types/chai": "^4.2.0",
     "@types/jest": "^24.0.17",

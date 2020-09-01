@@ -32,7 +32,7 @@
       "url": "mapbox://mapbox.mapbox-terrain-v2"
       }
   },
-  "sprite": "https://www.cyclemap.link/sprites/cyclemap",
+  "sprite": "http://localhost:8082/sprites/cyclemap",
   "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
   "layers": []
 }

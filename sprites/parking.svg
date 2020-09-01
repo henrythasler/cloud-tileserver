@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="18"
+   height="18"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="parking.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="32"
+     inkscape:cx="10.269744"
+     inkscape:cy="12.348653"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1869"
+     inkscape:window-height="1145"
+     inkscape:window-x="51"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:snap-global="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2994"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       originx="-1.1197363e-16"
+       originy="0" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(4.8596183e-7,-1034.3622)">
+    <path
+       inkscape:connector-curvature="0"
+       id="path4549"
+       d="M 4.4999995,1034.3622 H 13.5 c 2.493,0 4.5,2.007 4.5,4.5 v 9 c 0,2.493 -2.007,4.5 -4.5,4.5 H 4.4999995 c -2.493,0 -4.49999998596183,-2.007 -4.49999998596183,-4.5 v -9 c 0,-2.493 2.00699998596183,-4.5 4.49999998596183,-4.5 z"
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5" />
+    <path
+       style="fill:#0092da;fill-opacity:1;stroke:none;stroke-width:1.5"
+       d="M 4.5 0 C 2.007 0 0 2.007 0 4.5 L 0 13.5 C 0 15.993 2.007 18 4.5 18 L 13.5 18 C 15.993 18 18 15.993 18 13.5 L 18 4.5 C 18 2.007 15.993 0 13.5 0 L 4.5 0 z M 3.5371094 2.4160156 L 9.1542969 2.4160156 C 10.824483 2.4160156 12.103375 2.7869916 12.994141 3.53125 C 13.890767 4.2696481 14.339844 5.3259548 14.339844 6.6972656 C 14.339844 8.0744367 13.890767 9.1346478 12.994141 9.8789062 C 12.103375 10.617304 10.824483 10.986328 9.1542969 10.986328 L 6.9199219 10.986328 L 6.9199219 15.539062 L 3.5371094 15.539062 L 3.5371094 2.4160156 z M 6.9199219 4.8671875 L 6.9199219 8.5332031 L 8.7929688 8.5332031 C 9.4493226 8.5332031 9.9569747 8.3750501 10.314453 8.0585938 C 10.671932 7.7362771 10.849609 7.2832959 10.849609 6.6972656 C 10.849609 6.1112354 10.671932 5.6602063 10.314453 5.34375 C 9.9569747 5.0272937 9.4493226 4.8671875 8.7929688 4.8671875 L 6.9199219 4.8671875 z "
+       transform="translate(-4.8596183e-7,1034.3622)"
+       id="rect4334" />
+    <g
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none"
+       id="text3782" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2"
+     style="display:inline" />
+</svg>
