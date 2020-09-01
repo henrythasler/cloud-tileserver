@@ -1916,7 +1916,24 @@
     "paint": {
       "circle-radius": 3.5
     }
-  },    
+  },
+  {
+    "id": "no-access",
+    "type": "symbol",
+    "source": "local",
+    "source-layer": "manmade",
+    "minzoom": 16,
+    "maxzoom": 24,
+    "filter": ["all",
+      ["==", ["geometry-type"], "Point"],
+      ["==", ["get", "class"], "barrier"],
+      ["match", ["get", "subclass"], ["gate", "lift_gate"], true, false]
+    ],
+    "layout": {
+      "symbol-placement": "point",
+      "icon-image": "no-access"
+    }
+  },
   {
     "id": "power-line",
     "type": "line",
