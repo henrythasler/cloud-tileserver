@@ -141,15 +141,14 @@
             });
         }
 
-        Promise.all([loadJson(`${styles[0]}-base.json`), loadJson(`${styles[0]}-layers.json`)]).then(function (responses) {
+        Promise.all([loadJson(`${styles[0]}-style.json`)]).then(function (responses) {
             // responses contains the parsed JSON objects in the order of requests
-            setupMap(responses[0], responses[1]);
+            setupMap(responses[0]);
         }).catch(function (error) {
             console.log(error);
         });
 
-        function setupMap(myStyle, layers) {
-            myStyle.layers = layers;
+        function setupMap(myStyle) {
             // TODO: Enter your mapbox gl access token on the line below
             mapboxgl.accessToken = 'pk.eyJ1IjoibXljeWNsZW1hcCIsImEiOiJjaXJhYnoxcGEwMDRxaTlubnk3cGZpbTBmIn0.TEO9UhyyX1nFKDTwO4K1xg';
             var map = new mapboxgl.Map({
@@ -212,11 +211,9 @@
 
             function loadStyle(e) {
                 let newStyle = e.element.options[e.element.selectedIndex].value
-                Promise.all([loadJson(`${newStyle}-base.json`), loadJson(`${newStyle}-layers.json`)]).then(function (responses) {
+                Promise.all([loadJson(`${newStyle}-style.json`)]).then(function (responses) {
                     // responses contains the parsed JSON objects in the order of requests
-                    let styleJson = responses[0]
-                    styleJson.layers = responses[1];
-                    map.setStyle(styleJson);
+                    map.setStyle(responses[0]);
                 }).catch(function (error) {
                     console.log(error);
                 });
@@ -357,6 +354,7 @@
                 useInspectStyle: false
             });
             map.addControl(inspect, 'top-left');
+
 
 
             function updateDistance(e) {
