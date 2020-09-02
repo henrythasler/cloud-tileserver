@@ -349,7 +349,8 @@
       "line-cap": "round"
     },
     "paint": {
-      "line-color": "rgba(0xaa, 4, 0xaa, 0.6)",
+      "line-color": "#a4a",
+      "line-opacity": 0.3,
       "line-width": [
         "interpolate", ["exponential", 2], ["zoom"],
         2, 1,
@@ -383,7 +384,8 @@
       "line-cap": "round"
     },
     "paint": {
-      "line-color": "rgba(0xaa, 4, 0xaa, 0.3)",
+      "line-color": "#a4a",
+      "line-opacity": 0.3,
       "line-width": [
         "interpolate", ["exponential", 2], ["zoom"],
         2, 1,
