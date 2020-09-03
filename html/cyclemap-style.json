@@ -414,35 +414,21 @@
       "source": "local",
       "source-layer": "admin",
       "minzoom": 10,
-      "filter": ["==", ["get", "level"], 2],
       "layout": {        
         "line-join": "round",
         "line-cap": "round"
       },
       "paint": {
         "line-color": "#a4a",
-        "line-opacity": 0.3,
+        "line-opacity": 0.3,        
         "line-width": [
           "interpolate", ["exponential", 2], ["zoom"],
-          2, 1,
-          6, ["case",
-            ["==", ["get", "level"], 2], 2,
-            ["==", ["get", "level"], 4], 1,
-            1
-          ],
-          10, ["case",
-            ["==", ["get", "level"], 2], 3,
-            ["==", ["get", "level"], 4], 2,
-            1
-          ],
-          14, ["case",
-            ["==", ["get", "level"], 2], 7,
-            ["==", ["get", "level"], 4], 5,
-            3
-          ]
+          10, 3,
+          14, 6,
+          18, 14
         ]
       }
-    },    
+    },   
     {
       "id": "weir",
       "type": "line",
@@ -1994,7 +1980,7 @@
       "type": "symbol",
       "source": "local",
       "source-layer": "manmade",
-      "minzoom": 16,
+      "minzoom": 14,
       "maxzoom": 24,
       "filter": ["all",
         ["==", ["geometry-type"], "Point"],
@@ -2003,9 +1989,14 @@
       ],
       "layout": {
         "symbol-placement": "point",
-        "icon-image": "no-access"
+        "icon-image": "no-access",
+        "icon-padding": 10,
+        "icon-size": ["interpolate", ["exponential", 2], ["zoom"],
+          14, 0.75, 
+          18, 1
+        ]
       }
-    },  
+    },
     {
       "id": "power-line",
       "type": "line",

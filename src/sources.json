@@ -387,6 +387,9 @@
           "keys": [
             "ref",
             "level"
+          ],
+          "where": [
+            "level = 2"
           ]
         },
         {

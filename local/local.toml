@@ -269,6 +269,7 @@
     name      = "admin"
     table     = "admin"
     keys      = ["ref", "level"]
+    where     = ["level = 2"]
 
   [[sources.layers]]
     minzoom   = 13
