@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "aws-lambda": "^1.0.5",
-    "aws-sdk": "^2.503.0",
+    "aws-sdk": "^2.814.0",
     "pg": "^7.11.0"
   },
   "np": {
