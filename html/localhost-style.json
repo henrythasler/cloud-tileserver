@@ -14,7 +14,7 @@
       "minzoom": 3,
       "type": "vector",
       "tiles": [
-        "https://tiles.cyclemap.link/global/{z}/{x}/{y}.mvt"
+        "http://localhost:8000/global/{z}/{x}/{y}.mvt"
       ]
     },
     "mapbox-terrain-rgb": {
@@ -379,32 +379,19 @@
       "source": "global",
       "source-layer": "admin",
       "minzoom": 2,
-      "filter": ["==", ["get", "maritime"], false],
+      "maxzoom": 10,
+      "filter": ["all", 
+        ["==", ["get", "type"], "Land"],
+        ["match", ["get", "subclass"], ["International boundary (verify)", "Disputed (please verify)"], true, false]
+      ],
       "layout": {        
         "line-join": "round",
         "line-cap": "round"
       },
       "paint": {
-        "line-color": "rgba(0xaa, 4, 0xaa, 0.6)",
-        "line-width": [
-          "interpolate", ["exponential", 2], ["zoom"],
-          2, 1,
-          6, ["case",
-            ["==", ["get", "admin_level"], 2], 2,
-            ["==", ["get", "admin_level"], 4], 1,
-            1
-          ],
-          10, ["case",
-            ["==", ["get", "admin_level"], 2], 3,
-            ["==", ["get", "admin_level"], 4], 2,
-            1
-          ],
-          14, ["case",
-            ["==", ["get", "admin_level"], 2], 7,
-            ["==", ["get", "admin_level"], 4], 5,
-            3
-          ]
-        ]
+        "line-color": "#a4a",
+        "line-opacity": 0.5,        
+        "line-width": 3
       }
     },
     {
@@ -419,7 +406,7 @@
       },
       "paint": {
         "line-color": "#a4a",
-        "line-opacity": 0.3,        
+        "line-opacity": 0.5,        
         "line-width": [
           "interpolate", ["exponential", 2], ["zoom"],
           10, 3,
@@ -2424,7 +2411,26 @@
         "text-halo-width": 2.5,
         "text-halo-blur": 1
       }
-    },      
+    },
+    {
+      "id": "global-countries",
+      "type": "symbol",
+      "source": "global",
+      "source-layer": "countries",
+      "maxzoom": 11,
+      "layout": {
+        "symbol-placement": "point",
+        "text-field": ["upcase",["get", "name"]],
+        "text-font": ["Open Sans Bold"],
+        "text-size": 26
+      },
+      "paint": {
+        "text-color": "rgba(0, 0, 0, 0.5)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 2.5,
+        "text-halo-blur": 1
+      }
+    },    
     {
       "id": "label-place",
       "type": "symbol",

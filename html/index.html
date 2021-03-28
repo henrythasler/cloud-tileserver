@@ -2,8 +2,10 @@
 <html lang="en">
 
 <head>
+    <title>CycleMap - Better Navigation</title>
     <meta charset="utf-8">
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <meta property="og:image" content="https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/11,48,12,0/300x200?access_token=pk.eyJ1IjoibXljeWNsZW1hcCIsImEiOiJjaXJhYnoxcGEwMDRxaTlubnk3cGZpbTBmIn0.TEO9UhyyX1nFKDTwO4K1xg">
     <style>
         body {
             margin: 0;
@@ -174,6 +176,15 @@
             // Debug output
             // map.showTileBoundaries = true;
             // map.showCollisionBoxes = true;
+
+            // update meta-data to current location to enable preview-image on social media
+            function updateMeta() {
+                var center = map.getCenter();
+                console.log(center);
+                document.querySelector('meta[property="og:image"]').setAttribute("content", "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"+center.lng+","+center.lat+","+map.getZoom()+",0/300x200?access_token="+mapboxgl.accessToken);
+            }
+            map.on('moveend', () => {updateMeta()});
+            updateMeta();
 
             class someList {
                 constructor(options) {

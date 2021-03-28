@@ -1,58 +1,92 @@
 [[sources]]
   name = "global"
   database = "shapes"
+  namespace = "public"  
 
   [[sources.layers]]
     minzoom   = 3
     name      = "water"
-    table     = "public.water_gen3"
+    table     = "water_gen3"
   [[sources.layers.variants]]
       minzoom = 4
-      table   = "public.water_gen4"
+      table   = "water_gen4"
   [[sources.layers.variants]]
       minzoom = 5
-      table   = "public.water_gen5"
+      table   = "water_gen5"
   [[sources.layers.variants]]
       minzoom = 6
-      table   = "public.water_gen6"
+      table   = "water_gen6"
   [[sources.layers.variants]]
       minzoom = 7
-      table   = "public.simplified_water_polygons"
+      table   = "simplified_water_polygons"
   [[sources.layers.variants]]
       minzoom = 8
-      table   = "public.water_polygons"
+      table   = "water_polygons"
 
   [[sources.layers]]
     minzoom   = 3
     name      = "bathymetry"
-    table     = "public.bathymetry_gen3"
+    table     = "bathymetry_gen3"
     keys      = ["depth"]
     postfix   = "ORDER BY depth"
   [[sources.layers.variants]]
       minzoom = 4
-      table   = "public.bathymetry_gen4"
+      table   = "bathymetry_gen4"
   [[sources.layers.variants]]
       minzoom = 5
-      table   = "public.bathymetry"
+      table   = "bathymetry"
 
   [[sources.layers]]
     minzoom   = 3
     name      = "lakes"
-    table     = "public.lakes"
+    table     = "lakes"
     keys      = ["name"]
     where     = ["minzoom <= !ZOOM!"]
 
   [[sources.layers]]
     minzoom   = 3
     name      = "urban_areas"
-    table     = "public.ne_10m_urban_areas"
+    table     = "ne_10m_urban_areas"
     where     = ["min_zoom <= !ZOOM!"]
 
   [[sources.layers]]
     minzoom   = 3
     name      = "places"
-    table     = "public.ne_10m_populated_places_simple"
+    table     = "ne_10m_populated_places_simple"
     keys      = ["name", "featurecla as subclass"]
+    where     = ["min_zoom <= !ZOOM!"]
+    postfix   = "ORDER BY scalerank"
+
+  [[sources.layers]]
+    minzoom   = 3
+    name      = "countries"
+    table     = "label_countries"
+    keys      = ["CASE WHEN area > 1000000 THEN name_en ELSE abbrev END as name"]
+    where     = ["min_label <= !ZOOM! AND area > 500000"]
+    postfix   = "ORDER BY scalerank"
+    [[sources.layers.variants]]
+      minzoom = 5
+      keys    = ["CASE WHEN area > 500000 THEN name_en ELSE abbrev END as name"]
+      where   = ["min_label <= !ZOOM! AND area > 100000"]
+    [[sources.layers.variants]]
+      minzoom = 6
+      keys    = ["CASE WHEN area > 100000 THEN name_en ELSE abbrev END as name"]
+      where   = ["min_label <= !ZOOM! AND area > 50000"]
+    [[sources.layers.variants]]
+      minzoom = 7
+      keys    = ["CASE WHEN area > 50000 THEN name_en ELSE abbrev END as name"]
+      where   = ["min_label <= !ZOOM! AND area > 10000"]
+    [[sources.layers.variants]]
+      minzoom = 8
+      keys    = ["CASE WHEN area > 10000 THEN name_en ELSE abbrev END as name"]
+      where   = ["min_label <= !ZOOM!"]
+
+  [[sources.layers]]
+    minzoom   = 3
+    name      = "admin"
+    table     = "ne_10m_admin_0_boundary_lines_land"
+    geom_query = "ST_LineMerge(!GEOM!)"
+    keys      = ["name", "featurecla as subclass", "type"]
     where     = ["min_zoom <= !ZOOM!"]
     postfix   = "ORDER BY scalerank"
 
