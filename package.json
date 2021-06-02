@@ -38,25 +38,25 @@
   },
   "homepage": "https://github.com/henrythasler/cloud-tileserver#readme",
   "devDependencies": {
-    "@iarna/toml": "^2.2.3",
+    "@iarna/toml": "^2.2.5",
     "@mapbox/spritezero": "^7.0.1",
-    "@types/aws-lambda": "^8.10.27",
-    "@types/chai": "^4.2.0",
-    "@types/jest": "^24.0.17",
-    "@types/node": "^12.0.12",
-    "@types/pg": "^7.4.14",
-    "chai": "^4.2.0",
-    "coveralls": "^3.0.6",
-    "jest": "^24.8.0",
-    "lambda-local": "^1.6.3",
-    "ts-jest": "^24.0.2",
-    "typedoc": "^0.15.0",
-    "typescript": "^3.5.3"
+    "@types/aws-lambda": "^8.10.76",
+    "@types/chai": "^4.2.18",
+    "@types/jest": "^24.9.1",
+    "@types/node": "^12.20.14",
+    "@types/pg": "^7.14.11",
+    "chai": "^4.3.4",
+    "coveralls": "^3.1.0",
+    "jest": "^24.9.0",
+    "lambda-local": "^1.7.4",
+    "ts-jest": "^24.3.0",
+    "typedoc": "^0.15.8",
+    "typescript": "^3.9.9"
   },
   "dependencies": {
-    "aws-lambda": "^1.0.5",
-    "aws-sdk": "^2.503.0",
-    "pg": "^7.11.0"
+    "aws-lambda": "^1.0.6",
+    "aws-sdk": "^2.919.0",
+    "pg": "^7.18.2"
   },
   "np": {
     "publish": false
