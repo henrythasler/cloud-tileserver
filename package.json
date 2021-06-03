@@ -12,8 +12,8 @@
     "layer": "cd tileserver_layer && npm i",
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
     "docs": "node node_modules/typedoc/bin/typedoc",
-    "sim": "npm run predeploy && LOG_LEVEL=5 PGUSER=postgres PGHOST=127.0.0.1 PGPORT=5432 node_modules/lambda-local/bin/lambda-local -l dist/index.js -h handler -e test/fixtures/local_14_8691_5677.js",
-    "local": "tsc local/local.ts && node local/local.js",
+    "sim": "npm run predeploy && LOG_LEVEL=5 PGUSER=postgres PGHOST=127.0.0.1 PGPORT=5432 node node_modules/lambda-local/build/cli.js -l dist/index.js -h handler -e test/fixtures/local_14_8691_5677.js",
+    "local": "tsc local/local.ts && LOG_LEVEL=3 node local/local.js",
     "predeploy": "rm -rf ./dist/* && npm run gen:sources && tsc && cp ./src/sources.json ./dist && zip -j ./dist/function.zip ./dist/*.js* && cd tileserver_layer/nodejs && npm i && cd .. && zip -qr ../dist/tileserver_layer.zip nodejs",
     "deploy": "aws lambda update-function-code --function-name tileserver --zip-file fileb://dist/function.zip"
   },
@@ -43,8 +43,8 @@
     "@types/aws-lambda": "^8.10.76",
     "@types/chai": "^4.2.18",
     "@types/jest": "^24.9.1",
-    "@types/node": "^12.20.14",
-    "@types/pg": "^7.14.11",
+    "@types/node": "^14.17.2",
+    "@types/pg": "^8.6.0",
     "chai": "^4.3.4",
     "coveralls": "^3.1.0",
     "jest": "^24.9.0",
@@ -56,7 +56,7 @@
   "dependencies": {
     "aws-lambda": "^1.0.6",
     "aws-sdk": "^2.919.0",
-    "pg": "^7.18.2"
+    "pg": "^8.6.0"
   },
   "np": {
     "publish": false

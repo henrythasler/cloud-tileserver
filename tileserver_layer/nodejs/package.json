@@ -13,6 +13,6 @@
   "author": "Henry Thasler",
   "license": "MIT",
   "dependencies": {
-    "pg": "^7.11.0"
+    "pg": "^8.6.0"
   }
 }
