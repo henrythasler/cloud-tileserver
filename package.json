@@ -9,11 +9,11 @@
     "gen:sprites": "node tools/gensprites.js && mv sprites/cyclemap* html/sprites",
     "test": "LOG_LEVEL=3 jest --coverage && coveralls < coverage/lcov.info",
     "test:solo": "LOG_LEVEL=1 jest --coverage",
-    "layer": "cd tileserver_layer && npm i",
+    "layer": "cd tileserver_layer/nodejs && npm i",
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
     "docs": "node node_modules/typedoc/bin/typedoc",
-    "sim": "npm run predeploy && LOG_LEVEL=5 PGUSER=postgres PGHOST=127.0.0.1 PGPORT=5432 node_modules/lambda-local/bin/lambda-local -l dist/index.js -h handler -e test/fixtures/local_14_8691_5677.js",
-    "local": "tsc local/local.ts && node local/local.js",
+    "sim": "npm run predeploy && LOG_LEVEL=5 PGUSER=postgres PGHOST=127.0.0.1 PGPORT=5432 node node_modules/lambda-local/build/cli.js -l dist/index.js -h handler -e test/fixtures/local_14_8691_5677.js",
+    "local": "tsc local/local.ts && LOG_LEVEL=3 node local/local.js",
     "predeploy": "rm -rf ./dist/* && npm run gen:sources && tsc && cp ./src/sources.json ./dist && zip -j ./dist/function.zip ./dist/*.js* && cd tileserver_layer/nodejs && npm i && cd .. && zip -qr ../dist/tileserver_layer.zip nodejs",
     "deploy": "aws lambda update-function-code --function-name tileserver --zip-file fileb://dist/function.zip"
   },
@@ -38,25 +38,25 @@
   },
   "homepage": "https://github.com/henrythasler/cloud-tileserver#readme",
   "devDependencies": {
-    "@iarna/toml": "^2.2.3",
+    "@iarna/toml": "^2.2.5",
     "@mapbox/spritezero": "^7.0.1",
-    "@types/aws-lambda": "^8.10.27",
-    "@types/chai": "^4.2.0",
-    "@types/jest": "^24.0.17",
-    "@types/node": "^12.0.12",
-    "@types/pg": "^7.4.14",
-    "chai": "^4.2.0",
-    "coveralls": "^3.0.6",
-    "jest": "^24.8.0",
-    "lambda-local": "^1.6.3",
-    "ts-jest": "^24.0.2",
-    "typedoc": "^0.15.0",
-    "typescript": "^3.5.3"
+    "@types/aws-lambda": "^8.10.76",
+    "@types/chai": "^4.2.18",
+    "@types/jest": "^24.9.1",
+    "@types/node": "^14.17.2",
+    "@types/pg": "^8.6.0",
+    "chai": "^4.3.4",
+    "coveralls": "^3.1.0",
+    "jest": "^24.9.0",
+    "lambda-local": "^1.7.4",
+    "ts-jest": "^24.3.0",
+    "typedoc": "^0.15.8",
+    "typescript": "^3.9.9"
   },
   "dependencies": {
-    "aws-lambda": "^1.0.5",
-    "aws-sdk": "^2.503.0",
-    "pg": "^7.11.0"
+    "aws-lambda": "^1.0.6",
+    "aws-sdk": "^2.922.0",
+    "pg": "^8.6.0"
   },
   "np": {
     "publish": false
