@@ -7,8 +7,9 @@ const fixturesPath = "local/";
 
 const config = parse(readFileSync(`${fixturesPath}local.toml`, "utf8")) as unknown as Config;
 
-const gzip = true;
-const tileserver = new Tileserver(config, "", 2, gzip);
+const gzip = process.env.GZIP?process.env.GZIP!=="false":true;
+const logLevel = (process.env.LOG_LEVEL)?parseInt(process.env.LOG_LEVEL):2;
+const tileserver = new Tileserver(config, "", logLevel, gzip);
 
 // docker run --rm -ti -p 5432:5432 -v /media/mapdata/pgdata_mvt:/pgdata -v $(pwd)/postgis.conf:/etc/postgresql/postgresql.conf -e PGDATA=/pgdata img-postgis:0.9 -c 'config_file=/etc/postgresql/postgresql.conf'
 process.env.PGPASSWORD = "";
@@ -35,4 +36,4 @@ async function listener(req: http.IncomingMessage, res: http.ServerResponse): Pr
 const webserver = http.createServer();
 webserver.on('request', listener);
 webserver.listen(8000);
-console.log("awaiting connections...");
+console.log(`(Nodejs ${process.version}) awaiting connections...`);
