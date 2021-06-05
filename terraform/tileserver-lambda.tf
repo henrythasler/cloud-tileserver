@@ -35,12 +35,12 @@ resource "aws_lambda_layer_version" "tileserver_layer" {
   filename = "../dist/tileserver_layer.zip"
   layer_name = "tileserver_layer"
   source_code_hash = "${filebase64sha256("../dist/tileserver_layer.zip")}"
-  compatible_runtimes = ["nodejs14.x"]
+  compatible_runtimes = ["nodejs12.x"]
 }
 
 resource "aws_lambda_function" "tileserver" {
   function_name = "tileserver"
-  runtime = "nodejs14.x"
+  runtime = "nodejs12.x"
   filename = "./../dist/function.zip"
   role = "${aws_iam_role.tileserver_role.arn}"
   handler = "index.handler"
