@@ -9,7 +9,7 @@
     "gen:sprites": "node tools/gensprites.js && mv sprites/cyclemap* html/sprites",
     "test": "LOG_LEVEL=3 jest --coverage && coveralls < coverage/lcov.info",
     "test:solo": "LOG_LEVEL=1 jest --coverage",
-    "layer": "cd tileserver_layer && npm i",
+    "layer": "cd tileserver_layer/nodejs && npm i",
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
     "docs": "node node_modules/typedoc/bin/typedoc",
     "sim": "npm run predeploy && LOG_LEVEL=5 PGUSER=postgres PGHOST=127.0.0.1 PGPORT=5432 node node_modules/lambda-local/build/cli.js -l dist/index.js -h handler -e test/fixtures/local_14_8691_5677.js",
@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "aws-lambda": "^1.0.6",
-    "aws-sdk": "^2.919.0",
+    "aws-sdk": "^2.922.0",
     "pg": "^8.6.0"
   },
   "np": {
