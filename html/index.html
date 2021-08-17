@@ -81,23 +81,23 @@
             background-color: transparent;
         }
     </style>
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.4.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.4.0/mapbox-gl.css' rel='stylesheet' />
 
-    <script src='https://mapbox-gl-inspect.lukasmartinelli.ch/dist/mapbox-gl-inspect.min.js'></script>
-    <link href='https://mapbox-gl-inspect.lukasmartinelli.ch/dist/mapbox-gl-inspect.css' rel='stylesheet' />
+    <!-- <script src='https://mapbox-gl-inspect.lukasmartinelli.ch/dist/mapbox-gl-inspect.min.js'></script>
+    <link href='https://mapbox-gl-inspect.lukasmartinelli.ch/dist/mapbox-gl-inspect.css' rel='stylesheet' /> -->
 
     <script
-        src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js'></script>
+        src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.3/mapbox-gl-geocoder.min.js'></script>
     <link rel='stylesheet'
-        href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css'
+        href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.3/mapbox-gl-geocoder.css'
         type='text/css' />
 
-    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.1.2/mapbox-gl-draw.css'
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.3.0/mapbox-gl-draw.css'
         type='text/css' />
-    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.1.2/mapbox-gl-draw.js'></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.3.0/mapbox-gl-draw.js'></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
 
     <script src='togpx.js'></script>
     <script src='togeojson.js'></script>
@@ -164,6 +164,8 @@
                 zoom: 12,
                 attributionControl: false,
                 antialias: true,
+                failIfMajorPerformanceCaveat: true,
+                maxTileCacheSize: 1024,
             }).addControl(new mapboxgl.AttributionControl({
                 compact: true,
                 customAttribution: '© Henry Thasler <strong><a href="https://github.com/henrythasler/cloud-tileserver">about this map</a></strong> | © <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>'
@@ -180,7 +182,7 @@
             // update meta-data to current location to enable preview-image on social media
             function updateMeta() {
                 var center = map.getCenter();
-                console.log(center);
+                // console.log(center);
                 document.querySelector('meta[property="og:image"]').setAttribute("content", "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"+center.lng+","+center.lat+","+map.getZoom()+",0/300x200?access_token="+mapboxgl.accessToken);
             }
             map.on('moveend', () => {updateMeta()});
@@ -360,11 +362,11 @@
             });
             map.addControl(draw, 'top-left');
 
-            var inspect = new MapboxInspect({
-                selectThreshold: 5,
-                useInspectStyle: false
-            });
-            map.addControl(inspect, 'top-left');
+            // var inspect = new MapboxInspect({
+            //     selectThreshold: 5,
+            //     useInspectStyle: false
+            // });
+            // map.addControl(inspect, 'top-left');
 
 
 
