@@ -1,11 +1,9 @@
 provider "aws" {
-  version = "~> 2.16"
   profile = "default"
   region  = "${var.region}"
 }
 
 provider "aws" {
-  version = "~> 2.16"
   profile = "default"
   region  = "us-east-1"
   alias   = "us-east-1"

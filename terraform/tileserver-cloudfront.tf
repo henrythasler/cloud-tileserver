@@ -12,7 +12,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   aliases = ["cyclemap.link", "www.cyclemap.link"]
 
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD"]
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "S3-Website"
 
@@ -67,12 +67,13 @@ resource "aws_cloudfront_distribution" "tiles" {
   aliases = ["tiles.cyclemap.link"]
 
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD"]
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "S3-Tilecache"
 
     forwarded_values {
       query_string = false
+      headers = ["origin", "access-control-request-headers", "access-control-request-method"]
 
       cookies {
         forward = "none"
@@ -80,8 +81,8 @@ resource "aws_cloudfront_distribution" "tiles" {
     }
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 0
+    min_ttl                = 1
+    default_ttl            = 86400
     max_ttl                = 220752000
   }
 

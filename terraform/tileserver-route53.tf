@@ -8,7 +8,7 @@ data "aws_route53_zone" "primary" {
 
 resource "aws_route53_record" "A" {
   depends_on = [
-    "aws_cloudfront_distribution.website_distribution",
+    aws_cloudfront_distribution.website_distribution,
   ]
 
   zone_id = "${data.aws_route53_zone.primary.zone_id}"
@@ -24,7 +24,7 @@ resource "aws_route53_record" "A" {
 
 resource "aws_route53_record" "www" {
   depends_on = [
-    "aws_cloudfront_distribution.website_distribution",
+    aws_cloudfront_distribution.website_distribution,
   ]
 
   zone_id = "${data.aws_route53_zone.primary.zone_id}"
@@ -36,7 +36,7 @@ resource "aws_route53_record" "www" {
 
 resource "aws_route53_record" "tileserver" {
   depends_on = [
-    "aws_api_gateway_domain_name.tileserver_domain",
+    aws_api_gateway_domain_name.tileserver_domain,
   ]
   zone_id = "${data.aws_route53_zone.primary.zone_id}"
   name    = "${var.tileserver_prefix}${var.domain}"
@@ -51,7 +51,7 @@ resource "aws_route53_record" "tileserver" {
 
 resource "aws_route53_record" "tiles" {
   depends_on = [
-    "aws_cloudfront_distribution.tiles",
+    aws_cloudfront_distribution.tiles,
   ]
   zone_id = "${data.aws_route53_zone.primary.zone_id}"
   name    = "${var.tilecache_prefix}${var.domain}"
