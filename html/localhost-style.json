@@ -920,7 +920,7 @@
       "minzoom": 14,
       "maxzoom": 24,
       "filter": ["all",
-        ["match", ["get", "subclass"], ["path", "footway", "steps", "bridleway"], true, false],
+        ["match", ["get", "subclass"], ["path", "footway", "steps", "bridleway", "via_ferrata"], true, false],
         ["!=", ["get", "tracktype"], 1],
         ["!=", ["get", "bridge"], true],
         ["!=", ["get", "tunnel"], true]
@@ -940,6 +940,39 @@
       }
     },    
     {
+      "id": "alpine_paths",
+      "type": "line",
+      "source": "local",
+      "source-layer": "roads",
+      "minzoom": 13,
+      "maxzoom": 24,
+      "filter": ["any",
+        ["==", ["get", "subclass"], "via_ferrata"],
+        ["all",
+          ["match", ["get", "subclass"], ["path", "footway", "steps", "bridleway"], true, false],
+          [">=", ["get", "sac"], 4]
+        ]
+      ],
+      "layout": {
+        "line-join": "round",
+        "line-cap": "round"
+      },
+      "paint": {
+        "line-dasharray": [0.5, 2],
+        "line-color": 
+        [
+          "interpolate", ["linear"], ["zoom"],
+          13, "#444",
+          14, ["match", ["get", "subclass"], ["via_ferrata"], "#d44", "#000"]
+          ],        
+        "line-width": [
+          "interpolate", ["exponential", 2], ["zoom"],
+          13, 1.2,
+          15, 3
+        ]
+      }
+    },    
+    {
       "id": "paths",
       "type": "line",
       "source": "local",
@@ -950,6 +983,7 @@
         ["match", ["get", "subclass"], ["path", "footway", "steps", "bridleway"], true, false],
         ["!=", ["get", "tracktype"], 1],
         ["<=", ["get", "bicycle"], 2],
+        ["<", ["get", "sac"], 4],
         ["!=", ["get", "bridge"], true],
         ["!=", ["get", "tunnel"], true]
       ],

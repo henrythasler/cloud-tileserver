@@ -499,8 +499,9 @@
             }
 
             function toggleLayer(options) {
-                var visibility = map.getLayoutProperty(options.type, 'visibility');
-                map.setLayoutProperty(options.type, 'visibility', (visibility === 'none') ? 'visible' : 'none');
+                map.setLayoutProperty("hillshading", 'visibility', (map.getLayoutProperty("hillshading", 'visibility') === 'none') ? 'visible' : 'none');
+                map.setLayoutProperty("contour-lines", 'visibility', (map.getLayoutProperty("contour-lines", 'visibility') === 'none') ? 'visible' : 'none');
+                map.setLayoutProperty("contour-label", 'visibility', (map.getLayoutProperty("contour-label", 'visibility') === 'none') ? 'visible' : 'none');
             }
 
             var jsonButton = new anotherButton({ action: exportData, type: "json", title: "Download as GeoJSON" });
