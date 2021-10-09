@@ -311,7 +311,7 @@
           "minzoom": 8,
           "table": "roads_gen8",
           "geom_query": "ST_LineMerge(ST_Collect(!GEOM!))",
-          "postfix": "GROUP BY class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref",
+          "postfix": "GROUP BY class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, sac, ref",
           "keys": [
             "class",
             "subclass",
@@ -324,6 +324,7 @@
             "rank",
             "bicycle",
             "scale",
+            "sac",
             "substring(ref from '\\w+') as ref_prefix",
             "substring(ref from '\\d+') as ref_num",
             "NULL as name"
@@ -370,11 +371,12 @@
                 "rank",
                 "bicycle",
                 "scale",
+                "sac",
                 "substring(ref from '\\w+') as ref_prefix",
                 "substring(ref from '\\d+') as ref_num",
                 "name"
               ],
-              "postfix": "GROUP BY class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, ref, name ORDER BY rank DESC"
+              "postfix": "GROUP BY class, subclass, oneway, tracktype, bridge, tunnel, service, layer, rank, bicycle, scale, sac, ref, name ORDER BY rank DESC"
             }
           ]
         },
