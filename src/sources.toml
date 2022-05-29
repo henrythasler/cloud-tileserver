@@ -45,6 +45,13 @@
 
   [[sources.layers]]
     minzoom   = 3
+    name      = "rivers"
+    table     = "rivers"
+    keys      = ["name"]
+    where     = ["minzoom <= !ZOOM!"]    
+
+  [[sources.layers]]
+    minzoom   = 3
     name      = "urban_areas"
     table     = "ne_10m_urban_areas"
     where     = ["min_zoom <= !ZOOM!"]

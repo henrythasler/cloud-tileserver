@@ -3,9 +3,9 @@ import * as http from "http"
 import { readFileSync } from "fs";
 import { parse } from "@iarna/toml";
 
-const fixturesPath = "local/";
+const fixturesPath = "src/";
 
-const config = parse(readFileSync(`${fixturesPath}local.toml`, "utf8")) as unknown as Config;
+const config = parse(readFileSync(`${fixturesPath}sources.toml`, "utf8")) as unknown as Config;
 
 const gzip = process.env.GZIP?process.env.GZIP!=="false":true;
 const logLevel = (process.env.LOG_LEVEL)?parseInt(process.env.LOG_LEVEL):2;

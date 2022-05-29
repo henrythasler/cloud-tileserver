@@ -64,6 +64,17 @@
         },
         {
           "minzoom": 3,
+          "name": "rivers",
+          "table": "rivers",
+          "keys": [
+            "name"
+          ],
+          "where": [
+            "minzoom <= !ZOOM!"
+          ]
+        },
+        {
+          "minzoom": 3,
           "name": "urban_areas",
           "table": "ne_10m_urban_areas",
           "where": [

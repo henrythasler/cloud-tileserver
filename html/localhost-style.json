@@ -165,6 +165,21 @@
       }
     },
     {
+      "id": "global-waterway",
+      "type": "line",
+      "source": "global",
+      "source-layer": "rivers",
+      "maxzoom": 8,
+      "paint": {
+        "line-color": "rgba(31, 131, 188, 1)",
+        "line-width": [
+          "interpolate", ["exponential", 2], ["zoom"],
+          3, 2,
+          8, 4
+        ]
+      }
+    },
+    {
       "id": "water-way",
       "type": "line",
       "source": "local",
@@ -232,18 +247,6 @@
           16, 10
         ]
       }
-    },
-    {
-      "id": "hillshading",
-      "source": "mapbox-terrain-rgb",
-      "type": "hillshade",
-      "paint": {
-        "hillshade-illumination-direction": 315,
-        "hillshade-exaggeration": 0.38,
-        "hillshade-shadow-color": "#000",
-        "hillshade-highlight-color": "rgba(0, 0, 0, 0)",
-        "hillshade-accent-color": "rgba(0, 0, 0, .5)"
-      }  
     },
     {
       "id": "contour-lines",
@@ -2105,8 +2108,31 @@
         "text-size": 18
       },
       "paint": {
-        "text-color": "#669",
-        "text-halo-color": "rgba(255,255,255,0.6)",
+        "text-color": "rgba(25, 100, 150, 1)",
+        "text-halo-color": "rgba(255,255,255,0.7)",
+        "text-halo-width": 2.5,
+        "text-halo-blur": 1
+      }
+    },
+    {
+      "id": "label-global-waterway",
+      "type": "symbol",
+      "source": "global",
+      "source-layer": "rivers",
+      "minzoom": 5,
+      "maxzoom": 8,
+      "layout": {
+        "symbol-placement": "line",
+        "symbol-spacing": 500,
+        "text-allow-overlap": false,
+        "text-ignore-placement": false,
+        "text-field": "{name}",
+        "text-font": ["Open Sans Bold Italic"],
+        "text-size": 18
+      },
+      "paint": {
+        "text-color": "rgba(25, 100, 150, 1)",
+        "text-halo-color": "rgba(255,255,255,0.7)",
         "text-halo-width": 2.5,
         "text-halo-blur": 1
       }
@@ -2132,8 +2158,8 @@
         "text-size": 18
       },
       "paint": {
-        "text-color": "#669",
-        "text-halo-color": "rgba(255,255,255,0.6)",
+        "text-color": "rgba(25, 100, 150, 1)",
+        "text-halo-color": "rgba(255,255,255,0.7)",
         "text-halo-width": 2.5,
         "text-halo-blur": 1
       }
