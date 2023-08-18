@@ -348,7 +348,8 @@ export class Tileserver {
             const pgConfig = this.getClientConfig(source);
             try {
                 data = await this.fetchTileFromDatabase(query, pgConfig);
-            } catch (error) {
+            } catch (_e) {
+                const error: Error = _e as Error;
                 mvt.res = -4;
                 mvt.status = `[ERROR] - Database error: ${error.message}`;
                 this.log.show(error, LogLevels.ERROR);
@@ -388,7 +389,8 @@ export class Tileserver {
                     //     "gzippedBytes": `${stats.compressedBytes}`
                     // }
                 }).promise();
-            } catch (error) {
+            } catch (_e) {
+                const error: Error = _e as Error;
                 const msg = `[ERROR] - Could not putObject() to S3: ${error.message}`;
                 mvt.res = 2;
                 mvt.status = msg;
