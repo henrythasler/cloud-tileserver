@@ -1,6 +1,6 @@
 import { promisify } from "util";
 import { gzip } from "zlib";
-import { S3 } from "aws-sdk";
+import { S3Client, PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 
 import { Client, QueryResult, ClientConfig } from "pg";
 import { Projection, WGS84BoundingBox, Tile } from "./projection";
@@ -317,7 +317,7 @@ export class Tileserver {
      */
     async getVectortile(path: string): Promise<Vectortile> {
         const mvt: Vectortile = { res: 0 };
-        const s3 = new S3({ apiVersion: '2006-03-01' });
+        const s3 = new S3Client();
 
         // check for valid tile
         const tile = this.extractTile(path);
@@ -377,7 +377,7 @@ export class Tileserver {
 
         if (this.cacheBucketName) {
             try {
-                await s3.putObject({
+                const input: PutObjectCommandInput = {
                     Body: mvt.data,
                     Bucket: this.cacheBucketName,
                     Key: `${source}/${tile.z}/${tile.x}/${tile.y}.mvt`,
@@ -388,7 +388,9 @@ export class Tileserver {
                     //     "rawBytes": `${stats.uncompressedBytes}`,
                     //     "gzippedBytes": `${stats.compressedBytes}`
                     // }
-                }).promise();
+                };
+                const command = new PutObjectCommand(input);
+                await s3.send(command);
             } catch (_e) {
                 const error: Error = _e as Error;
                 const msg = `[ERROR] - Could not putObject() to S3: ${error.message}`;
