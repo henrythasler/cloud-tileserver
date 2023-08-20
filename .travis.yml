@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - 12
+  - 18
 
 addons:
   sonarcloud:
@@ -18,7 +18,7 @@ deploy:
   function_name: "tileserver"
   region: "eu-central-1"
   role: "arn:aws:iam::324094553422:role/tileserver_role"  
-  runtime: "nodejs12.x"
+  runtime: "nodejs18.x"
   handler_name: "handler"
   zip: "dist/function.zip"
   on:
