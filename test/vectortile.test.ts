@@ -29,13 +29,12 @@ jest.mock('pg', () => ({
 
 /** Setup mocks for aws */
 const mockS3putObject = jest.fn();
-// const mockS3putObject = jest.fn().mockReturnValue({ promise: () => { return Promise.resolve({}) } })
-
-jest.mock('aws-sdk', () => {
+jest.mock('@aws-sdk/client-s3', () => {
     return {
-        S3: jest.fn(() => ({
-            putObject: mockS3putObject
-        }))
+        S3Client: jest.fn(() => ({
+            send: mockS3putObject
+        })),
+        PutObjectCommand: jest.fn(),
     };
 });
 
