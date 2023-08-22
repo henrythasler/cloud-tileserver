@@ -9,6 +9,7 @@
     "gen:sprites": "node tools/gensprites.js && mv sprites/cyclemap* html/sprites",
     "test": "LOG_LEVEL=3 jest --coverage && coveralls < coverage/lcov.info",
     "test:solo": "LOG_LEVEL=1 jest --coverage",
+    "test:single": "LOG_LEVEL=1 jest --coverage vectortile.test.ts",
     "layer": "cd tileserver_layer/nodejs && npm i",
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
     "docs": "node node_modules/typedoc/bin/typedoc",
