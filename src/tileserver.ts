@@ -150,8 +150,8 @@ export class Tileserver {
         if (layer.variants?.length) {
             for (const variant of layer.variants) {
                 /** the default zoom-values should cover all use-cases on earth */
-                const variantMinzoom = variant.minzoom ?? 0;
-                const variantMaxzoom = variant.maxzoom ?? 32
+                const variantMinzoom = variant.minzoom;
+                const variantMaxzoom = variant.maxzoom ?? 32;
                 if (zoom >= variantMinzoom && zoom < variantMaxzoom) {
                     /** We have a match: merge the variant with the original layer. */
                     resolved = { ...layer, ...variant }
