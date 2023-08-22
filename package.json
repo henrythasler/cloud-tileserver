@@ -1,6 +1,6 @@
 {
   "name": "cloud-tileserver",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "AWS lambda function to handle vectortile queries via REST",
   "main": "index.js",
   "scripts": {
