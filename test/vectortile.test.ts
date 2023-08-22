@@ -18,7 +18,6 @@ const dummyServer = new Tileserver({ sources: [] }, "testBucket");
 const mockQuery = jest.fn();
 const mockConnect = jest.fn();
 
-//const mockQuery = jest.fn().mockResolvedValue({ rows: [{ data: Buffer.from("data") }, { data: Buffer.from("something") }] })
 jest.mock('pg', () => ({
     Client: class {
         connect = mockConnect

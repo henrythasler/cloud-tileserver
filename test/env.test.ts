@@ -10,14 +10,14 @@ import "jest";
 /** Setup mocks for postgres */
 jest.mock('pg', () => ({
     Client: class {
-        connect = jest.fn().mockResolvedValue(this)
-        query = jest.fn().mockResolvedValue({ rows: [{ mvt: Buffer.from("data") }, { mvt: Buffer.from("something") }] })
-        end = jest.fn().mockResolvedValue(this)
+        connect = jest.fn().mockResolvedValue(this);
+        query = jest.fn().mockResolvedValue({ rows: [{ mvt: Buffer.from("data") }, { mvt: Buffer.from("something") }] });
+        end = jest.fn().mockResolvedValue(this);
     }
 }));
 
 /** Setup mocks for aws */
-const mockPutObject = jest.fn().mockReturnValue({ promise: () => { return Promise.resolve({}) } })
+const mockPutObject = jest.fn().mockResolvedValue(null);
 jest.mock('@aws-sdk/client-s3', () => {
     return {
         S3Client: jest.fn(() => ({

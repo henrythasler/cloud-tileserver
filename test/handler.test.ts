@@ -20,7 +20,7 @@ jest.mock('pg', () => ({
 }));
 
 /** Setup mocks for aws */
-const mockPutObject = jest.fn().mockReturnValue({ promise: () => { return Promise.resolve({}) } })
+const mockPutObject = jest.fn().mockResolvedValue(null)
 jest.mock('@aws-sdk/client-s3', () => {
     return {
         S3Client: jest.fn(() => ({
