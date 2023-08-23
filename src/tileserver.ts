@@ -393,7 +393,7 @@ export class Tileserver {
                 await s3.send(command);
             } catch (_e) {
                 const error: Error = _e as Error;
-                const msg = `[ERROR] - Could not store tile in S3: ${error.message}`;
+                const msg = `[ERROR] - Could not write tile to S3: ${error.message}`;
                 mvt.res = 2;
                 mvt.status = msg;
                 this.log.show(msg, LogLevels.ERROR);
