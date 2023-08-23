@@ -1,14 +1,3 @@
-provider "aws" {
-  profile = "default"
-  region  = "${var.region}"
-}
-
-provider "aws" {
-  profile = "default"
-  region  = "us-east-1"
-  alias   = "us-east-1"
-}
-
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "terraform-state-0000"
   versioning {
@@ -30,15 +19,5 @@ resource "aws_dynamodb_table" "terraform_locks" {
   attribute {
     name = "LockID"
     type = "S"
-  }
-}
-
-terraform {
-  backend "s3" {
-    bucket         = "terraform-state-0000"
-    key            = "cyclemap.link/terraform.tfstate"
-    region         = "eu-central-1"
-    dynamodb_table = "terraform-state-lock"
-    encrypt        = true
   }
 }
