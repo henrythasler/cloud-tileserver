@@ -8,6 +8,7 @@ addons:
   sonarcloud:
     organization: "henrythasler"
 script:
+  - jdk_switcher use openjdk18
   - npm run test && sonar-scanner
 
 before_deploy:
