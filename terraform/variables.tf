@@ -8,7 +8,7 @@ variable "postgres_user" {
 }
 
 variable "postgres_host" {
-  default = "spot.cyclemap.link"
+  default = "ec2.cyclemap.link"
 }
 
 variable "domain" {
