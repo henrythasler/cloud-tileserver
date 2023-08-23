@@ -1,14 +1,14 @@
 language: node_js
 dist: jammy
-jdk: openjdk18
 node_js:
   - 18
 
 addons:
   sonarcloud:
     organization: "henrythasler"
+install:
+  - apt install -y openjdk-18-jdk
 script:
-  - jdk_switcher use openjdk18
   - npm run test && sonar-scanner
 
 before_deploy:
