@@ -8,9 +8,10 @@ addons:
     organization: "henrythasler"
 
 before_install:
-  - sudo apt-get install -y openjdk-18-jdk
+  - sudo apt-get install -y openjdk-17-jdk-headless
 
 script:
+  - java -version
   - npm run test && sonar-scanner
 
 before_deploy:
