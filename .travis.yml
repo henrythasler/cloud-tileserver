@@ -8,7 +8,7 @@ addons:
     organization: "henrythasler"
 
 before_install:
-  - sudo apt-get install -y openjdk-17-jdk-headless
+  - sudo apt-get install -y openjdk-17-jdk
 
 script:
   - java -version
