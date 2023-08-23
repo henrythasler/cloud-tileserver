@@ -7,11 +7,7 @@ addons:
   sonarcloud:
     organization: "henrythasler"
 
-before_install:
-  - sudo apt-get install -y openjdk-17-jdk
-
 script:
-  - java -version
   - npm run test && sonar-scanner
 
 before_deploy:
