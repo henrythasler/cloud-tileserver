@@ -6,8 +6,10 @@ node_js:
 addons:
   sonarcloud:
     organization: "henrythasler"
-install:
-  - apt install -y openjdk-18-jdk
+
+before_install:
+  - sudo apt-get install -y openjdk-18-jdk
+
 script:
   - npm run test && sonar-scanner
 
