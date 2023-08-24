@@ -47,7 +47,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
 
 resource "aws_cloudfront_distribution" "tiles" {
   origin {
-    domain_name = "${aws_s3_bucket.tilecache.website_endpoint}"
+    domain_name = "${aws_s3_bucket_website_configuration.tilecache_config.website_endpoint}"
     origin_id   = "S3-Tilecache"
     custom_origin_config {
       http_port                = 80
