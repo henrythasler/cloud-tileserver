@@ -9,12 +9,13 @@ const logLevel = (process.env.LOG_LEVEL)?parseInt(process.env.LOG_LEVEL):undefin
 const tileserver: Tileserver = new Tileserver(configJSON, cacheBucketName, logLevel, gzip);
 
 interface Event {
-    path: string
+    path?: string   // used by API-Gateway
+    rawPath?: string    // used by Lambda function URLs
 }
 
 export const handler: Handler = async (event: Event, context: Context): Promise<any> => {
     let response;
-    const vectortile: Vectortile = await tileserver.getVectortile(event.path);
+    const vectortile: Vectortile = await tileserver.getVectortile(event.path ?? event.rawPath ?? "");
     if ((vectortile.res >= 0) && (vectortile.data)) {
         response = {
             statusCode: 200,
