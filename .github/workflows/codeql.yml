@@ -19,8 +19,8 @@ jobs:
 
     strategy:
       fail-fast: false
-     matrix:
-       language: [ javascript ]
+      matrix:
+        language: [ javascript ]
 
     steps:
       - name: Checkout
