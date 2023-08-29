@@ -1974,7 +1974,7 @@
             ["get", "subclass"], ["cable_car", "chairlift", "gondola", "chair_lift", "mixed_lift", "funicular"], true, 
           false],
           14, ["match", 
-            ["get", "subclass"], ["cable_car", "chairlift", "gondola", "chair_lift", "mixed_lift", "funicular", "summer_toboggan", "goods", "drag_lift"], true, 
+            ["get", "subclass"], ["cable_car", "chairlift", "gondola", "chair_lift", "mixed_lift", "funicular", "summer_toboggan", "alpine_coaster", "roller_coaster", "goods", "drag_lift"], true, 
           false]
         ],
       "paint": {
@@ -1983,10 +1983,10 @@
           "interpolate", ["exponential", 2], ["zoom"],
           12, 2,
           14, ["match", ["get", "subclass"], 
-                ["summer_toboggan", "goods", "drag_lift"], 2, 
+                ["summer_toboggan", "goods", "drag_lift", "alpine_coaster", "roller_coaster"], 2, 
               4],
           16, ["match", ["get", "subclass"], 
-                ["summer_toboggan", "goods", "drag_lift"], 2, 
+                ["summer_toboggan", "goods", "drag_lift", "alpine_coaster", "roller_coaster"], 2, 
               8]
         ]
       }
