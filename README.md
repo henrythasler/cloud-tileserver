@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/henrythasler/cloud-tileserver.svg?branch=master)](https://travis-ci.org/henrythasler/cloud-tileserver) [![Coverage Status](https://coveralls.io/repos/github/henrythasler/cloud-tileserver/badge.svg?branch=master)](https://coveralls.io/github/henrythasler/cloud-tileserver?branch=master) 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=henrythasler_cloud-tileserver&metric=alert_status)](https://sonarcloud.io/dashboard?id=henrythasler_cloud-tileserver) 
+[![CodeQL](https://github.com/henrythasler/cloud-tileserver/workflows/CodeQL/badge.svg)](https://github.com/henrythasler/cloud-tileserver/actions/workflows/codeql.yml)
 [![Known Vulnerabilities](https://snyk.io//test/github/henrythasler/cloud-tileserver/badge.svg?targetFile=package.json)](https://snyk.io//test/github/henrythasler/cloud-tileserver?targetFile=package.json)
 
 Serve mapbox vectortiles via AWS stack. Please visit the [Wiki](https://github.com/henrythasler/cloud-tileserver/wiki) for installation instructions.
@@ -15,7 +16,7 @@ These are the main project goals:
 [x] Create an AWS lambda function to handle vectortile queries via REST
 [x] Create mapbox vectortiles directly with postgis using ST_AsMvtGeom() and ST_AsMVT()
 [x] Write a parser to read config-files that define the vectortiles layout
-[ ] Create fully automated deployment pipeline.
+[x] Create fully automated deployment pipeline.
 [x] Use some caching mechanism for vectortiles
 [x] Use Typescript and typed interfaces where possible
 [x] Have module tests with tsjest/chai
