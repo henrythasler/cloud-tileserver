@@ -26,3 +26,4 @@ deploy:
   on:
     branch: master
     tags: true
+  edge: true  # force dpl v2
