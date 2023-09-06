@@ -62,7 +62,7 @@ Each layer is resolved to the following query:
 All resulting layers are merged into one SQL query:
 
 ```
-SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
+SELECT ( [${layer1} [|| ${layer2} [|| ...]]] ) as data
 ```
 
 ## Performance, Benchmarks & Timing
@@ -76,6 +76,18 @@ SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 3. Client timing was collected with curl (see `tools/benchmark.sh`)
 4. Lambda durations were collected from CloudWatch
 5. The raw results can be found in `docs/benchmark.ods`
+
+### Update 2023
+
+While upgrading to Nodejs 18, I repeated the benchmarks on 2023-09-06 07:00 UTC. Interestingly, the timing has changed in general:
+
+Node Version | Lambda Timing
+---|---
+Nodejs 12 2019 | 303 ms 
+Nodejs 12 2023 | 867 ms
+Nodejs 18 2023 | 670 ms
+
+Further investigation is needed to determine the root cause.
 
 ## Next Steps
 
@@ -124,6 +136,7 @@ SELECT ( [${layer1} [|| ${layer2} [|| ...]] ) as data
 
 - [Keeping Node.js Fast: Tools, Techniques, And Tips For Making High-Performance Node.js Servers](https://webdesigntips.blog/web-design/web-design-tips/keeping-node-js-fast-tools-techniques-and-tips-for-making-high-performance-node-js-servers/)
 - [autocannon - fast HTTP/1.1 benchmarking tool written in Node.js](https://github.com/mcollina/autocannon)
+- [Piers Cornwell: A Question of Timing](https://blog.cloudflare.com/a-question-of-timing/)
 
 ### UI, Design
 

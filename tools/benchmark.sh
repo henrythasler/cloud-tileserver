@@ -1,4 +1,4 @@
-#ENDPOINT=https://4vci3n7djxnwdhltigbeptswua0vzafy.lambda-url.eu-central-1.on.aws/
+# ENDPOINT=https://4vci3n7djxnwdhltigbeptswua0vzafy.lambda-url.eu-central-1.on.aws/
 ENDPOINT=https://tileserver.cyclemap.link/
 FILE=local/14/8691/5677.mvt
 

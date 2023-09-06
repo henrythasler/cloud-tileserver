@@ -72,3 +72,4 @@ dist
 local/local.js
 src/projection.js
 src/tileserver.js
+tools/*.csv
