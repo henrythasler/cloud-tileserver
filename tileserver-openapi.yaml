@@ -1,0 +1,55 @@
+openapi: 3.0.0
+info:
+  title: cyclemap.link
+  description: |
+    generate mapbox vectortiles
+  contact: {}
+  version: 1.2.3
+  
+paths:
+  /local/{zoom}/{x}/{y}.mvt:
+    parameters:
+    - name: zoom
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 20
+    - name: x
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    - name: y
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      summary: gets a tile from the local layer
+      description: cool endpoint
+      operationId: ewe
+      tags:
+      - vectortile
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/vnd.mapbox-vector-tile:
+              schema:
+                type: string
+                format: binary            
+tags:
+- name: vectortile
+  description: a mapbox vectortile
+  externalDocs:
+    url: http://mapbox.github.io/vector-tile-spec/
+servers:
+- url: https://4vci3n7djxnwdhltigbeptswua0vzafy.lambda-url.eu-central-1.on.aws
+  description: Temporary Lambda Function URL for testing purposes
+- url: https://tileserver.cyclemap.link
+  description: Lambda Function Endpoint
+  

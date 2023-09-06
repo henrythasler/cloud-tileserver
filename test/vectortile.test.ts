@@ -18,7 +18,6 @@ const dummyServer = new Tileserver({ sources: [] }, "testBucket");
 const mockQuery = jest.fn();
 const mockConnect = jest.fn();
 
-//const mockQuery = jest.fn().mockResolvedValue({ rows: [{ data: Buffer.from("data") }, { data: Buffer.from("something") }] })
 jest.mock('pg', () => ({
     Client: class {
         connect = mockConnect
@@ -29,13 +28,12 @@ jest.mock('pg', () => ({
 
 /** Setup mocks for aws */
 const mockS3putObject = jest.fn();
-// const mockS3putObject = jest.fn().mockReturnValue({ promise: () => { return Promise.resolve({}) } })
-
-jest.mock('aws-sdk', () => {
+jest.mock('@aws-sdk/client-s3', () => {
     return {
-        S3: jest.fn(() => ({
-            putObject: mockS3putObject
-        }))
+        S3Client: jest.fn(() => ({
+            send: mockS3putObject
+        })),
+        PutObjectCommand: jest.fn(),
     };
 });
 
@@ -67,7 +65,7 @@ describe("getVectortile", function () {
     });
 
     it("empty request", async function () {
-        mockS3putObject.mockReturnValue({ promise: () => { return Promise.resolve({}) } });
+        mockS3putObject.mockResolvedValue(null);
         let path = "/local/14/8691/5677.mvt"
         let expected: Vectortile = {
             res: 1,
@@ -82,7 +80,7 @@ describe("getVectortile", function () {
     });
 
     it("regular request", async function () {
-        mockS3putObject.mockReturnValue({ promise: () => { return Promise.resolve({}) } });
+        mockS3putObject.mockResolvedValue(null);
         mockQuery.mockResolvedValue({ rows: [{ mvt: Buffer.from("data") }, { mvt: Buffer.from("something") }] })
         mockConnect.mockResolvedValue(null);
         let path = "/local/14/8691/5677.mvt"
@@ -99,7 +97,7 @@ describe("getVectortile", function () {
     });
 
     it("regular request w/o gzip", async function () {
-        mockS3putObject.mockReturnValue({ promise: () => { return Promise.resolve({}) } });
+        mockS3putObject.mockResolvedValue(null);
         mockQuery.mockResolvedValue({ rows: [{ mvt: Buffer.from("data") }, { mvt: Buffer.from("something") }] })
         mockConnect.mockResolvedValue(null);
         let path = "/local/14/8691/5677.mvt"
@@ -116,7 +114,7 @@ describe("getVectortile", function () {
     });
 
     it("regular request w/o cacheBucketName", async function () {
-        mockS3putObject.mockReturnValue({ promise: () => { return Promise.resolve({}) } });
+        mockS3putObject.mockResolvedValue(null);
         mockQuery.mockResolvedValue({ rows: [{ mvt: Buffer.from("data") }, { mvt: Buffer.from("something") }] })
         mockConnect.mockResolvedValue(null);
         let path = "/local/14/8691/5677.mvt"
@@ -133,7 +131,7 @@ describe("getVectortile", function () {
     });
 
     it("postgres connect error", async function () {
-        mockS3putObject.mockReturnValue({ promise: () => { return Promise.resolve({}) } });
+        mockS3putObject.mockResolvedValue(null);
         mockQuery.mockResolvedValue({ rows: [{ mvt: Buffer.from("data") }, { mvt: Buffer.from("something") }] })
         mockConnect.mockRejectedValue(new Error("simulated connect error"));
         let path = "/local/14/8691/5677.mvt"
@@ -150,8 +148,8 @@ describe("getVectortile", function () {
     });
 
     it("postgres query error", async function () {
-        mockS3putObject.mockReturnValue({ promise: () => { return Promise.resolve({}) } });
-        mockConnect.mockResolvedValue(null)
+        mockS3putObject.mockResolvedValue(null);
+        mockConnect.mockResolvedValue(null);
         mockQuery.mockRejectedValue(new Error("simulated query error"));
         let path = "/local/14/8691/5677.mvt"
         let expected: Vectortile = {
@@ -167,13 +165,13 @@ describe("getVectortile", function () {
     });
 
     it("S3 error", async function () {
-        mockS3putObject.mockReturnValue({ promise: () => { return Promise.reject(new Error("simulated message")) } });
-        mockQuery.mockResolvedValue({ rows: [{ mvt: Buffer.from("data") }, { mvt: Buffer.from("something") }] })
+        mockS3putObject.mockRejectedValue(new Error("simulated message"));
+        mockQuery.mockResolvedValue({ rows: [{ mvt: Buffer.from("data") }, { mvt: Buffer.from("something") }] });
         mockConnect.mockResolvedValue(null);
         let path = "/local/14/8691/5677.mvt"
         let expected: Vectortile = {
             res: 2,
-            status: `[ERROR] - Could not putObject() to S3: simulated message`,
+            status: `[ERROR] - Could not write tile to S3: simulated message`,
             data: await asyncgzip("data") as Buffer
         }
         let server = new Tileserver(config, "testBucket");

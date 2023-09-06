@@ -1,6 +1,6 @@
 import { promisify } from "util";
 import { gzip } from "zlib";
-import { S3 } from "aws-sdk";
+import { S3Client, PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 
 import { Client, QueryResult, ClientConfig } from "pg";
 import { Projection, WGS84BoundingBox, Tile } from "./projection";
@@ -17,8 +17,8 @@ export enum LogLevels { SILENT = 1, ERROR, INFO, DEBUG, TRACE }
 export class Log {
     loglevel: LogLevels;
 
-    constructor(level?: LogLevels) {
-        this.loglevel = (level) ? level : LogLevels.DEBUG;
+    constructor(level: LogLevels = LogLevels.DEBUG) {
+        this.loglevel = level;
     }
 
     show(msg: any, level: number) {
@@ -147,11 +147,11 @@ export class Tileserver {
             return null;
         }
 
-        if (layer.variants && layer.variants.length) {
+        if (layer.variants?.length) {
             for (const variant of layer.variants) {
                 /** the default zoom-values should cover all use-cases on earth */
-                const variantMinzoom = (variant.minzoom !== undefined) ? variant.minzoom : /* istanbul ignore next: This can't happen due to interface definition */0
-                const variantMaxzoom = (variant.maxzoom !== undefined) ? variant.maxzoom : 32
+                const variantMinzoom = variant.minzoom;
+                const variantMaxzoom = variant.maxzoom ?? 32;
                 if (zoom >= variantMinzoom && zoom < variantMaxzoom) {
                     /** We have a match: merge the variant with the original layer. */
                     resolved = { ...layer, ...variant }
@@ -181,32 +181,32 @@ export class Tileserver {
         if (resolved === null) return null;
         // FIXME: minzoom and maxzoom must be propagated from source into layer
 
-        const layerExtend: number = (resolved.extend !== undefined) ? resolved.extend : ((source.extend !== undefined) ? source.extend : 4096);
-        const sql: string = (resolved.sql !== undefined) ? resolved.sql : ((source.sql !== undefined) ? source.sql : "");
-        const geom: string = (resolved.geom !== undefined) ? resolved.geom : ((source.geom !== undefined) ? source.geom : "geometry");
-        const geom_query: string = (resolved.geom_query !== undefined) ? resolved.geom_query : ((source.geom_query !== undefined) ? source.geom_query : "!GEOM!");
-        const srid: number = (resolved.srid !== undefined) ? resolved.srid : ((source.srid !== undefined) ? source.srid : 3857);
+        const layerExtend: number = resolved.extend ?? (source.extend ?? 4096);
+        const sql: string = resolved.sql ?? (source.sql ?? "");
+        const geom: string = resolved.geom ?? (source.geom ?? "geometry");
+        const geom_query: string = resolved.geom_query ?? (source.geom_query ?? "!GEOM!");
+        const srid: number = resolved.srid ?? (source.srid ?? 3857);
         const bbox: string = `ST_Transform(ST_MakeEnvelope(${wgs84BoundingBox.leftbottom.lng}, ${wgs84BoundingBox.leftbottom.lat}, 
             ${wgs84BoundingBox.righttop.lng}, ${wgs84BoundingBox.righttop.lat}, 4326), ${srid})`;
-        const buffer: number = (resolved.buffer !== undefined) ? resolved.buffer : ((source.buffer !== undefined) ? source.buffer : 64);
-        const clip_geom: boolean = (resolved.clip_geom !== undefined) ? resolved.clip_geom : ((source.clip_geom !== undefined) ? source.clip_geom : true);
-        const prefix: string = (resolved.prefix !== undefined) ? resolved.prefix : ((source.prefix !== undefined) ? source.prefix : "");
-        const postfix: string = (resolved.postfix !== undefined) ? resolved.postfix : ((source.postfix !== undefined) ? source.postfix : "");
+        const buffer: number = resolved.buffer ?? (source.buffer ?? 64);
+        const clip_geom: boolean = resolved.clip_geom ?? (source.clip_geom ?? true);
+        const prefix: string = resolved.prefix ?? (source.prefix ?? "");
+        const postfix: string = resolved.postfix ?? (source.postfix ?? "");
         const namespace: string = (resolved.namespace !== undefined) ? `${resolved.namespace}.` : ((source.namespace !== undefined) ? `${source.namespace}.` : "");
 
         let keys: string = "";
-        if (source.keys && source.keys.length) {
+        if (source.keys?.length) {
             keys += ", " + source.keys.join(", ");
         }
-        if (resolved.keys && resolved.keys.length) {
+        if (resolved.keys?.length) {
             keys += ", " + resolved.keys.join(", ");
         }
 
         let where: string = "";
-        if (source.where && source.where.length) {
+        if (source.where?.length) {
             where += ` AND (${source.where.join(") AND (")})`;
         }
-        if (resolved.where && resolved.where.length) {
+        if (resolved.where?.length) {
             where += ` AND (${resolved.where.join(") AND (")})`;
         }
 
@@ -317,7 +317,7 @@ export class Tileserver {
      */
     async getVectortile(path: string): Promise<Vectortile> {
         const mvt: Vectortile = { res: 0 };
-        const s3 = new S3({ apiVersion: '2006-03-01' });
+        const s3 = new S3Client();
 
         // check for valid tile
         const tile = this.extractTile(path);
@@ -348,7 +348,8 @@ export class Tileserver {
             const pgConfig = this.getClientConfig(source);
             try {
                 data = await this.fetchTileFromDatabase(query, pgConfig);
-            } catch (error) {
+            } catch (_e) {
+                const error: Error = _e as Error;
                 mvt.res = -4;
                 mvt.status = `[ERROR] - Database error: ${error.message}`;
                 this.log.show(error, LogLevels.ERROR);
@@ -376,7 +377,7 @@ export class Tileserver {
 
         if (this.cacheBucketName) {
             try {
-                await s3.putObject({
+                const input: PutObjectCommandInput = {
                     Body: mvt.data,
                     Bucket: this.cacheBucketName,
                     Key: `${source}/${tile.z}/${tile.x}/${tile.y}.mvt`,
@@ -387,9 +388,12 @@ export class Tileserver {
                     //     "rawBytes": `${stats.uncompressedBytes}`,
                     //     "gzippedBytes": `${stats.compressedBytes}`
                     // }
-                }).promise();
-            } catch (error) {
-                const msg = `[ERROR] - Could not putObject() to S3: ${error.message}`;
+                };
+                const command = new PutObjectCommand(input);
+                await s3.send(command);
+            } catch (_e) {
+                const error: Error = _e as Error;
+                const msg = `[ERROR] - Could not write tile to S3: ${error.message}`;
                 mvt.res = 2;
                 mvt.status = msg;
                 this.log.show(msg, LogLevels.ERROR);

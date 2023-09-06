@@ -35,16 +35,16 @@ resource "aws_lambda_layer_version" "tileserver_layer" {
   filename = "../dist/tileserver_layer.zip"
   layer_name = "tileserver_layer"
   source_code_hash = "${filebase64sha256("../dist/tileserver_layer.zip")}"
-  compatible_runtimes = ["nodejs12.x"]
+  compatible_runtimes = ["nodejs18.x"]
 }
 
 resource "aws_lambda_function" "tileserver" {
   function_name = "tileserver"
-  runtime = "nodejs12.x"
+  runtime = "nodejs18.x"
   filename = "./../dist/function.zip"
   role = "${aws_iam_role.tileserver_role.arn}"
   handler = "index.handler"
-  timeout = 10
+  timeout = 20
   source_code_hash = "${filebase64sha256("./../dist/function.zip")}"
   layers = ["${aws_lambda_layer_version.tileserver_layer.arn}"]
   vpc_config {
