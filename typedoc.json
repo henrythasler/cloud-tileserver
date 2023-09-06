@@ -1,5 +1,5 @@
 {
-    "mode": "modules",
+    "entryPoints": ["src"],
+    "entryPointStrategy": "expand",
     "out": "docs/out",
-    "ignoreCompilerErrors": true
 }
