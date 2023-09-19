@@ -17,6 +17,9 @@ before_deploy:
 # see `terraform/tileserver-lambda.tf` for values
 deploy:
   provider: lambda
+  edge:
+    source: travis-ci/dpl
+    branch: qa-add-lambda-runtime
   function_name: "tileserver"
   region: "eu-central-1"
   role: "arn:aws:iam::324094553422:role/tileserver_role"  
