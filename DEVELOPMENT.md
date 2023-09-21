@@ -87,7 +87,7 @@ Nodejs 12 2019 | 303 ms
 Nodejs 12 2023 | 867 ms
 Nodejs 18 2023 | 670 ms
 
-Further investigation is needed to determine the root cause.
+Further investigation is needed to determine the root cause. Maybe the database is now bigger (=slower).
 
 ## Next Steps
 
