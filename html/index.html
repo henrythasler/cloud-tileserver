@@ -81,8 +81,8 @@
             background-color: transparent;
         }
     </style>
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css' rel='stylesheet' />
 
     <!-- <script src='https://mapbox-gl-inspect.lukasmartinelli.ch/dist/mapbox-gl-inspect.min.js'></script>
     <link href='https://mapbox-gl-inspect.lukasmartinelli.ch/dist/mapbox-gl-inspect.css' rel='stylesheet' /> -->
@@ -122,7 +122,16 @@
 
     <script type="text/javascript">
 
-        var styles = ["cyclemap", "transport", "shadow", "xray"];
+        const styles = ["cyclemap", "transport", "shadow", "xray", "Mapbox Standard", "Mapbox Outdoors"];
+        const stylesUri = [
+            `${styles[0]}-style.json`, 
+            `${styles[1]}-style.json`, 
+            `${styles[2]}-style.json`, 
+            `${styles[3]}-style.json`, 
+            "mapbox://styles/mapbox/standard", 
+            "mapbox://styles/mapbox/outdoors-v12"
+        ];
+
 
         function loadJson(file) {
             return new Promise(function (resolve, reject) {
@@ -143,7 +152,7 @@
             });
         }
 
-        Promise.all([loadJson(`${styles[0]}-style.json`)]).then(function (responses) {
+        Promise.all([loadJson(stylesUri[0])]).then(function (responses) {
             // responses contains the parsed JSON objects in the order of requests
             setupMap(responses[0]);
         }).catch(function (error) {
@@ -224,12 +233,19 @@
 
             function loadStyle(e) {
                 let newStyle = e.element.options[e.element.selectedIndex].value
-                Promise.all([loadJson(`${newStyle}-style.json`)]).then(function (responses) {
-                    // responses contains the parsed JSON objects in the order of requests
-                    map.setStyle(responses[0]);
-                }).catch(function (error) {
-                    console.log(error);
-                });
+                const styleIndex = styles.indexOf(newStyle);
+                if(stylesUri.at(styleIndex).match(/mapbox:\/\//g)) {
+                    console.log(`loading ${newStyle} from ${stylesUri.at(styleIndex)}`)
+                    map.setStyle(stylesUri.at(styleIndex));
+                }
+                else {
+                    Promise.all([loadJson(stylesUri.at(styleIndex))]).then(function (responses) {
+                        // responses contains the parsed JSON objects in the order of requests
+                        map.setStyle(responses[0]);
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                }
             }
 
             var styleButton = new someList({ action: loadStyle, items: styles, type: "small", title: "Choose Style" });
