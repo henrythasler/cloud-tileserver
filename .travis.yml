@@ -2,7 +2,7 @@ language: node_js
 dist: jammy
 node_js:
   - 18
-jdk: openjdk17
+#jdk: openjdk17
 
 addons:
   sonarcloud:
@@ -10,7 +10,7 @@ addons:
 
 script:
   - npm run test
-  - sonar-scanner
+#  - sonar-scanner
 
 before_deploy:
   - npm run predeploy
