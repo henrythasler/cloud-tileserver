@@ -1,6 +1,6 @@
 # Cloud-Tileserver
 
-[![Build Status](https://travis-ci.org/henrythasler/cloud-tileserver.svg?branch=master)](https://travis-ci.org/henrythasler/cloud-tileserver) [![Coverage Status](https://coveralls.io/repos/github/henrythasler/cloud-tileserver/badge.svg?branch=master)](https://coveralls.io/github/henrythasler/cloud-tileserver?branch=master) 
+[![Build Status](https://github.com/henrythasler/cloud-tileserver/actions/workflows/node.js.yml/badge.svg)](https://github.com/henrythasler/cloud-tileserver/actions/workflows/node.js.yml) [![Coverage Status](https://coveralls.io/repos/github/henrythasler/cloud-tileserver/badge.svg?branch=master)](https://coveralls.io/github/henrythasler/cloud-tileserver?branch=master) 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=henrythasler_cloud-tileserver&metric=alert_status)](https://sonarcloud.io/dashboard?id=henrythasler_cloud-tileserver) 
 [![CodeQL](https://github.com/henrythasler/cloud-tileserver/workflows/CodeQL/badge.svg)](https://github.com/henrythasler/cloud-tileserver/actions/workflows/codeql.yml)
 [![Known Vulnerabilities](https://snyk.io//test/github/henrythasler/cloud-tileserver/badge.svg?targetFile=package.json)](https://snyk.io//test/github/henrythasler/cloud-tileserver?targetFile=package.json)
