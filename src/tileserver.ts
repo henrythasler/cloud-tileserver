@@ -21,8 +21,8 @@ export class Log {
         this.loglevel = level;
     }
 
-    show(msg: any, level: number) {
-        if (level <= this.loglevel) console.log(msg);
+    show(msg: string, level: number) {
+        if (level <= this.loglevel) console.log(msg.replace(/\n|\r/g, ""));
     }
 }
 
@@ -103,6 +103,10 @@ export class Tileserver {
      * @return a tile for subsequent use or null if no valid Tile could be extracted. 
      */
     extractTile(path: string): Tile | null {
+        if (path.length > 1000) {
+            this.log.show(`extractTile(): input path length exceeds limit`, LogLevels.ERROR);
+            return null;
+        }
         const tile: Tile = { x: 0, y: 0, z: 0 };
         const tilepath: RegExpMatchArray | null = path.match(/\d+\/\d+\/\d+(?=\.mvt\b)/g);
         if (tilepath) {
@@ -121,6 +125,10 @@ export class Tileserver {
      * @return the name of the source if found
      */
     extractSource(path: string): string | null {
+        if (path.length > 1000) {
+            this.log.show(`extractSource(): input path length exceeds limit`, LogLevels.ERROR);
+            return null;
+        }
         // match the last word between slashes before the actual tile (3-numbers + extension)
         const sourceCandidates: RegExpMatchArray | null = path.match(/(?!\/)\w+(?=\/\d+\/\d+\/\d+\.mvt\b)/g)
         if (sourceCandidates != null && sourceCandidates.length > 0) {
@@ -352,7 +360,7 @@ export class Tileserver {
                 const error: Error = _e as Error;
                 mvt.res = -4;
                 mvt.status = `[ERROR] - Database error: ${error.message}`;
-                this.log.show(error, LogLevels.ERROR);
+                this.log.show(error.message, LogLevels.ERROR);
                 return mvt;
             }
         }
@@ -365,7 +373,7 @@ export class Tileserver {
             data = Buffer.from("");
         }
 
-        this.log.show(data, LogLevels.TRACE);
+        this.log.show(data.toString("base64"), LogLevels.TRACE);
 
         const uncompressedBytes = data.byteLength;
         if (this.gzip) mvt.data = await asyncgzip(data) as Buffer;
