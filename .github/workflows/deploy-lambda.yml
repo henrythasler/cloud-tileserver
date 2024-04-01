@@ -1,0 +1,31 @@
+name: Deploy Nodejs Lambda
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@main
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@main
+      with:
+        node-version: 20.x
+        cache: 'npm'
+    - name: predeploy
+      run: | 
+        npm ci
+        npm run predeploy
+    - name: Setup AWS CLI
+      uses: aws-actions/configure-aws-credentials@main
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-central-1
+    - name: deploy to AWS lambda
+      run: aws lambda update-function-code --dry-run --function-name tileserver --zip-file dist/function.zip
