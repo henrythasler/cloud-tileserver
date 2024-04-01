@@ -28,4 +28,5 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-central-1
     - name: deploy to AWS lambda
-      run: aws lambda update-function-code --dry-run --function-name tileserver --zip-file fileb://dist/function.zip
+      run: aws lambda update-function-code --dry-run --function-name tileserver --description 'Deploy build ${{github.run_number}}' --zip-file fileb://dist/function.zip
+      #run: aws lambda create-function --dry-run --function-name tileserver --runtime nodejs18.x --handler handler --role ${{ secrets.AWS_LAMBDA_TILESERVER_ROLE }} --zip-file fileb://dist/function.zip
