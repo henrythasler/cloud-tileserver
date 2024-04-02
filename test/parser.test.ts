@@ -35,11 +35,16 @@ describe("Parsing functions", function () {
         let tile: Tile | null = tileserver.extractTile("foo");
         expect(tile).to.be.null;
     });
-    it("extractTile negative #3 - invalid extension", function () {
+    it("extractTile negative #4 - invalid extension", function () {
         let tile: Tile | null = tileserver.extractTile("/local/14/8691/5677.mvtinvalid");
         expect(tile).to.be.null;
     });
-        
+    it("extractTile negative #5 - oversized input", function () {
+        const longString = '9'.repeat(1024);
+        let tile: Tile | null = tileserver.extractTile(longString);
+        expect(tile).to.be.null;
+    });
+
 
     it("extractSource regular #1 - simple path", function () {
         let source: string | null = tileserver.extractSource("/local/0/0/0.mvt");
@@ -58,6 +63,11 @@ describe("Parsing functions", function () {
         let source: string | null = tileserver.extractSource("foo");
         expect(source).to.be.null;
     });
+    it("extractSource negative #3 - input length limit exceeded", function () {
+        const longString = '9'.repeat(1024);
+        let source: string | null = tileserver.extractSource(longString);
+        expect(source).to.be.null;
+    });    
     it("extractSource SQL-Injection #1 - `select now()`", function () {
         let source: string | null = tileserver.extractSource("/select+now%28%29/0/0/0.mvt");
         expect(source).to.be.equal('29');
