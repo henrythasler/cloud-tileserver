@@ -431,10 +431,8 @@
           "keys": [
             "class",
             "subclass",
+            "ST_IsClosed(geometry) as polygon",
             "CASE WHEN (name_de <> '') IS NOT FALSE THEN name_de WHEN (name_en <> '') IS NOT FALSE THEN name_en ELSE name END as name"
-          ],
-          "where": [
-            "NOT ST_IsClosed(geometry)"
           ]
         },
         {
