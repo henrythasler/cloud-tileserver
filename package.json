@@ -7,7 +7,7 @@
     "tools": "tsc tools/toml2json.ts",
     "gen:sources": "node tools/toml2json.js < src/sources.toml > src/sources.json",
     "gen:sprites": "node tools/gensprites.js && mv sprites/cyclemap* html/sprites",
-    "test": "LOG_LEVEL=3 jest --coverage && coveralls < coverage/lcov.info",
+    "test": "LOG_LEVEL=3 jest --coverage",
     "test:solo": "LOG_LEVEL=1 jest --coverage",
     "test:single": "LOG_LEVEL=1 jest --coverage vectortile.test.ts",
     "linter": "eslint src/**/*.ts",
