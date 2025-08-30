@@ -23,7 +23,7 @@ export interface Tile {
     y: number
 }
 
-export interface TileList extends Array<Tile> { }
+export type TileList = Array<Tile>
 
 export interface WGS84BoundingBox {
     leftbottom: Wgs84,

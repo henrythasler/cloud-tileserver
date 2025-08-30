@@ -10,12 +10,13 @@
     "test": "LOG_LEVEL=3 jest --coverage && coveralls < coverage/lcov.info",
     "test:solo": "LOG_LEVEL=1 jest --coverage",
     "test:single": "LOG_LEVEL=1 jest --coverage vectortile.test.ts",
+    "linter": "eslint src/**/*.ts",
     "layer": "cd tileserver_layer/nodejs && npm i",
     "html": "aws s3 cp ./html/ s3://cyclemap.link/ --recursive",
     "docs": "node node_modules/typedoc/bin/typedoc",
     "sim": "npm run predeploy && LOG_LEVEL=5 PGUSER=postgres PGHOST=127.0.0.1 PGPORT=5432 node node_modules/lambda-local/build/cli.js -l dist/index.js -h handler -e test/fixtures/local_14_8691_5677.js",
     "local": "tsc local/local.ts && LOG_LEVEL=3 node local/local.js",
-    "predeploy": "rm -rf ./dist/* && npm run gen:sources && tsc && cp ./src/sources.json ./dist && zip -j ./dist/function.zip ./dist/*.js* && cd tileserver_layer/nodejs && npm i && cd .. && zip -qr ../dist/tileserver_layer.zip nodejs",
+    "build": "rm -rf ./dist/* && npm run gen:sources && tsc && cp ./src/sources.json ./dist && zip -j ./dist/function.zip ./dist/*.js* && cd tileserver_layer/nodejs && npm i && cd .. && zip -qr ../dist/tileserver_layer.zip nodejs",
     "deploy": "aws lambda update-function-code --function-name tileserver --zip-file fileb://dist/function.zip"
   },
   "repository": {
@@ -39,6 +40,7 @@
   },
   "homepage": "https://github.com/henrythasler/cloud-tileserver#readme",
   "devDependencies": {
+    "@eslint/js": "^9.34.0",
     "@iarna/toml": "^2.2.5",
     "@mapbox/spritezero": "^8.0.3",
     "@types/aws-lambda": "^8.10.119",
@@ -48,11 +50,13 @@
     "@types/pg": "^8.10.2",
     "chai": "^4.3.7",
     "coveralls": "^3.1.1",
+    "eslint": "^9.34.0",
     "jest": "^29.6.2",
     "lambda-local": "^2.1.1",
     "ts-jest": "^29.1.1",
     "typedoc": "^0.24.8",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "typescript-eslint": "^8.41.0"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.395.0",

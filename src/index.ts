@@ -13,6 +13,7 @@ interface Event {
     rawPath?: string    // used by Lambda function URLs
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
 export const handler: Handler = async (event: Event, context: Context): Promise<any> => {
     let response;
     const vectortile: Vectortile = await tileserver.getVectortile(event.path ?? event.rawPath ?? "");
