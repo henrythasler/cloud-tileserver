@@ -1,5 +1,4 @@
 import { Context } from 'aws-lambda';
-import { expect } from "chai";
 
 import { gzip } from "zlib";
 import { promisify } from "util";
@@ -63,7 +62,7 @@ describe('environmental variables', () => {
         const index = require('../src/index');
         const response = await index.handler({ path: "/local/14/8691/5677.mvt" }, ctx, () => { });
         const gzipped = await asyncgzip("data") as Buffer;
-        expect(response).to.deep.equal({
+        expect(response).toStrictEqual({
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/vnd.mapbox-vector-tile',
@@ -73,7 +72,7 @@ describe('environmental variables', () => {
             body: gzipped.toString('base64'),
             isBase64Encoded: true
         });
-        expect(mockPutObject.mock.calls.length).to.be.equal(0);
+        expect(mockPutObject).toHaveBeenCalledTimes(0);
     });
 
     it("LOG_LEVEL=1", async function () {
@@ -81,7 +80,7 @@ describe('environmental variables', () => {
         const index = require('../src/index');
         const response = await index.handler({ path: "/local/14/8691/5677.mvt" }, ctx, () => { });
         const gzipped = await asyncgzip("data") as Buffer;
-        expect(response).to.deep.equal({
+        expect(response).toStrictEqual({
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/vnd.mapbox-vector-tile',
@@ -91,7 +90,7 @@ describe('environmental variables', () => {
             body: gzipped.toString('base64'),
             isBase64Encoded: true
         });
-        expect(mockPutObject.mock.calls.length).to.be.equal(0);
+        expect(mockPutObject).toHaveBeenCalledTimes(0);
     });
 
     it("CACHE_BUCKET=sampleBucket", async function () {
@@ -99,7 +98,7 @@ describe('environmental variables', () => {
         const index = require('../src/index');
         const response = await index.handler({ path: "/local/14/8691/5677.mvt" }, ctx, () => { });
         const gzipped = await asyncgzip("data") as Buffer;
-        expect(response).to.deep.equal({
+        expect(response).toStrictEqual({
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/vnd.mapbox-vector-tile',
@@ -109,14 +108,14 @@ describe('environmental variables', () => {
             body: gzipped.toString('base64'),
             isBase64Encoded: true
         });
-        expect(mockPutObject.mock.calls.length).to.be.equal(1);
+        expect(mockPutObject).toHaveBeenCalledTimes(1);
     });
 
     it("GZIP=false", async function () {
         process.env.GZIP = "false";
         const index = require('../src/index');
         const response = await index.handler({ path: "/local/14/8691/5677.mvt" }, ctx, () => { });
-        expect(response).to.deep.equal({
+        expect(response).toStrictEqual({
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/vnd.mapbox-vector-tile',
@@ -126,7 +125,7 @@ describe('environmental variables', () => {
             body: Buffer.from('data').toString('base64'),
             isBase64Encoded: true
         });
-        expect(mockPutObject.mock.calls.length).to.be.equal(0);
+        expect(mockPutObject).toHaveBeenCalledTimes(0);
     });
 
 });

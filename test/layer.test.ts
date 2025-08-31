@@ -1,5 +1,4 @@
 import { Tileserver, Layer } from "../src/tileserver";
-import { expect } from "chai";
 import "jest";
 
 const dummy = new Tileserver({ sources: [] }, "testBucket");
@@ -13,7 +12,7 @@ describe("resolveLayerProperties", function () {
                 minzoom: 11,
             }]
         }, 11);
-        expect(resolved).to.deep.equal({
+        expect(resolved).toStrictEqual({
             name: "name",
             table: "table",
             minzoom: 11
@@ -40,7 +39,7 @@ describe("resolveLayerProperties", function () {
 
             }]
         }, 11);
-        expect(resolved).to.deep.equal({
+        expect(resolved).toStrictEqual({
             name: "name",
             table: "table_11",
             minzoom: 11,
@@ -70,7 +69,7 @@ describe("resolveLayerProperties", function () {
                 table: "table_11"
             }]
         }, 11);
-        expect(resolved).to.deep.equal({
+        expect(resolved).toStrictEqual({
             name: "name",
             table: "table_11",
             minzoom: 11
@@ -91,7 +90,7 @@ describe("resolveLayerProperties", function () {
                 table: "table_11"
             }]
         }, 13);
-        expect(resolved).to.be.null;
+        expect(resolved).toBeNull();
     });
 
     it("variants not applicable due to zoom", function () {
@@ -107,7 +106,7 @@ describe("resolveLayerProperties", function () {
                 table: "table_11"
             }]
         }, 9);
-        expect(resolved).to.deep.equal({
+        expect(resolved).toStrictEqual({
             name: "name",
             table: "table"
         });
@@ -127,7 +126,7 @@ describe("resolveLayerProperties", function () {
                 table: "table_11"
             }]
         }, 8);
-        expect(resolved).to.be.null;
+        expect(resolved).toBeNull()
     });
 
     it("variants not applicable due to zoom", function () {
@@ -145,7 +144,7 @@ describe("resolveLayerProperties", function () {
                 table: "table_11"
             }]
         }, 13);
-        expect(resolved).to.deep.equal({
+        expect(resolved).toStrictEqual({
             minzoom: 9,
             name: "name",
             table: "table"
@@ -166,7 +165,7 @@ describe("resolveLayerProperties", function () {
                 table: "table_11"
             }]
         }, 11);
-        expect(resolved).to.deep.equal({
+        expect(resolved).toStrictEqual({
             minzoom: 10,
             maxzoom: 12,
             name: "name",
@@ -187,7 +186,7 @@ describe("resolveLayerProperties", function () {
                 srid: 4326,
             }]
         }, 10);
-        expect(resolved).to.deep.equal({
+        expect(resolved).toStrictEqual({
             minzoom: 10,
             name: "name",
             table: "table_10",
@@ -207,7 +206,7 @@ describe("resolveLayerProperties", function () {
                 keys: [],
             }]
         }, 10);
-        expect(resolved).to.deep.equal({
+        expect(resolved).toStrictEqual({
             minzoom: 10,
             name: "name",
             table: "table_10",
@@ -228,7 +227,7 @@ describe("resolveLayerProperties", function () {
                 table: "table_10",
             }]
         }, 11);
-        expect(resolved).to.deep.equal({
+        expect(resolved).toStrictEqual({
             minzoom: 10,
             name: "name",
             table: "table_10"
@@ -249,7 +248,7 @@ describe("resolveLayerProperties", function () {
                 table: "table_10",
             }]
         }, 11);
-        expect(resolved).to.deep.equal({
+        expect(resolved).toStrictEqual({
             minzoom: 11,
             name: "name",
             table: "table_11"
@@ -261,7 +260,7 @@ describe("resolveLayerProperties", function () {
             name: "name",
             table: "table"
         }, 11);
-        expect(resolved).to.deep.equal({
+        expect(resolved).toStrictEqual({
             name: "name",
             table: "table"
         });
@@ -276,7 +275,7 @@ describe("resolveLayerProperties", function () {
                 minzoom: 11,
             }]
         }, 11);
-        expect(resolved).to.deep.equal({
+        expect(resolved).toStrictEqual({
             name: "name",
             namespace: "import.",
             table: "table",
@@ -290,7 +289,7 @@ describe("resolveLayerProperties", function () {
             table: "table",
             minzoom: 12
         }, 11);
-        expect(resolved).to.be.null;
+        expect(resolved).toBeNull()
     });
 })
 

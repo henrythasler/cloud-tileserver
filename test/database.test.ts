@@ -1,5 +1,4 @@
 import { Tileserver, Config } from "../src/tileserver";
-import { expect } from "chai";
 import { readFileSync } from "fs";
 import { parse } from "@iarna/toml";
 
@@ -26,14 +25,14 @@ describe("getClientConfig", function () {
         let config = parse(readFileSync(`${fixturesPath}simple.toml`, "utf8")) as unknown as Config;
         let server = new Tileserver(config, "testBucket");
         let pgconfig: ClientConfig = server.getClientConfig("local");
-        expect(pgconfig).to.be.empty;
+        expect(pgconfig).toStrictEqual({});
     });
 
     it("full database config", function () {
         let config = parse(readFileSync(`${fixturesPath}simple_dbconfig.toml`, "utf8")) as unknown as Config;
         let server = new Tileserver(config, "testBucket");
         let pgconfig: ClientConfig = server.getClientConfig("local");
-        expect(pgconfig).to.deep.equal({
+        expect(pgconfig).toStrictEqual({
             host: "localhost",
             port: 5432,
             user: "user",
@@ -46,7 +45,7 @@ describe("getClientConfig", function () {
         let config = parse(readFileSync(`${fixturesPath}simple_dbconfig.toml`, "utf8")) as unknown as Config;
         let server = new Tileserver(config, "testBucket");
         let pgconfig: ClientConfig = server.getClientConfig("unknown");
-        expect(pgconfig).to.be.empty;
+        expect(pgconfig).toStrictEqual({});
     });
 
 });
@@ -64,8 +63,8 @@ describe("fetchTileFromDatabase", function () {
         let pgconfig: ClientConfig = server.getClientConfig("local");
 
         let res = await server.fetchTileFromDatabase("SELECT true", pgconfig);
-        expect(mockQuery.mock.calls.length).to.be.equal(1);
-        expect(res.toString()).to.equal("data");
+        expect(mockQuery).toHaveBeenCalledTimes(1);
+        expect(res.toString()).toBe("data");
     });
 
     it("row not found", async function () {
@@ -77,9 +76,9 @@ describe("fetchTileFromDatabase", function () {
         try {
             await server.fetchTileFromDatabase("SELECT true", pgconfig)    
         } catch (e) {
-            expect(e).to.be.an("Error");
-            expect(e).to.have.property("message", "Property \'mvt\' does not exist in res.rows[0]");
+            expect(e).toBeInstanceOf(Error);
+            expect(e).toHaveProperty("message", "Property \'mvt\' does not exist in res.rows[0]");
         }        
-        expect(mockQuery.mock.calls.length).to.be.equal(1);
+        expect(mockQuery).toHaveBeenCalledTimes(1);
     });    
 });

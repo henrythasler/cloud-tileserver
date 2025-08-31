@@ -1,6 +1,5 @@
 import { Projection, WGS84BoundingBox } from "../src/projection";
 import { Tileserver, Config } from "../src/tileserver";
-import { expect } from "chai";
 import { readFileSync } from "fs";
 import { parse } from "@iarna/toml";
 
@@ -23,7 +22,7 @@ describe("buildLayerQuery", function () {
             },
             bbox,
             13);
-        expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
+        expect(layerQuery).toBe(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
     (SELECT ST_AsMvtGeom(
         geometry,
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
@@ -47,7 +46,7 @@ describe("buildLayerQuery", function () {
             },
             bbox,
             13);
-        expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
+        expect(layerQuery).toBe(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
     (SELECT ST_AsMvtGeom(
         geometry,
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
@@ -80,7 +79,7 @@ describe("buildLayerQuery", function () {
             },
             bbox,
             13);
-        expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
+        expect(layerQuery).toBe(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
     (SELECT DISTINCT ON(name)ST_AsMvtGeom(
         ST_LineMerge(ST_Collect(geometry)),
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
@@ -112,7 +111,7 @@ describe("buildLayerQuery", function () {
             },
             bbox,
             9);
-        expect(layerQuery).to.be.null;
+        expect(layerQuery).toBeNull();
     });
 
     it("layer with variant gets rejected due to minzoom", function () {
@@ -130,7 +129,7 @@ describe("buildLayerQuery", function () {
             },
             bbox,
             8);
-        expect(layerQuery).to.be.null;
+        expect(layerQuery).toBeNull();
     });
 
     it("source-properties get propagated into layer", function () {
@@ -156,7 +155,7 @@ describe("buildLayerQuery", function () {
             bbox,
             10);
 
-        expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
+        expect(layerQuery).toBe(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
     (SELECT DISTINCT ON(name)ST_AsMvtGeom(
         ST_LineMerge(ST_Collect(geometry)),
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
@@ -181,7 +180,7 @@ describe("buildLayerQuery", function () {
             },
             bbox,
             13);
-        expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
+        expect(layerQuery).toBe(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
     (SELECT ST_AsMvtGeom(geometry,
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AS geom
     FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AND 13<14) AS q)`.replace(/\s+/g, ' '));
@@ -200,7 +199,7 @@ describe("buildLayerQuery", function () {
             },
             bbox,
             13);
-        expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
+        expect(layerQuery).toBe(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
     (SELECT ST_AsMvtGeom(geometry,
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AS geom
     FROM table1 WHERE (geometry && ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857)) AND 13<14) AS q)`.replace(/\s+/g, ' '));
@@ -221,7 +220,7 @@ describe("buildLayerQuery", function () {
             },
             bbox,
             13);
-        expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
+        expect(layerQuery).toBe(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
     (SELECT 13ST_AsMvtGeom(
         geometry,
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
@@ -246,7 +245,7 @@ describe("buildLayerQuery", function () {
             },
             bbox,
             13);
-        expect(layerQuery).to.be.equal(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
+        expect(layerQuery).toBe(`(SELECT ST_AsMVT(q, 'layer1', 4096, 'geom') AS l FROM
     (SELECT ST_AsMvtGeom(
         (fancy_geometry),
         ST_Transform(ST_MakeEnvelope(${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}, 4326), 3857),
@@ -267,7 +266,7 @@ describe("buildQuery", function () {
         let expected = readFileSync(`${fixturesPath}simple_z13.sql`, "utf8")
             .replace(/!BBOX!/g, `${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}`)
             .replace(/\s+/g, ' ');
-        expect(query).to.be.equal(expected);
+        expect(query).toBe(expected);
     });
 
     it("prevent duplication of name fields in layers as per spec", function () {
@@ -278,7 +277,7 @@ describe("buildQuery", function () {
         let expected = readFileSync(`${fixturesPath}simple_z13.sql`, "utf8")
             .replace(/!BBOX!/g, `${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}`)
             .replace(/\s+/g, ' ');
-        expect(query).to.be.equal(expected);
+        expect(query).toBe(expected);
     });
 
     it("empty query due to zoom", function () {
@@ -286,7 +285,7 @@ describe("buildQuery", function () {
         let config = parse(readFileSync(`${fixturesPath}simple.toml`, "utf8")) as unknown as Config;
         let server = new Tileserver(config, "testBucket");
         let query: string | null = server.buildQuery("local", bbox, 7);
-        expect(query).to.be.equal("");
+        expect(query).toBe("");
     });
 
     it("layer with namespace", function () {
@@ -297,7 +296,7 @@ describe("buildQuery", function () {
         let expected = readFileSync(`${fixturesPath}simple_z13.sql`, "utf8")
             .replace(/!BBOX!/g, `${bbox.leftbottom.lng}, ${bbox.leftbottom.lat}, ${bbox.righttop.lng}, ${bbox.righttop.lat}`)
             .replace(/\s+/g, ' ');
-        expect(query).to.be.equal(expected);
+        expect(query).toBe(expected);
     }); 
 
 });

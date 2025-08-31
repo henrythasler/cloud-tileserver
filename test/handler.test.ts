@@ -2,7 +2,6 @@ process.env.CACHE_BUCKET = "sampleBucket";
 
 import { handler } from "../src/index";
 import { Context } from 'aws-lambda';
-import { expect } from "chai";
 
 import { gzip } from "zlib";
 import { promisify } from "util";
@@ -58,7 +57,7 @@ describe("handler", function () {
     it("regular request", async function () {
         let response = await handler({ path: "/local/14/8691/5677.mvt" }, ctx, () => { });
         let gzipped = await asyncgzip("data") as Buffer;
-        expect(response).to.deep.equal({
+        expect(response).toStrictEqual({
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/vnd.mapbox-vector-tile',
@@ -68,12 +67,12 @@ describe("handler", function () {
             body: gzipped.toString('base64'),
             isBase64Encoded: true
         });
-        expect(mockPutObject.mock.calls.length).to.be.equal(1);
+        expect(mockPutObject).toHaveBeenCalledTimes(1);
     });
 
     it("invalid path", async function () {
         let response = await handler({ path: "invalid" }, ctx, () => { });
-        expect(response).to.deep.equal({
+        expect(response).toStrictEqual({
             statusCode: 500,
             headers: {
                 'Content-Type': 'text/html',
@@ -83,7 +82,7 @@ describe("handler", function () {
             body: '{"res":-2,"status":"[ERROR] - Tile not correctly specified in \'invalid\'"}',
             isBase64Encoded: false
         });
-        expect(mockPutObject.mock.calls.length).to.be.equal(0);
+        expect(mockPutObject).toHaveBeenCalledTimes(0);
     });    
 
     it("Lambda Function URL request", async function () {
@@ -134,7 +133,7 @@ describe("handler", function () {
 
         let response = await handler(request, ctx, () => { });
         let gzipped = await asyncgzip("data") as Buffer;
-        expect(response).to.deep.equal({
+        expect(response).toStrictEqual({
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/vnd.mapbox-vector-tile',
@@ -144,12 +143,12 @@ describe("handler", function () {
             body: gzipped.toString('base64'),
             isBase64Encoded: true
         });
-        expect(mockPutObject.mock.calls.length).to.be.equal(1);
+        expect(mockPutObject).toHaveBeenCalledTimes(1);
     });
 
     it("missing path", async function () {
         let response = await handler({ wrong: "path" }, ctx, () => { });
-        expect(response).to.deep.equal({
+        expect(response).toStrictEqual({
             statusCode: 500,
             headers: {
                 'Content-Type': 'text/html',
@@ -159,6 +158,6 @@ describe("handler", function () {
             body: '{"res":-2,"status":"[ERROR] - Tile not correctly specified in \'\'"}',
             isBase64Encoded: false
         });
-        expect(mockPutObject.mock.calls.length).to.be.equal(0);
+        expect(mockPutObject).toHaveBeenCalledTimes(0);
     });    
 });
