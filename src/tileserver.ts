@@ -78,6 +78,10 @@ export interface Config {
 }
 
 
+/**
+ * The main class for the tileserver. It encapsulates all functionality to extract tile-information from a path,
+ * build the SQL-Query, fetch the data from the database and optionally cache it in an S3-bucket.
+ */
 export class Tileserver {
     protected config: Config;
     protected cacheBucketName: string | null = null
@@ -86,9 +90,10 @@ export class Tileserver {
     protected gzip: boolean;
 
     /**
-     * @constructor
-     * @param config 
-     * @param cacheBucketName 
+     * @param config The configuration object as per `./sources.json`
+     * @param cacheBucketName If set, generated tiles will be cached in this S3-bucket
+     * @param logLevel The loglevel to use. Default is LogLevels.ERROR
+     * @param gzip If true the resulting tile will be gzipped before returning and caching
      */
     constructor(config: Config, cacheBucketName?: string, logLevel: number = LogLevels.ERROR, gzip = true) {
         if (cacheBucketName) this.cacheBucketName = cacheBucketName;
