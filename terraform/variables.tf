@@ -30,3 +30,7 @@ variable "vpc" {
 variable "log_level" {
   default = "3"
 }
+
+variable "node_runtime" {
+  default = "nodejs22.x"
+}

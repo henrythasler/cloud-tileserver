@@ -10,7 +10,7 @@ provider "aws" {
 }
 
 terraform {
-  required_version = ">= 1.5"
+  required_version = ">= 1.13"
   backend "s3" {
     bucket         = "terraform-state-0000"
     key            = "cyclemap.link/terraform.tfstate"
@@ -22,7 +22,7 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "~> 5.13"
+      version = "~> 6.11"
     }
   }
 }
