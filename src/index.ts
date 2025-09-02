@@ -13,9 +13,18 @@ interface Event {
     rawPath?: string    // used by Lambda function URLs
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-export const handler: Handler = async (event: Event, context: Context): Promise<any> => {
-    let response;
+// see https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html#apigateway-types-transforms
+interface APIGatewayResponse {
+    statusCode: number
+    headers?: { [header: string]: string }
+    multiValueHeaders?: { [header: string]: string[] }
+    body: string
+    isBase64Encoded?: boolean
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const handler: Handler = async (event: Event, context: Context): Promise<APIGatewayResponse> => {
+    let response: APIGatewayResponse;
     const vectortile: Vectortile = await tileserver.getVectortile(event.path ?? event.rawPath ?? "");
     if ((vectortile.res >= 0) && (vectortile.data)) {
         response = {
