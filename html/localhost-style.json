@@ -19,11 +19,11 @@
     },
     "mapbox-terrain-rgb": {
       "type": "raster-dem",
-      "tileSize": 256,
+      "tileSize": 512,
       "maxzoom": 14,
       "encoding": "terrarium",
       "tiles": [
-        "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"
+        "https://tiles.mapterhorn.com/{z}/{x}/{y}.webp"
       ]
     },
     "contour-lines": {
