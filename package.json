@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/henrythasler/cloud-tileserver#readme",
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.879.0",
+    "@aws-sdk/client-s3": "^3.1027.0",
     "@eslint/js": "^9.34.0",
     "@iarna/toml": "^2.2.5",
     "@mapbox/spritezero": "^8.0.3",
